@@ -1,0 +1,237 @@
+{% extends "base.html" %}
+{% block title %}
+    Список тикетов
+{% endblock %}
+{% block style %}
+    <style>
+       .leftstr, .rightstr {
+        float: left; /* Обтекание справа */ 
+        width: 50%; /* Ширина текстового блока */ 
+       }
+       .rightstr {
+        text-align: right; /* Выравнивание по правому краю */ 
+       }
+        .center {
+        text-align: center; 
+        width: 100%; /* Ширина текстового блока */ 
+{% comment %}
+        {# Заменил на стрелки #}
+       }
+       .first_prior {
+       padding:0 0 0 10;
+       background:url(../media/img/red.gif) no-repeat;
+       }
+       .second_prior {
+       padding:0 0 0 10;
+       background:url(../media/img/orange.gif) no-repeat;
+       }
+       .fourth_prior {
+       padding:0 0 0 10;
+       background:url(../media/img/blue.gif) no-repeat;
+       }
+       .fifth_prior {
+       padding:0 0 0 10;
+       background:url(../media/img/green.gif) no-repeat;
+       }
+{% endcomment %}
+
+    </style>
+    <meta http-equiv="refresh" content="60">
+{% endblock %}
+
+{% block content %}
+    <div class ="leftstr"><p>Привет, {{ worker.fio }}</p></div>
+    <div class ="rightstr"><p><a target="_new" href="/media/task_files/versions.html">v0.2<a></p></div>
+    {% if admin %}
+        <ul style="clear:left">
+            <li><a href="to/Мотя/">Вопросы к Моте</a></li>
+            <li><a href="to/Звонки/">Звонки</a></li>
+            <li><a href="to/БД/">Вопросы по БД</a></li>
+        </ul>
+    {% endif %}
+    <br />
+    {% if alert %}
+        <script>alert("Появились новые задачи!")</script>
+    {% endif %}
+    {% if my_error %}
+        {% for error in my_error %}
+            <h2>{{error}}</h2><br />
+        {% endfor %}
+    {% endif %}
+    {% if regular_tasks %}
+        <p>Повторяющиеся задачи</p>
+        <ol>
+            {% for task in regular_tasks %}
+                {% ifequal task.priority 1 %}
+                    <li class="first_prior">&#11014;
+                {% endifequal %}                            
+                {% ifequal task.priority 2 %}
+                    <li class="second_prior">&#8657;
+                {% endifequal %}                            
+                {% ifequal task.priority 3 %}
+                    <li class="third_prior">
+                {% endifequal %}                            
+                {% ifequal task.priority 4 %}
+                    <li class="fourth_prior">&#8659;
+                {% endifequal %}                            
+                {% ifequal task.priority 5 %}
+                    <li class="fifth_prior">&#11015;
+                {% endifequal %}
+                {% ifequal task.category.name 'Звонки' %}
+                    &#9743;
+                {% endifequal %}                            
+                <a href="../task/regular/{{task.id}}" title="{{task.description}}" target="_blank">{{task.name}}</a> <a href="../set_reminder/regular/{{task.id}}" title="Установить напоминалку">&#8986;</a> <a href="../regular_task_done/{{task.id}}" title="Отметить как выполненую" onclick="if (confirm('Уверены?')) {return true} else {return false};">&#9790;</a> 
+                {% ifnotequal task.category.name 'Звонки' %}
+                    <a href="../move_to_call/regular/{{task.id}}" title="Переместить в звонки">&#9742;</a>
+                {% endifnotequal %}
+                </li>
+            {% endfor %}
+        </ol>
+    {% endif %}
+    <table>
+        <tr>
+            <th>Заявки для меня</th>
+            <th>Заявки от меня</th>
+        </tr>
+        <tr>
+            <td>
+                {% if tasks_overdue %}
+                    <p>Просроченные задачи</p>
+                    <ol>
+                        {% for task in tasks_overdue %}
+                            {% ifequal task.priority 1 %}
+                                <li class="first_prior">&#11014;
+                            {% endifequal %}                            
+                            {% ifequal task.priority 2 %}
+                                <li class="second_prior">&#8657;
+                            {% endifequal %}                            
+                            {% ifequal task.priority 3 %}
+                                <li class="third_prior">
+                            {% endifequal %}                            
+                            {% ifequal task.priority 4 %}
+                                <li class="fourth_prior">&#8659;
+                            {% endifequal %}                            
+                            {% ifequal task.priority 5 %}
+                                <li class="fifth_prior">&#11015;
+                            {% endifequal %}
+                            {% ifequal task.category.name 'Звонки' %}
+                                &#9743;
+                            {% endifequal %}                            
+                            <a href="../task/one_time/{{task.id}}" title="{{task.description}}" target="_blank">{{task.name}} - Сделать до: {{task.due_date}}</a> <a href="../set_reminder/one_time/{{task.id}}" title="Установить напоминалку">&#8986;</a> 
+                            {% ifnotequal task.category.name 'Звонки' %}
+                                <a href="../move_to_call/one_time/{{task.id}}" title="Переместить в звонки">&#9742;</a>
+                            {% endifnotequal %}
+                            </li>
+                        {% endfor %}
+                    </ol>
+                {% endif %}
+                {% if tasks_for_today %}
+                    <p>Задачи на сегодня задачи</p>
+                    <ol>
+                        {% for task in tasks_for_today %}
+                            {% ifequal task.priority 1 %}
+                                <li class="first_prior">&#11014;
+                            {% endifequal %}                            
+                            {% ifequal task.priority 2 %}
+                                <li class="second_prior">&#8657;
+                            {% endifequal %}                            
+                            {% ifequal task.priority 3 %}
+                                <li class="third_prior">
+                            {% endifequal %}                            
+                            {% ifequal task.priority 4 %}
+                                <li class="fourth_prior">&#8659;
+                            {% endifequal %}                            
+                            {% ifequal task.priority 5 %}
+                                <li class="fifth_prior">&#11015;
+                            {% endifequal %}                            
+                            {% ifequal task.category.name 'Звонки' %}
+                                &#9743;
+                            {% endifequal %}                            
+                            <a href="../task/one_time/{{task.id}}" title="{{task.description}}" target="_blank">{{task.name}} - Сделать до: {{task.due_date}}</a> <a href="../set_reminder/one_time/{{task.id}}" title="Установить напоминалку">&#8986;</a> 
+                            {% ifnotequal task.category.name 'Звонки' %}
+                                <a href="../move_to_call/one_time/{{task.id}}" title="Переместить в звонки">&#9742;</a>
+                            {% endifnotequal %}
+                            </li>
+                        {% endfor %}
+                    </ol>
+                {% endif %}
+                {% if tasks_future %}
+                    <p>Задачи на будущее</p>
+                    <ol>
+                        {% for task in tasks_future %}
+                            {% ifequal task.priority 1 %}
+                                <li class="first_prior">&#11014;
+                            {% endifequal %}                            
+                            {% ifequal task.priority 2 %}
+                                <li class="second_prior">&#8657;
+                            {% endifequal %}                            
+                            {% ifequal task.priority 3 %}
+                                <li class="third_prior">
+                            {% endifequal %}                            
+                            {% ifequal task.priority 4 %}
+                                <li class="fourth_prior">&#8659;
+                            {% endifequal %}                            
+                            {% ifequal task.priority 5 %}
+                                <li class="fifth_prior">&#11015;
+                            {% endifequal %}                            
+                            {% ifequal task.category.name 'Звонки' %}
+                                &#9743;
+                            {% endifequal %}                            
+                            <a href="../task/one_time/{{task.id}}" title="{{task.description}}" target="_blank">{{task.name}} - Сделать до: {{task.due_date}}</a> <a href="../set_reminder/one_time/{{task.id}}" title="Установить напоминалку">&#8986;</a> 
+                            {% ifnotequal task.category.name 'Звонки' %}
+                                <a href="../move_to_call/one_time/{{task.id}}" title="Переместить в звонки">&#9742;</a>
+                            {% endifnotequal %}
+                            </li>
+                        {% endfor %}
+                    </ol>
+                {% endif %}
+            </td>
+            <td>
+                {% if my_tasks %}
+                    <ol>
+                        {% for task in my_tasks %}
+                            <li><a href="../task/one_time/{{task.id}}" title="{{task.description}}" target="_blank">{{task.name}}</a></li>
+                        {% endfor %}
+                    </ol>
+                {% endif %}
+                <p align="center"><a href="/new_ticket/">Добавить задачу</a></p>
+                <p align="center"><a href="/new_regular_ticket/">Добавить повторяющуюся задачу</a></p>
+
+            </td>
+        </tr>
+    </table>
+    <table>
+        <tr>
+            <td>
+                {% if tasks_to_confirm %}
+                    <h4>Заявки на подтверждение</h4>
+                    <form action='' method='post'>
+                        {% csrf_token %}
+                        <ol>
+                            {% for task in tasks_to_confirm %}
+                                <li>
+                                    <input type='checkbox' value='{{task.id}}' name='task_to_confirm_id' />
+                                    <a href="../confirm/{{task.id}}" title="{{task.description}}" target="_blank">{{task.name}}</a>
+                                    <a href="../unclose/{{task.id}}" title="Отменить закрытие задачи" onclick="if (confirm('Уверены?')) {return true} else {return false};"> &#10008;</a>
+                                    <a href="../task/one_time/{{task.id}}" title="Просмотреть описание задачи задачи"> &#9776;</a>
+                                </li>
+                            {% endfor %}
+                        </ol>
+                        <input type='submit' value='Подтвердить несколько задач' name='submit_many' onclick="if (confirm('Уверены?')) {return true} else {return false};"/>
+                    </form>
+                {% endif %}
+            </td>
+            <td  width="70%">
+                {% if all_tasks %}
+                    <h4>Все заявки</h4>
+                    <ol>
+                        {% for task in all_tasks %}
+                            <li><a href="../task/one_time/{{task.id}}">{{task.name}}; <b>Исполнитель</b>: {{task.worker.fio}}; <i>{{task.start_date}} - {{task.due_date}}</i></a></li>
+                        {% endfor %}
+                    </ol>
+                {% endif %}
+            </td>
+        </tr>
+    </table>
+    <a href="../all_task">Просмотреть все задачи (архив)</a>
+{% endblock %}

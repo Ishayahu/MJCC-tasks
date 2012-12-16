@@ -1,0 +1,83 @@
+<html>
+<head>
+    <title>Новый тикет</title>
+</head>
+<body>
+    <form action="/new_ticket_register/" method="post">
+        <table>
+            <tr>
+                <td><label for="name">Название задачи</label></td>
+                <td><input type="text" name="name" id="name" size=37 /></td>
+            </tr>
+            <tr>
+                <td><label for="pbu">Тип со слов заказчика</label></td>
+                <td><select name="pbu" id="pbu">
+                    {% for pbu in pbus %}
+                        <option value="{{pbu}}">{{pbu}}</option>
+                    {% endfor %}
+                </select></td>
+            </tr>
+            <tr>
+                <td><label for="description">Описание задачи</label></td>
+                <td><textarea rows="6" cols="30" name="description" id="description"></textarea></td>
+            </tr>
+            <tr>
+                <td><label for="client">Заказчик</label></td>
+                <td><select name="client" id="client">
+                    {% for client in clients %}
+                        <option value="{{client}}">{{client}}</option>
+                    {% endfor %}
+                </select></td>
+            </tr>
+            <tr>
+                <td><label for="priority">Приоритет</label></td>
+                <td><select name="priority" id="priority">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+
+                </select></td>
+            </tr>
+            <tr>
+                <td><label for="category">Категория</label></td>
+                <td><select name="category" id="category">
+                    {% for cat in cats %}
+                        <option value="{{cat}}">{{cats}}</option>
+                    {% endfor %}
+                </select></td>
+            </tr>
+            <tr>
+                <td><label for="start_date_date">Дата открытия заявки</label></td>
+                <td><input type="date" name="start_date_date" id="start_date_date" /></td>
+            </tr>
+            <tr>
+                <td><label for="start_date_time">Время открытия заявки</label></td>
+                <td><input type="time" name="start_date_time" id="start_date_time" /></td>
+            </tr>
+
+            <tr>
+                <td><label for="due_date_date">Предполагаемая дата завершения</label></td>
+                <td><input type="date" name="due_date_date" id="due_date_date" /></td>
+            </tr>
+            <tr>
+                <td><label for="due_date_time">Предполагаемое время завершнеия</label></td>
+                <td><input type="time" name="due_date_time" id="due_date_time" /></td>
+            </tr>
+            <tr>
+                <td><label for="worker">Исполнитель</label></td>
+                <td><select name="worker" id="worker">
+                    {% for worker in workers %}
+                        <option value="{{worker.fio}}">{{worker.fio}}</option>
+                    {% endfor %}
+                </select></td>
+            </tr>
+            <tr>
+                <td><label for="percentage">Процент выполнения</label></td>
+                <td>0<input type="range" name="percentage" value="0" onchange="x.value=parseInt(percentage.value)">100 =<output name="x" for="percentage"></output></td>
+            </tr>
+        </table>
+        <input type="submit">
+    </form>
+</body>
