@@ -1,6 +1,6 @@
 # -*- coding:utf-8 -*-
 # coding=<utf8>
-
+# testing git
 import datetime, re
 def decronize(fstring):
     minute,hour,day,month,wday = fstring.split('\t')
