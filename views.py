@@ -852,7 +852,8 @@ def add_children_task(request,parent_task_type,parent_task_id):
                 when_to_reminder = data['start_date'],
                 due_date=data['due_date'], 
                 worker=data['workers'],
-                percentage=data['percentage'])
+                percentage=data['percentage'],
+                acl = data['clients'].login+';'+data['workers'].login)
             t.save()
             if parent_task_type =='one_time':
                 t.parent_task.add(parent_task)
