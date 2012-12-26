@@ -848,7 +848,8 @@ def add_children_task(request,parent_task_type,parent_task_id):
                 client=data['clients'], 
                 priority=data['priority'], 
                 category=data['category'], 
-                start_date=datetime.datetime.now(), 
+                start_date=data['start_date'],
+                when_to_reminder = data['start_date'],
                 due_date=data['due_date'], 
                 worker=data['workers'],
                 percentage=data['percentage'])
@@ -862,7 +863,7 @@ def add_children_task(request,parent_task_type,parent_task_id):
             send_email(u"Новая подзадача: "+t.name+u" для задачи "+parent_task.name,t.description+u"\nПосмотреть подзадачу можно тут:\nhttp://192.168.1.157:8080/task/"+str(t.id)+u"\nПосмотреть задачу можно тут:\nhttp://192.168.1.157:8080/task/"+str(parent_task.id),[data['workers'].mail,])
             return HttpResponseRedirect('/tasks/')
     else:
-        form = NewTicketForm({'percentage':0,'due_date':datetime.datetime.now(),'priority':parent_task.priority,'category':parent_task.category})
+        form = NewTicketForm({'percentage':0,'start_date':datetime.datetime.now(),'due_date':datetime.datetime.now(),'priority':parent_task.priority,'category':parent_task.category})
     return render_to_response('new_ticket.html', {'form':form, 'method':method},RequestContext(request))
 @login_required
 def regular_task_done(request,task_id):

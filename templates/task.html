@@ -89,7 +89,7 @@
                     <p><a href="/edit_regular/{{task.id}}">Редактировать описание задачи</a></p>
                 {% endifequal %}
             
-            <p><a href="/add_children_task/{{task.id}}">Добавить дочернюю задачу</a></p>
+            <p><a href="/add_children_task/one_time/{{task.id}}">Добавить дочернюю задачу</a></p>
                 {% ifequal task_type 'one_time' %}
                     <p><form action="/delete/one_time/{{task.id}}/" method="post">{% csrf_token %}<input type="submit" value="Удалить задачу" name="close_task" onclick="if (confirm('Уверены?')) {return true} else {return false};"/></form></p>
                 {% endifequal %}
