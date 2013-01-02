@@ -60,7 +60,6 @@ urlpatterns = patterns('',
 # тестовые 
     url(r'^users/', views.get_all_logged_in_users),
     url(r'^test_task/([^/]+)/(\d+)/$', views.test_task),
-    url(r'^$', views.tasks),
 
 )
 if settings.DEBUG:
