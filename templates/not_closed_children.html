@@ -33,11 +33,11 @@
             <h2>{{error}}</h2><br />
         {% endfor %}
     {% endif %}
-    У задачи <a href="../../task/{{task_to_close.id}}">{{task_to_close.name}}</a> есть незакрытые подзадачи. Закройте их сперва!
+    У задачи <a href="../../task/one_time/{{task_to_close.id}}">{{task_to_close.name}}</a> есть незакрытые подзадачи. Закройте их сперва!
     <ol>
         {% for task in not_closed_children_tasks %}
             <li>
-            <a href="../../task/{{task.id}}">
+            <a href="../../task/one_time/{{task.id}}">
                 {{task.name}}
             </a></li>
         {% endfor %}
