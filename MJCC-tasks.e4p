@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE Project SYSTEM "Project-4.6.dtd">
+<!-- eric4 project file for project MJCC-tasks -->
+<!-- Saved: 2013-01-02, 16:10:13 -->
+<!-- Copyright (C) 2013 ,  -->
+<Project version="4.6">
+  <Language>en</Language>
+  <ProgLanguage mixed="0">Python</ProgLanguage>
+  <ProjectType>Other</ProjectType>
+  <Description></Description>
+  <Version>0.2</Version>
+  <Author></Author>
+  <Email></Email>
+  <Sources>
+    <Source>todoes/migrations/0001_initial.py</Source>
+    <Source>todoes/migrations/0010_start_date_to_when_to_remember_a.py</Source>
+    <Source>todoes/migrations/0006_cl_and_work_to_cl_and_work_new.py</Source>
+    <Source>todoes/migrations/0008_auto__del_client__del_worker__del_field_task_client_new__del_field_tas.py</Source>
+    <Source>todoes/migrations/0002_auto.py</Source>
+    <Source>todoes/migrations/0004_client_and_worker_to_person.py</Source>
+    <Source>todoes/migrations/0005_auto__add_field_task_worker_new__add_field_task_client_new.py</Source>
+    <Source>todoes/migrations/__init__.py</Source>
+    <Source>todoes/migrations/0003_auto__add_person__chg_field_joker_visit_worker.py</Source>
+    <Source>todoes/admin.py</Source>
+    <Source>todoes/models.py</Source>
+    <Source>ize.py</Source>
+    <Source>forms.py</Source>
+    <Source>urls.py</Source>
+    <Source>settings.py</Source>
+    <Source>views.py</Source>
+    <Source>__init__.py</Source>
+  </Sources>
+  <Forms>
+  </Forms>
+  <Translations>
+  </Translations>
+  <Resources>
+  </Resources>
+  <Interfaces>
+  </Interfaces>
+  <Others>
+  </Others>
+  <Vcs>
+    <VcsType>None</VcsType>
+  </Vcs>
+  <FiletypeAssociations>
+    <FiletypeAssociation pattern="*.pyw" type="SOURCES" />
+    <FiletypeAssociation pattern="*.idl" type="INTERFACES" />
+    <FiletypeAssociation pattern="*.py" type="SOURCES" />
+    <FiletypeAssociation pattern="*.ptl" type="SOURCES" />
+  </FiletypeAssociations>
+</Project>

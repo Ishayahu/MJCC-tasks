@@ -161,5 +161,5 @@ pip-log.txt
 
 # Mac crap
 .DS_Store
-.eric4project/
+.eric4project
 MJCC-tasks.e4p
