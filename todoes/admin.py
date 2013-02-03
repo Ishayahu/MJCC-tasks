@@ -1,5 +1,5 @@
 from django.contrib import admin
-from tasks.todoes.models import Note, Resource, File, Task, ProblemByWorker, ProblemByUser, Categories, Joker, Joker_Visit, Person, RegularTask
+from todoes.models import Note, Resource, File, Task, ProblemByWorker, ProblemByUser, Categories, Joker, Joker_Visit, Person, RegularTask
 # from tasks.todoes.models import Worker, Client
 
 class WorkerAdmin(admin.ModelAdmin):
