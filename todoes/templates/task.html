@@ -1,0 +1,194 @@
+{% extends "base.html" %}
+{% block title %}
+    {{task.name}}
+{% endblock %}
+{% block style %}
+    <style>
+       .leftstr, .rightstr {
+        float: left; /* Обтекание справа */ 
+        width: 50%; /* Ширина текстового блока */ 
+       }
+       .rightstr {
+        text-align: right; /* Выравнивание по правому краю */ 
+       }
+       .author {
+        text-align: right; /* Выравнивание по правому краю */ 
+        width: 100%;
+       }
+      </style>
+      <script>
+        var was_selected = []
+        var notice = true
+        function del_selection(){ 
+            var worker_select = document.getElementById("id_workers");
+            if (window.notice) {
+                // если снимаем выделение
+                for (var i=0; i<worker_select.options.length; i++) {
+                    var option = worker_select.options[i];
+                    if(option.selected) {
+                        window.was_selected[i] = true
+                    } else {
+                        window.was_selected[i] = false
+                    }
+                }
+                worker_select.selectedIndex=-1;
+            } else {
+                // если восстанавливаем выделение
+                for (var i=0; i<worker_select.options.length; i++) {
+                    var option = worker_select.options[i];
+                    if(window.was_selected[i]) {
+                        option.selected = true
+                    }
+                }
+            }
+            window.notice = ! window.notice
+        }
+        function answer_to_note(div_id,note_id){
+            document.getElementById(div_id).outerHTML = "<form action='' method='post'>{% csrf_token %}<textarea id='id_note' rows='10' cols='40' name='answer'></textarea><input type='hidden' name='to_note' value='"+note_id+"' /><input type='submit' value='Ответить на комментарий' name='answer_to_comment' /></form>";
+        }
+
+      </script>
+{% endblock %}
+{% block content %}
+    <p class="leftstr"><a href="/tasks/">К списку задач</a></p>
+    <p class="rightstr">Привет, {{ fio.fio }}!</p>
+    {% if my_error %}
+        {% for error in my_error %}
+            <h2>{{error}}</h2><br />
+        {% endfor %}
+    {% endif %}
+
+    {% if task.confirmed %} 
+        <h2>Задача завершена и подтверждена</h2>
+    {% endif %}
+    <br />
+    <table border=0>
+    <tr>
+        <td>
+            <table border=1>
+            <tr><th colspan="2">Выбранная задача: {{task.name}}</th></tr>
+                <td>Заказчик</td><td>{{task.client.fio}};{{task.client.tel}}</td></tr>
+                <td>Категория</td><td>{{task.category}}</td></tr>
+                <td>Исполнитель</td><td>{{task.worker.fio}};+7-{{task.worker.tel}}</td></tr>
+                <td>Приоритет</td><td>{{task.priority}}</td></tr>
+                <td>Дата создания</td><td>{{task.start_date}}</td></tr>
+                <td>Дата напоминания</td><td>{{task.when_to_reminder}}</td></tr>
+                {% ifequal task_type 'one_time' %}
+                    <td>Предполагаемая дата завершения</td><td>{{task.due_date}}</td></tr>
+                    <td>Проблема со слов пользователя</td><td>{{task.pbu}}</td></tr>
+                {% endifequal %}
+                {% ifequal task_type 'regular' %}
+                    <td>Дата следующей задачи</td><td>{{task.next_date}}</td></tr>
+                    <td>Периодичность задачи</td><td><a title="В crontab стиле" href='http://www.opennet.ru/man.shtml?topic=crontab&category=5&russian=0'>{{task.period}}</a><br />{{task.russian_period}}</td></tr>
+                {% endifequal %}
+            </table>
+                {% ifequal task_type 'one_time' %}
+                    <p><a href="/edit/{{task.id}}">Редактировать описание задачи</a></p>
+                {% endifequal %}
+                {% ifequal task_type 'regular' %}
+                    <p><a href="/edit_regular/{{task.id}}">Редактировать описание задачи</a></p>
+                {% endifequal %}
+            
+            <p><a href="/add_children_task/one_time/{{task.id}}">Добавить дочернюю задачу</a></p>
+                {% ifequal task_type 'one_time' %}
+                    <p><form action="/delete/one_time/{{task.id}}/" method="post">{% csrf_token %}<input type="submit" value="Удалить задачу" name="close_task" onclick="if (confirm('Уверены?')) {return true} else {return false};"/></form></p>
+                {% endifequal %}
+                {% ifequal task_type 'regular' %}
+                    <p><form action="/delete/regular/{{task.id}}/" method="post">{% csrf_token %}<input type="submit" value="Удалить задачу" name="close_task" onclick="if (confirm('Уверены?')) {return true} else {return false};"/></form></p>
+                {% endifequal %}
+            <p><a href="/close/{{task.id}}">Закрыть задачу</a></p>
+
+        </td>
+        <td>
+            {{task.html_description|safe}}
+            <table border=1>
+                <tr><th colspan="3">Комментарии</th></tr>
+                    {% for note in notes %}
+                        <tr>
+                            <form action="" method="post">
+                                {% csrf_token %}
+                                <td style="padding: 0px 0px 0px {{note.indent_pix}}%;"> 
+                                    {# {{note.indent|safe}} #}
+                                    {# {{note.id}};{{note_to_edit_id}} #}
+                                    {# Текст комментария #}
+                                    {% ifnotequal note.id note_to_edit_id %}
+                                        {#{{note.indent}}!!#}
+                                        {{note.note|safe}}<br />
+                                        <div class="author"><i>
+                                            {{note.timestamp}}
+                                            {% if note.author %}
+                                                {{note.author.fio}}
+                                            {% endif %}
+                                        </i></div>
+                                    {% endifnotequal %}
+                                    {# Поле для редактирования коммента #}
+                                    {% ifequal note.id note_to_edit_id %}
+                                        <textarea rows="10" cols="40" name="text_note_to_edit" >{{note.note}}</textarea>
+                                    {% endifequal %}
+                                </td>
+                                {# Если автор комментария - можно редактировать #}
+                                {% ifequal note.author.login fio.login %}
+                                    {% ifequal note.id note_to_edit_id %}
+                                        <td colspan=2><input type="hidden" name="num" value="{{note.id}}" /><input type="submit" value="Сохранить комментарий" name="save_edited_comment" /></td>
+                                    {% endifequal %}
+                                    {% ifnotequal note.id note_to_edit_id %}
+                                        <td><input type="submit" value="&#9998;" title="Редактировать комментарий" name="edit_comment" /><input type="hidden" name="num" value="{{note.id}}" /><input type="submit" value="&#10005;" title="Удалить комментарий" name="del_comment" /><div id="answer_to_note_{{note.id}}"><input type="button" value="Ответить" onclick="answer_to_note('answer_to_note_{{note.id}}',{{note.id}})"/></div></td>
+                                    {% endifnotequal %}
+                                {% endifequal %}
+                                {# Если не автор комментария - только отвечать &#9997; #}
+                                {% ifnotequal note.author.login fio.login %}
+                                    <td><div id="answer_to_note_{{note.id}}"><input type="button" value="Ответить" onclick="answer_to_note('answer_to_note_{{note.id}}',{{note.id}})" /></div></td>
+                                {% endifnotequal %}
+                            </form>
+                        </tr>
+                    {% endfor %}
+            </table>
+            {% if form.is_multipart %}
+                <form enctype="multipart/form-data" method="post" action="">
+            {% else %}
+                <form method="post" action="">
+            {% endif %}
+            {# <form action="" method="post" enctype="multipart/form-data" > #}
+                {% csrf_token %}
+                <table border=1>
+                    {{ form.as_table }}
+                </table>
+                <input type="checkbox" onClick="del_selection()" /> Не уведомлять о комментарии
+                <input type="submit" value="Сохранить комментарий" name="add_comment" /> 
+            </form>
+        </td>
+    </table>
+    
+    <ul>
+        {% for file in files %}
+            <li> <a href="{{file.get_absolute_url}}">{{file.name}}</a>
+        {% endfor %}
+    </ul>
+    
+    
+{% comment %}
+    class Task(models.Model):
+        name = models.CharField(max_length=140)
+        description = models.TextField()
+        client = models.ForeignKey(Client)
+        priority = models.PositiveSmallIntegerField()
+        category = models.ForeignKey(Categories)
+        start_date = models.DateTimeField()
+        due_date = models.DateTimeField()
+        done_date = models.DateTimeField(blank = True, null = True)
+        worker = models.ForeignKey(Worker)
+        resource = models.ForeignKey(Resource, blank = True, null = True)
+        note = models.ManyToManyField(Note, related_name = "for_task",blank = True, null = True)
+        file = models.ForeignKey(File, blank = True, null = True)
+        percentage = models.PositiveSmallIntegerField()
+        pbu = models.ForeignKey(ProblemByUser)
+        pbw = models.ForeignKey(ProblemByWorker,blank = True, null = True)
+        confirmed = models.NullBooleanField(blank = True, null = True)
+        confirmed_date = models.DateTimeField(blank = True, null = True)
+        def __unicode__(self):
+            return u"\t".join((self.name,self.description,self.worker.fio,str(self.percentage)))
+{% endcomment %}            
+
+
+
+{% endblock %}

@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %}
+    Задачи для обсуждения с {{to_who}}
+{% endblock %}
+{% block style %}
+    <style>
+       .leftstr, .rightstr {
+        float: left; /* Обтекание справа */ 
+        width: 50%; /* Ширина текстового блока */ 
+       }
+       .rightstr {
+        text-align: right; /* Выравнивание по правому краю */ 
+       }
+        .center {
+        text-align: center; 
+        width: 100%; /* Ширина текстового блока */ 
+       }
+       .author {
+        text-align: right; /* Выравнивание по правому краю */ 
+        width: 100%;
+       }
+    </style>
+{% endblock %}
+{% block content %}
+    <p class="leftstr"><a href="/tasks/">К списку задач</a></p>
+    <p class="rightstr"><a href="#" onclick="window.print();">Напечатать</a></p>
+    <hr />
+    {% if my_error %}
+        {% for error in my_error %}
+            <h2>{{error}}</h2><br />
+        {% endfor %}
+        <hr />
+    {% endif %}
+    {% if tasks %}
+        <ol>
+            {% for task in tasks %}
+                <li>
+                    {% ifequal task.task_type 'one_time' %}
+                        <p><a href="/task/one_time/{{task.id}}" title="{{task.description}}">{{task.name}}</a></p>
+                    {% endifequal %}
+                    {% ifequal task.task_type 'regular' %}
+                        <p><a href="/task/regular/{{task.id}}" title="{{task.description}}">{{task.name}}</a></p>
+                    {% endifequal %}
+
+                    
+                    <p>Описание: {{task.description|safe}}</p>
+                    {% for key,value in notes.items %}
+                        {% ifequal task.id key %}
+                            {% if value %}
+                                <table border=1>
+                                {% for note in value %}
+                                    <tr>
+                                        <td>
+                                            {# Текст комментария #}
+                                            {{note.note|safe}}<br />
+                                            <div class="author"><i>
+                                                {{note.timestamp}}
+                                                {% if note.author %}
+                                                    {{note.author.fio}}
+                                                {% endif %}
+                                            </i></div>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </table>
+                            {% endif %}
+                        {% endifequal %}
+                    {% endfor %}
+                </li>
+            {% endfor %}
+        </ol>
+    {% endif %}
+
+{% endblock %}
