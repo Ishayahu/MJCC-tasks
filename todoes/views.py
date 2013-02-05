@@ -6,16 +6,16 @@ from django.http import HttpResponse, Http404, HttpResponseRedirect
 # from django.template import Context
 from django.shortcuts import render_to_response
 import datetime
-from tasks.todoes.models import Note, Resource, File, Person, Task, ProblemByWorker, ProblemByUser, Categories, RegularTask
-# from tasks.todoes.models import Worker, Client
-from tasks.forms import NewTicketForm, NoteToTicketAddForm, UserCreationFormMY, TicketClosingForm, TicketConfirmingForm, TicketEditForm,TicketSearchForm, NewRegularTicketForm, EditRegularTicketForm, File_and_NoteToTicketAddForm
+from todoes.models import Note, Resource, File, Person, Task, ProblemByWorker, ProblemByUser, Categories, RegularTask
+# from todoes.models import Worker, Client
+from todoes.forms import NewTicketForm, NoteToTicketAddForm, UserCreationFormMY, TicketClosingForm, TicketConfirmingForm, TicketEditForm,TicketSearchForm, NewRegularTicketForm, EditRegularTicketForm, File_and_NoteToTicketAddForm
 from django.contrib.auth.decorators import login_required
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.template import RequestContext
 from django.core.mail import send_mail
 from django.core.mail import EmailMultiAlternatives
-from ize import decronize, crontab_to_russian, generate_next_reminder, htmlize
+from todoes.ize import decronize, crontab_to_russian, generate_next_reminder, htmlize
 from itertools import chain
 
 admins = (

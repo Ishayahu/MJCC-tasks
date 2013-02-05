@@ -1,7 +1,7 @@
 # -*- coding:utf-8 -*-
 # coding=<utf8>
 from django import forms
-from tasks.todoes.models import Note, Resource, File, Person, Task, ProblemByWorker, ProblemByUser, Categories
+from todoes.models import Note, Resource, File, Person, Task, ProblemByWorker, ProblemByUser, Categories
 # from tasks.todoes.models import Worker, Client
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.admin import widgets

@@ -2,7 +2,7 @@
 # coding=<utf8>
 
 from django.conf.urls.defaults import patterns, include, url
-import views
+import todoes.views as views
 from django.contrib import admin
 from django.contrib.auth.views import login, logout
 from django.conf import settings
