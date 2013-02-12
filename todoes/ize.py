@@ -127,6 +127,8 @@ def htmlize(str=''):
     tegs = {True:'</', False:'<'}
     count = 0
     while count < len(str):
+	#print count
+	#print count+1<len(str)
         if str[count] == '\n':
             html += '<br />'
         elif str[count] == '*' and count+1<len(str) and str[count+1] != '*':
@@ -138,6 +140,8 @@ def htmlize(str=''):
             inItalic = not inItalic
         elif str[count] == '*' and inBold:
             html = html + '</b>'
+        elif str[count] == '\\' and count+1==len(str):
+	    html += '\\'
         elif str[count] == '\\':
             html += str[count+1]
             count += 1
