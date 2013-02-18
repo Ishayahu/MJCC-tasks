@@ -18,6 +18,7 @@ from django.core.mail import EmailMultiAlternatives
 from todoes.ize import decronize, crontab_to_russian, generate_next_reminder, htmlize
 from itertools import chain
 
+server_ip = '192.168.1.25:8080'
 admins = (
     'ishayahu',)
 admins_mail = [
@@ -72,7 +73,7 @@ def new_ticket(request):
             # отправляем уведомление исполнителю по мылу
             # send_mail(u"Новая задача: "+t.name,t.description+u"\nПосмотреть задачу можно тут:\nhttp://192.168.1.157:8080/task/"+str(t.id),"meoc-it@mail.ru",[data['workers'].mail,])
             # send_email(u"Новая задача: "+t.name,t.description+u"\nПосмотреть задачу можно тут:\nhttp://192.168.1.157:8080/task/"+str(t.id),[data['workers'].mail,])
-            send_email_alternative(u"Новая задача: "+t.name,t.description+u"\nПосмотреть задачу можно тут:\nhttp://192.168.1.157:8080/task/"+str(t.id),[data['workers'].mail,data['clients'].mail],fio)
+            send_email_alternative(u"Новая задача: "+t.name,t.description+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/one_time/"+str(t.id),[data['workers'].mail,data['clients'].mail],fio)
             return HttpResponseRedirect('/tasks/')
     else:
         form = NewTicketForm({'percentage':0,'start_date':datetime.datetime.now(),'due_date':datetime.datetime.now(),'priority':3})
@@ -104,7 +105,7 @@ def new_regular_ticket(request):
                 period = request.POST.get('cronized'))                
             t.save()
             # отправляем уведомление исполнителю по мылу
-            send_email_alternative(u"Новая повторяющаяся задача: "+t.name,t.description+u"\nПосмотреть задачу можно тут:\nhttp://192.168.1.157:8080/task/"+str(t.id),[data['workers'].mail,data['clients'].mail],fio)
+            send_email_alternative(u"Новая повторяющаяся задача: "+t.name,t.description+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/regular/"+str(t.id),[data['workers'].mail,data['clients'].mail],fio)
             return HttpResponseRedirect('/tasks/')
     else:
         form = NewRegularTicketForm({'start_date':datetime.datetime.now(),'due_date':datetime.datetime.now(),'priority':3})
@@ -137,15 +138,15 @@ def edit_regular_task(request,task_to_edit_id):
             task_to_edit.when_to_reminder=data['when_to_reminder']
             task_to_edit.save()
             if task_to_edit.worker != old_worker:
-                send_email(u"Изменён исполнитель задачи: "+task_to_edit.name,u"Прежний исполнитель:"+old_worker.fio+u"\nНовый исполнитель:"+task_to_edit.worker.fio+u"\nПосмотреть задачу можно тут:\nhttp://192.168.1.157:8080/task/regular/"+str(task_to_edit.id),[task_to_edit.worker.mail,task_to_edit.client.mail,old_worker.mail]+admins_mail)
+                send_email(u"Изменён исполнитель задачи: "+task_to_edit.name,u"Прежний исполнитель:"+old_worker.fio+u"\nНовый исполнитель:"+task_to_edit.worker.fio+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/regular/"+str(task_to_edit.id),[task_to_edit.worker.mail,task_to_edit.client.mail,old_worker.mail]+admins_mail)
             if task_to_edit.stop_date != old_stop_date:
-                send_email(u"Изменёна дата завершения регулярной задачи: "+task_to_edit.name,u"Прежная проблема:"+str(old_stop_date)+u"\nНовая проблема:"+str(task_to_edit.stop_date)+u"\nПосмотреть задачу можно тут:\nhttp://192.168.1.157:8080/task/regular/"+str(task_to_edit.id),[task_to_edit.worker.mail,task_to_edit.client.mail,old_worker.mail])
+                send_email(u"Изменёна дата завершения регулярной задачи: "+task_to_edit.name,u"Прежная проблема:"+str(old_stop_date)+u"\nНовая проблема:"+str(task_to_edit.stop_date)+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/regular/"+str(task_to_edit.id),[task_to_edit.worker.mail,task_to_edit.client.mail,old_worker.mail])
             if task_to_edit.client != old_client:
-                send_email(u"Изменён заказчик задачи: "+task_to_edit.name,u"Прежний заказчик:"+old_client.fio+u"\nНовый заказчик:"+task_to_edit.client.fio+u"\nПосмотреть задачу можно тут:\nhttp://192.168.1.157:8080/task/regular/"+str(task_to_edit.id),[task_to_edit.worker.mail,task_to_edit.client.mail,old_worker.mail])
+                send_email(u"Изменён заказчик задачи: "+task_to_edit.name,u"Прежний заказчик:"+old_client.fio+u"\nНовый заказчик:"+task_to_edit.client.fio+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/regular/"+str(task_to_edit.id),[task_to_edit.worker.mail,task_to_edit.client.mail,old_worker.mail])
             if task_to_edit.category != old_category:
-                send_email(u"Изменёна категория задачи: "+task_to_edit.name,u"Прежная категория:"+old_category.name+u"\nНовая категория:"+task_to_edit.category.name+u"\nПосмотреть задачу можно тут:\nhttp://192.168.1.157:8080/task/regular/"+str(task_to_edit.id),[task_to_edit.worker.mail,task_to_edit.client.mail,old_worker.mail])
+                send_email(u"Изменёна категория задачи: "+task_to_edit.name,u"Прежная категория:"+old_category.name+u"\nНовая категория:"+task_to_edit.category.name+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/regular/"+str(task_to_edit.id),[task_to_edit.worker.mail,task_to_edit.client.mail,old_worker.mail])
             if task_to_edit.period != old_period:
-                send_email(u"Изменёна периодичность выполонения задачи: "+task_to_edit.name,u"Старый срок:"+crontab_to_russian(period)+u"\nНовый срок:"+crontab_to_russian(task_to_edit.period)+u"\nПосмотреть задачу можно тут:\nhttp://192.168.1.157:8080/task/regular/"+str(task_to_edit.id),[task_to_edit.worker.mail,task_to_edit.client.mail,old_worker.mail]+admins_mail)
+                send_email(u"Изменёна периодичность выполонения задачи: "+task_to_edit.name,u"Старый срок:"+crontab_to_russian(period)+u"\nНовый срок:"+crontab_to_russian(task_to_edit.period)+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/regular/"+str(task_to_edit.id),[task_to_edit.worker.mail,task_to_edit.client.mail,old_worker.mail]+admins_mail)
             return HttpResponseRedirect('/tasks/')
     else:
         form = EditRegularTicketForm({'name' : task_to_edit.name,
@@ -256,7 +257,7 @@ def tasks(request):
             task_to_confirm.confirmed = True
             task_to_confirm.confirmed_date = datetime.datetime.now()
             task_to_confirm.save()
-            send_email(u"Завершение задачи подтверждено: "+task_to_confirm.name,u"\nПосмотреть задачу можно тут:\nhttp://192.168.1.157:8080/task/"+str(task_to_confirm.id),[task_to_confirm.worker.mail,task_to_confirm.client.mail])
+            send_email(u"Завершение задачи подтверждено: "+task_to_confirm.name,u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/one_time/"+str(task_to_confirm.id),[task_to_confirm.worker.mail,task_to_confirm.client.mail])
         request.session['my_error'] = u'Выполнение задач успешно подтверждено!'
         return HttpResponseRedirect('/tasks/')
     else:
@@ -414,7 +415,7 @@ def task(request,task_type,task_id):
                             acl_list.append(person.login)
                     task_full.acl = ';'.join(acl_list)
                     task_full.save()
-                    send_email_alternative(u"Новый комментарий к задаче: "+task_full.name,note.note+u"\nПосмотреть задачу можно тут:\nhttp://192.168.1.157:8080/task/"+task_addr[task_type]+"/"+str(task_full.id),mails,fio)
+                    send_email_alternative(u"Новый комментарий к задаче: "+task_full.name,note.note+u"\nПосмотреть задачу можно тут:\nhttp://1"+server_ip+"/task/"+task_addr[task_type]+"/"+str(task_full.id),mails,fio)
                     return HttpResponseRedirect(request.get_full_path())
                 elif request.POST.get('answer_to_comment'):
                     parent_note = Note.objects.get(id=int(request.POST.get('to_note')))
@@ -427,7 +428,7 @@ def task(request,task_type,task_id):
                     note.parent_note.add(parent_note)
                     note.save()
                     mails = (parent_note.author.mail if parent_note.author.mail else '' ,)
-                    send_email_alternative(u"Ответ на ваш комментарий к задаче: "+task_full.name,note.note+u"\nПосмотреть задачу можно тут:\nhttp://192.168.1.157:8080/task/"+task_addr[task_type]+"/"+str(task_full.id),mails,fio)
+                    send_email_alternative(u"Ответ на ваш комментарий к задаче: "+task_full.name,note.note+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/"+task_addr[task_type]+"/"+str(task_full.id),mails,fio)
                     return HttpResponseRedirect(request.get_full_path())
                 elif request.POST.get('del_comment'):
                     note_to_del_id=request.POST.get('num')
@@ -446,7 +447,7 @@ def task(request,task_type,task_id):
                     old_comment = note_to_edit.note
                     note_to_edit.note = request.POST.get('text_note_to_edit')
                     note_to_edit.save()
-                    send_email_alternative(u"Отредактирован комментарий к задаче: "+task_full.name,u"Старый комментарий:"+old_comment+u"\nНовый комментарий"+note_to_edit.note+u"\nПосмотреть задачу можно тут:\nhttp://192.168.1.157:8080/task/"+task_addr[task_type]+"/"+str(task_full.id),[task_full.worker.mail,task_full.client.mail],fio)
+                    send_email_alternative(u"Отредактирован комментарий к задаче: "+task_full.name,u"Старый комментарий:"+old_comment+u"\nНовый комментарий"+note_to_edit.note+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/"+task_addr[task_type]+"/"+str(task_full.id),[task_full.worker.mail,task_full.client.mail],fio)
                     return HttpResponseRedirect(request.get_full_path())
 
         else:
@@ -462,74 +463,7 @@ def task(request,task_type,task_id):
         return HttpResponseRedirect('/tasks/')
     # никогда не выполняется. нужно только для проформы
     return HttpResponseRedirect("/tasks/")
-# @login_required
-# def old_task(request,task_id):
-    # user = request.user.username
-    # try:
-        # # fio = Worker.objects.get(login=user)
-        # fio = Person.objects.get(login=user)
-    # # except Worker.DoesNotExist:
-    # except Person.DoesNotExist:
-        # fio = 'Нет такого пользователя'
-    # try:
-        # # есть ли здача или она уже удалена?
-        # task_full = Task.objects.get(id=task_id)
-        # try:
-            # notes = Note.objects.filter(for_task=task_full).order_by('-timestamp')
-        # except Note.DoesNotExist:
-            # notes = ('Нет подходящих заметок',)
-        # method = request.method
-        # task_full.description = htmlize(task_full.description)
-        # if request.method == 'POST':
-            # form = NoteToTicketAddForm(request.POST)
-            # if form.is_valid():
-                # data = form.cleaned_data
-                # if request.POST.get('add_comment'):
-                    # note = Note(
-                        # timestamp = datetime.datetime.now(),
-                        # note = data['note'],
-                        # author = fio
-                    # )
-                    # note.save()
-                    # note.for_task.add(task_full)
-                    # note.save()
-                    # mails = [worker.mail for worker in data['workers']]
-                    # send_email_alternative(u"Новый комментарий к задаче: "+task_full.name,note.note+u"\nПосмотреть задачу можно тут:\nhttp://192.168.1.157:8080/task/"+str(task_full.id),[task_full.worker.mail,task_full.client.mail]+mails,fio)
 
-                    # return HttpResponseRedirect(request.get_full_path())
-                # elif request.POST.get('del_comment'):
-                    # note_to_del_id=request.POST.get('num')
-                    # note_to_del = Note.objects.get(id=note_to_del_id)
-                    # note_to_del.delete()
-                    # return HttpResponseRedirect(request.get_full_path())
-                # elif request.POST.get('edit_comment'):
-                    # note_to_edit_id = request.POST.get('num')
-                    # for note in notes:
-                        # if note.id != int(note_to_edit_id):
-                            # note.note = htmlize(note.note)
-                    # return render_to_response('task.html',{'user':user,'fio':fio,'task':task_full,'notes':notes, 'form':form,'note_to_edit_id':int(note_to_edit_id)},RequestContext(request))
-                # elif request.POST.get('save_edited_comment'):
-                    # note_to_edit_id = request.POST.get('num')
-                    # note_to_edit = Note.objects.get(id=note_to_edit_id)
-                    # old_comment = note_to_edit.note
-                    # note_to_edit.note = request.POST.get('text_note_to_edit')
-                    # note_to_edit.save()
-                    # send_email_alternative(u"Отредактирован комментарий к задаче: "+task_full.name,u"Старый комментарий:"+old_comment+u"\nНовый комментарий"+note_to_edit.note+u"\nПосмотреть задачу можно тут:\nhttp://192.168.1.157:8080/task/"+str(task_full.id),[task_full.worker.mail,task_full.client.mail],fio)
-                    # return HttpResponseRedirect(request.get_full_path())
-
-        # else:
-            # form = NoteToTicketAddForm()
-            # for note in notes:
-                # note.note = htmlize(note.note)
-            # return render_to_response('task.html',{'user':user,'fio':fio,'task':task_full,'notes':notes, 'form':form},RequestContext(request))
-    # # если задачи нет - возвращаем к списку с ошибкой
-    # except Task.DoesNotExist:
-        # # print 'here'
-        # # return tasks(request, my_error=u'Такой задачи нет. Возможно она была уже удалена')
-        # request.session['my_error'] = u'Такой задачи нет. Возможно она была уже удалена'
-        # return HttpResponseRedirect('/tasks/')
-    # # никогда не выполняется. нужно только для проформы
-    # return HttpResponseRedirect("/tasks/")
 @login_required
 def close_task(request,task_to_close_id):
     if not acl(request,'one_time',task_to_close_id):
@@ -558,7 +492,7 @@ def close_task(request,task_to_close_id):
             task_to_close.save()
             request.session['my_error'] = u'Задача благополучно закрыта! Ещё одну? ;)'
             # send_email(u"Задача закрыта и требует подтверждения: "+task_to_close.name,u"\nПосмотреть задачу можно тут:\nhttp://192.168.1.157:8080/task/regular/"+str(task_to_close.id),[task_to_close.client.mail,]+admins_mail)
-            send_email_alternative(u"Задача закрыта и требует подтверждения: "+task_to_close.name,u"\nПосмотреть задачу можно тут:\nhttp://192.168.1.157:8080/task/regular/"+str(task_to_close.id),[task_to_close.client.mail,]+admins_mail,fio)
+            send_email_alternative(u"Задача закрыта и требует подтверждения: "+task_to_close.name,u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/regular/"+str(task_to_close.id),[task_to_close.client.mail,]+admins_mail,fio)
             return HttpResponseRedirect('/tasks/')
     # если хотим закрыть заявку
     else:
@@ -655,7 +589,7 @@ def confirm_task(request,task_to_confirm_id):
                 task_to_confirm.confirmed_date=data['confirmed_date']
                 task_to_confirm.save()
                 request.session['my_error'] = u'Выполнение задачи успешно подтверждено!'
-                send_email(u"Завершение задачи подтверждено: "+task_to_confirm.name,u"\nПосмотреть задачу можно тут:\nhttp://192.168.1.157:8080/task/"+str(task_to_confirm.id),[task_to_confirm.worker.mail,task_to_confirm.client.mail])
+                send_email(u"Завершение задачи подтверждено: "+task_to_confirm.name,u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/"+str(task_to_confirm.id),[task_to_confirm.worker.mail,task_to_confirm.client.mail])
                 return HttpResponseRedirect('/tasks/')
             elif request.POST.get('del_comment'):
                 note_to_del_id=request.POST.get('num')
@@ -702,15 +636,15 @@ def edit_task(request,task_to_edit_id):
             task_to_edit.when_to_reminder=data['when_to_reminder']
             task_to_edit.save()
             if task_to_edit.worker != old_worker:
-                send_email(u"Изменён исполнитель задачи: "+task_to_edit.name,u"Прежний исполнитель:"+old_worker.fio+u"\nНовый исполнитель:"+task_to_edit.worker.fio+u"\nПосмотреть задачу можно тут:\nhttp://192.168.1.157:8080/task/"+str(task_to_edit.id),[task_to_edit.worker.mail,task_to_edit.client.mail,old_worker.mail]+admins_mail)
+                send_email(u"Изменён исполнитель задачи: "+task_to_edit.name,u"Прежний исполнитель:"+old_worker.fio+u"\nНовый исполнитель:"+task_to_edit.worker.fio+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/one_time/"+str(task_to_edit.id),[task_to_edit.worker.mail,task_to_edit.client.mail,old_worker.mail]+admins_mail)
             if task_to_edit.pbu != old_pbu:
-                send_email(u"Изменёно описание проблемы со слов пользователя для задачи: "+task_to_edit.name,u"Прежная проблема:"+old_pbu.name+u"\nНовая проблема:"+task_to_edit.pbu.name+u"\nПосмотреть задачу можно тут:\nhttp://192.168.1.157:8080/task/"+str(task_to_edit.id),[task_to_edit.worker.mail,task_to_edit.client.mail,old_worker.mail])
+                send_email(u"Изменёно описание проблемы со слов пользователя для задачи: "+task_to_edit.name,u"Прежная проблема:"+old_pbu.name+u"\nНовая проблема:"+task_to_edit.pbu.name+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/one_time/"+str(task_to_edit.id),[task_to_edit.worker.mail,task_to_edit.client.mail,old_worker.mail])
             if task_to_edit.client != old_client:
-                send_email(u"Изменён заказчик задачи: "+task_to_edit.name,u"Прежний заказчик:"+old_client.fio+u"\nНовый заказчик:"+task_to_edit.client.fio+u"\nПосмотреть задачу можно тут:\nhttp://192.168.1.157:8080/task/"+str(task_to_edit.id),[task_to_edit.worker.mail,task_to_edit.client.mail,old_worker.mail])
+                send_email(u"Изменён заказчик задачи: "+task_to_edit.name,u"Прежний заказчик:"+old_client.fio+u"\nНовый заказчик:"+task_to_edit.client.fio+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/one_time/"+str(task_to_edit.id),[task_to_edit.worker.mail,task_to_edit.client.mail,old_worker.mail])
             if task_to_edit.category != old_category:
-                send_email(u"Изменёна категория задачи: "+task_to_edit.name,u"Прежная категория:"+old_category.name+u"\nНовая категория:"+task_to_edit.category.name+u"\nПосмотреть задачу можно тут:\nhttp://192.168.1.157:8080/task/"+str(task_to_edit.id),[task_to_edit.worker.mail,task_to_edit.client.mail,old_worker.mail])
+                send_email(u"Изменёна категория задачи: "+task_to_edit.name,u"Прежная категория:"+old_category.name+u"\nНовая категория:"+task_to_edit.category.name+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/one_time/"+str(task_to_edit.id),[task_to_edit.worker.mail,task_to_edit.client.mail,old_worker.mail])
             if task_to_edit.due_date != old_due_date:
-                send_email(u"Изменён срок выполонения задачи: "+task_to_edit.name,u"Старый срок:"+str(old_due_date)+u"\nНовый срок:"+str(task_to_edit.due_date)+u"\nПосмотреть задачу можно тут:\nhttp://192.168.1.157:8080/task/"+str(task_to_edit.id),[task_to_edit.worker.mail,task_to_edit.client.mail,old_worker.mail]+admins_mail)
+                send_email(u"Изменён срок выполонения задачи: "+task_to_edit.name,u"Старый срок:"+str(old_due_date)+u"\nНовый срок:"+str(task_to_edit.due_date)+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/one_time/"+str(task_to_edit.id),[task_to_edit.worker.mail,task_to_edit.client.mail,old_worker.mail]+admins_mail)
             return HttpResponseRedirect('/tasks/')
     else:
         form = TicketEditForm({'name' : task_to_edit.name,
@@ -861,7 +795,7 @@ def add_children_task(request,parent_task_type,parent_task_id):
                 t.parent_regular_task.add(parent_task)
             t.save()
             # отправляем уведомление исполнителю по мылу
-            send_email(u"Новая подзадача: "+t.name+u" для задачи "+parent_task.name,t.description+u"\nПосмотреть подзадачу можно тут:\nhttp://192.168.1.157:8080/task/"+str(t.id)+u"\nПосмотреть задачу можно тут:\nhttp://192.168.1.157:8080/task/"+str(parent_task.id),[data['workers'].mail,])
+            send_email(u"Новая подзадача: "+t.name+u" для задачи "+parent_task.name,t.description+u"\nПосмотреть подзадачу можно тут:\nhttp://"+server_ip+"/task/"+str(t.id)+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/"+str(parent_task.id),[data['workers'].mail,])
             return HttpResponseRedirect('/tasks/')
     else:
         form = NewTicketForm({'percentage':0,'start_date':datetime.datetime.now(),'due_date':datetime.datetime.now(),'priority':parent_task.priority,'category':parent_task.category})
@@ -980,7 +914,7 @@ def test_task(request,task_type,task_id):
                             acl_list.append(person.login)
                     task_full.acl = ';'.join(acl_list)
                     task_full.save()
-                    send_email_alternative(u"Новый комментарий к задаче: "+task_full.name,note.note+u"\nПосмотреть задачу можно тут:\nhttp://192.168.1.157:8080/task/"+task_addr[task_type]+"/"+str(task_full.id),mails,fio)
+                    send_email_alternative(u"Новый комментарий к задаче: "+task_full.name,note.note+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/"+task_addr[task_type]+"/"+str(task_full.id),mails,fio)
                     return HttpResponseRedirect(request.get_full_path())
                 elif request.POST.get('answer_to_comment'):
                     parent_note = Note.objects.get(id=int(request.POST.get('to_note')))
@@ -993,7 +927,7 @@ def test_task(request,task_type,task_id):
                     note.parent_note.add(parent_note)
                     note.save()
                     mails = (parent_note.author.mail if parent_note.author.mail else '' ,)
-                    send_email_alternative(u"Ответ на ваш комментарий к задаче: "+task_full.name,note.note+u"\nПосмотреть задачу можно тут:\nhttp://192.168.1.157:8080/task/"+task_addr[task_type]+"/"+str(task_full.id),mails,fio)
+                    send_email_alternative(u"Ответ на ваш комментарий к задаче: "+task_full.name,note.note+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/"+task_addr[task_type]+"/"+str(task_full.id),mails,fio)
                     return HttpResponseRedirect(request.get_full_path())
                 elif request.POST.get('del_comment'):
                     note_to_del_id=request.POST.get('num')
@@ -1012,7 +946,7 @@ def test_task(request,task_type,task_id):
                     old_comment = note_to_edit.note
                     note_to_edit.note = request.POST.get('text_note_to_edit')
                     note_to_edit.save()
-                    send_email_alternative(u"Отредактирован комментарий к задаче: "+task_full.name,u"Старый комментарий:"+old_comment+u"\nНовый комментарий"+note_to_edit.note+u"\nПосмотреть задачу можно тут:\nhttp://192.168.1.157:8080/task/"+task_addr[task_type]+"/"+str(task_full.id),[task_full.worker.mail,task_full.client.mail],fio)
+                    send_email_alternative(u"Отредактирован комментарий к задаче: "+task_full.name,u"Старый комментарий:"+old_comment+u"\nНовый комментарий"+note_to_edit.note+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/"+task_addr[task_type]+"/"+str(task_full.id),[task_full.worker.mail,task_full.client.mail],fio)
                     return HttpResponseRedirect(request.get_full_path())
 
         else:

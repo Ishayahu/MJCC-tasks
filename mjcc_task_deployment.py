@@ -7,7 +7,7 @@ change_server_test_to_master(directory='', project='', github=''):
 change_source_test_to_master(branch=''):
 deploy_server(directory='', project=''):
 commit_branch(branch=''):
-push_server(branch=''):
+push_commit(branch=''):
 """
 
 from __future__ import with_statement
@@ -17,7 +17,7 @@ from fabric.contrib.console import confirm
 env.passwords={'ishayahu@192.168.1.25':'aA111111'}
 env.shell='/bin/csh -c'
 # папка с fab файлом
-deployment_folder = '/usr/home/ishayahu/docsrv/scripts/Deployment/'
+deployment_folder = '/usr/home/ishayahu/docsrv/scripts/MJCC-tasks/'
 # папка с исходниками в локальном git репозитории
 source_folder = '/usr/home/ishayahu/docsrv/scripts/MJCC-tasks/'
 # Сервера для выполнения задачи
@@ -222,6 +222,8 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 	# Проверяем локальную и удалённую папку
 	local('pwd')
 	run('pwd')
+	run('cd '+where_to_place)
+	run('pwd')
 	# Выгружаем файл с настройками
 	put('settings.py',where_to_place)
 	# Удаляем локальный файл, ибо нафига
@@ -287,7 +289,7 @@ def commit_branch(branch=''):
 	    # Выгружаем на сервер
 	    local("git push origin %s" % branch)
 	    
-def push_server(branch=''):
+def push_commit(branch=''):
     """
     Выгружаем на удалённый сервер нужный бранч без коммита
     """
