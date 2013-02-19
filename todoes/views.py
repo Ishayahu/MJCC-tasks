@@ -32,6 +32,21 @@ def acl(request,task_type,task_id):
         return True
     else:
         return False
+# метод постороения дерева заметок
+def build_note_tree(root_note,notes,current_indent):
+    childrens = Note.objects.filter(parent_note=root_note).order_by('timestamp')
+    for note in childrens:
+	notes.append(note_with_indent(note,current_indent))
+	build_note_tree(note,notes,current_indent+1)
+# класс для заметки с отступом
+class note_with_indent():
+    def __init__(self, note, indent):
+	self.note = note.note
+	self.id = note.id
+	self.author = note.author
+	self.timestamp = note.timestamp
+	self.indent = '&#9676;'*indent
+	self.indent_pix = 4*indent
 
 # def isAuthorised(request):
     # if request.user.is_authenticated():
@@ -348,21 +363,7 @@ def tasks(request):
     return render_to_response('tasks.html',{'my_error':my_error,'user':user,'worker':worker,'tasks_overdue':tasks_overdue,'tasks_for_today':tasks_for_today,'tasks_future':tasks_future,'my_tasks':my_tasks,'alert':alert,'regular_tasks':regular_tasks},RequestContext(request))
 @login_required
 def task(request,task_type,task_id):
-    # метод постороения дерева заметок
-    def build_note_tree(root_note,notes,current_indent):
-        childrens = Note.objects.filter(parent_note=root_note).order_by('timestamp')
-        for note in childrens:
-            notes.append(note_with_indent(note,current_indent))
-            build_note_tree(note,notes,current_indent+1)
-    # класс для заметки с отступом
-    class note_with_indent():
-        def __init__(self, note, indent):
-            self.note = note.note
-            self.id = note.id
-            self.author = note.author
-            self.timestamp = note.timestamp
-            self.indent = '&#9676;'*indent
-            self.indent_pix = 4*indent
+
     if not acl(request,task_type,task_id):
         request.session['my_error'] = u'Нет права доступа к этой задаче!'
         return HttpResponseRedirect("/tasks/")
@@ -478,9 +479,13 @@ def close_task(request,task_to_close_id):
     except Person.DoesNotExist:
         fio = 'Нет такого пользователя'
     try:
-        notes = Note.objects.filter(for_task=task_to_close).order_by('-timestamp')
+        tmp_notes = Note.objects.filter(for_task=task_to_close).order_by('-timestamp')
     except Note.DoesNotExist:
-        notes = ('Нет подходящих заметок',)
+        tmp_notes = ('Нет подходящих заметок',)
+    notes=[]
+    for note in tmp_notes:
+	notes.append(note_with_indent(note,0))
+	build_note_tree(note,notes,1)
     # если закрываем заявку
     if request.method == 'POST':
         form = TicketClosingForm(request.POST)
@@ -495,10 +500,7 @@ def close_task(request,task_to_close_id):
             send_email_alternative(u"Задача закрыта и требует подтверждения: "+task_to_close.name,u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/regular/"+str(task_to_close.id),[task_to_close.client.mail,]+admins_mail,fio)
             return HttpResponseRedirect('/tasks/')
     # если хотим закрыть заявку
-    else:
-        # done_date = forms.DateTimeField(label='Дата закрытия заявки')
-        # pbw = forms.ModelChoiceField(queryset  = ProblemByWorker.objects.all(), label='Выявленная проблема')
-        
+    else: 
         # проверяем, есть ли незакрытые дочерние заявки. Если есть - выводим их список на новой странице
         try:
             not_closed_children_tasks = Task.objects.filter(deleted = False).filter(parent_task = task_to_close).exclude(percentage__exact=100)

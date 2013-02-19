@@ -101,6 +101,9 @@
         </td>
         <td>
             {{task.html_description|safe}}
+            
+            {# Вывод таблицы с комментариями #}
+            
             <table border=1>
                 <tr><th colspan="3">Комментарии</th></tr>
                     {% for note in notes %}
@@ -143,6 +146,7 @@
                         </tr>
                     {% endfor %}
             </table>
+            
             {% if form.is_multipart %}
                 <form enctype="multipart/form-data" method="post" action="">
             {% else %}
