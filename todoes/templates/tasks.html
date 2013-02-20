@@ -14,34 +14,30 @@
         .center {
         text-align: center; 
         width: 100%; /* Ширина текстового блока */ 
-{% comment %}
-        {# Заменил на стрелки #}
-       }
-       .first_prior {
-       padding:0 0 0 10;
-       background:url(../media/img/red.gif) no-repeat;
-       }
-       .second_prior {
-       padding:0 0 0 10;
-       background:url(../media/img/orange.gif) no-repeat;
-       }
-       .fourth_prior {
-       padding:0 0 0 10;
-       background:url(../media/img/blue.gif) no-repeat;
-       }
-       .fifth_prior {
-       padding:0 0 0 10;
-       background:url(../media/img/green.gif) no-repeat;
-       }
-{% endcomment %}
+      }
 
     </style>
     <meta http-equiv="refresh" content="60">
+    # горячие клавиши
+    <script>
+	document.onkeydown = function(e) {
+	    e = e || event;
+	    if (e.keyCode == 27) { // escape
+		cancel();
+		return false;
+	    }
+	    if ((e.ctrlKey && e.altKey && e.keyCode == 'N'.charCodeAt(0))) {
+		window.open("/new_ticket/",'_blank');
+		return false;
+	    }
+	}
+
+    </script>
 {% endblock %}
 
 {% block content %}
     <div class ="leftstr"><p>Привет, {{ worker.fio }}</p></div>
-    <div class ="rightstr"><p><a target="_new" href="/media/versions.html">v0.2.1<a></p></div>
+    <div class ="rightstr"><p><a target="_new" href="/media/versions.html">v0.2.2<a></p></div>
     {% if admin %}
         <ul style="clear:left">
             <li><a href="to/Мотя/">Вопросы к Моте</a></li>

@@ -497,7 +497,7 @@ def close_task(request,task_to_close_id):
             task_to_close.save()
             request.session['my_error'] = u'Задача благополучно закрыта! Ещё одну? ;)'
             # send_email(u"Задача закрыта и требует подтверждения: "+task_to_close.name,u"\nПосмотреть задачу можно тут:\nhttp://192.168.1.157:8080/task/regular/"+str(task_to_close.id),[task_to_close.client.mail,]+admins_mail)
-            send_email_alternative(u"Задача закрыта и требует подтверждения: "+task_to_close.name,u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/regular/"+str(task_to_close.id),[task_to_close.client.mail,]+admins_mail,fio)
+            send_email_alternative(u"Задача закрыта и требует подтверждения: "+task_to_close.name,u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/one_time/"+str(task_to_close.id),[task_to_close.client.mail,]+admins_mail,fio)
             return HttpResponseRedirect('/tasks/')
     # если хотим закрыть заявку
     else: 
