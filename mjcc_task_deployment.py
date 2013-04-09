@@ -6,8 +6,11 @@ start_deploy_server(branch='', directory='',github='', project=''):
 change_server_test_to_master(directory='', project='', github=''):
 change_source_test_to_master(branch=''):
 deploy_server(directory='', project=''):
-commit_branch(branch=''):
-push_commit(branch=''):
+new_branch(branch='') - создаёт новую ветку
+switch_branch(branch='') - переключается на указанную ветку
+commit_branch(branch='') - коммитит ветку
+push_commit(branch='') - отправляет ветку на сервер репозитория
+start_deploy_server(branch='', directory='',github='', project='') - устанавливает сервер с указанной веткой
 """
 
 from __future__ import with_statement
@@ -22,6 +25,26 @@ deployment_folder = '/usr/home/ishayahu/docsrv/scripts/MJCC-tasks/'
 source_folder = '/usr/home/ishayahu/docsrv/scripts/MJCC-tasks/'
 # Сервера для выполнения задачи
 env.hosts = ['ishayahu@192.168.1.25']
+
+def new_branch(branch=''):
+    """
+    Создаёт новую ветку branch
+    """
+    if not branch:
+        print "Вы должны указать ветку, которую хотите создать"
+        return
+    local ('git brunch %s' % branch)
+    local ('git checkout %s' % branch)
+    
+def switch_branch(branch=''):
+    """
+    Переключается на ветку branch
+    """
+    if not branch:
+        print "Вы должны указать ветку, на которую хотите переключиться"
+        return
+    local ('git checkout %s' % branch)
+
 
 def make_and_send_settings(host='',port='5432',email_host='',email_port='',email_user='',email_password='',where_to_place=''):
     """
