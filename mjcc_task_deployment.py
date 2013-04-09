@@ -35,7 +35,7 @@ def new_branch(branch=''):
     if not branch:
         print "Вы должны указать ветку, которую хотите создать"
         return
-    local ('git brunch %s' % branch)
+    local ('git branch %s' % branch)
     local ('git checkout %s' % branch)
     
 def switch_branch(branch=''):
