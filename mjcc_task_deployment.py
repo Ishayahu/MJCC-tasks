@@ -17,14 +17,16 @@ from __future__ import with_statement
 from fabric.api import *
 from fabric.contrib.console import confirm
 # Словарь паролей
-env.passwords={'ishayahu@192.168.1.25':'aA111111'}
+env.passwords={'ishayahu@192.168.1.25':'aA111111','ishayahu@192.168.1.249':'aA111111'}
 env.shell='/bin/csh -c'
 # папка с fab файлом
 deployment_folder = '/usr/home/ishayahu/docsrv/scripts/MJCC-tasks/'
 # папка с исходниками в локальном git репозитории
 source_folder = '/usr/home/ishayahu/docsrv/scripts/MJCC-tasks/'
 # Сервера для выполнения задачи
-env.hosts = ['ishayahu@192.168.1.25']
+test = 'ishayahu@192.168.1.249'
+deploy = 'ishayahu@192.168.1.25'
+
 
 def new_branch(branch=''):
     """
