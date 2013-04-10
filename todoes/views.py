@@ -48,17 +48,12 @@ class note_with_indent():
 	self.indent = '&#9676;'*indent
 	self.indent_pix = 4*indent
 
-# def isAuthorised(request):
-    # if request.user.is_authenticated():
-        # аутентифицирован
-        # request.user.username
-        # request.user.last_login
-        # request.user.set_password(passwd)
-        # request.user.check_password(passwd)
-        # request.user.email_user(subj, msg)
-    # else:
-        # анонимный пользователь
-    # return True
+class FioError():
+    def __init__(self):
+        self.mail=''
+        self.message='Нет такого пользователя'
+    def __str__(self):
+        return self.message
 
 @login_required
 def new_ticket(request):
@@ -66,7 +61,7 @@ def new_ticket(request):
     try:
         fio = Person.objects.get(login=user)
     except Person.DoesNotExist:
-        fio = 'Нет такого пользователя'
+        fio = FioError
     method = request.method
     if request.method == 'POST':
         form = NewTicketForm(request.POST)
@@ -100,7 +95,7 @@ def new_regular_ticket(request):
     try:
         fio = Person.objects.get(login=user)
     except Person.DoesNotExist:
-        fio = 'Нет такого пользователя'
+        fio = FioError()
     method = request.method
     if request.method == 'POST':
         form = NewRegularTicketForm(request.POST)
@@ -130,7 +125,11 @@ def edit_regular_task(request,task_to_edit_id):
     if not acl(request,'regular',task_to_edit_id):
         request.session['my_error'] = u'Нет права доступа к этой задаче!'
         return HttpResponseRedirect("/tasks/")
-
+    user = request.user.username
+    try:
+        fio = Person.objects.get(login=user)
+    except Person.DoesNotExist:
+        fio = FioError()
     task_to_edit = RegularTask.objects.get(id=task_to_edit_id)
     method = request.method
     if request.method == 'POST':
@@ -141,6 +140,7 @@ def edit_regular_task(request,task_to_edit_id):
         old_client = task_to_edit.client
         old_category = task_to_edit.category
         old_stop_date = task_to_edit.stop_date
+        old_name = task_to_edit.name
         if form.is_valid() and request.POST.get('cronized'):
             data = form.cleaned_data
             task_to_edit.description=data['description']
@@ -152,16 +152,61 @@ def edit_regular_task(request,task_to_edit_id):
             task_to_edit.worker=data['workers']
             task_to_edit.when_to_reminder=data['when_to_reminder']
             task_to_edit.save()
-            if task_to_edit.worker != old_worker:
-                send_email(u"Изменён исполнитель задачи: "+task_to_edit.name,u"Прежний исполнитель:"+old_worker.fio+u"\nНовый исполнитель:"+task_to_edit.worker.fio+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/regular/"+str(task_to_edit.id),[task_to_edit.worker.mail,task_to_edit.client.mail,old_worker.mail]+admins_mail)
-            if task_to_edit.stop_date != old_stop_date:
-                send_email(u"Изменёна дата завершения регулярной задачи: "+task_to_edit.name,u"Прежная проблема:"+str(old_stop_date)+u"\nНовая проблема:"+str(task_to_edit.stop_date)+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/regular/"+str(task_to_edit.id),[task_to_edit.worker.mail,task_to_edit.client.mail,old_worker.mail])
-            if task_to_edit.client != old_client:
-                send_email(u"Изменён заказчик задачи: "+task_to_edit.name,u"Прежний заказчик:"+old_client.fio+u"\nНовый заказчик:"+task_to_edit.client.fio+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/regular/"+str(task_to_edit.id),[task_to_edit.worker.mail,task_to_edit.client.mail,old_worker.mail])
-            if task_to_edit.category != old_category:
-                send_email(u"Изменёна категория задачи: "+task_to_edit.name,u"Прежная категория:"+old_category.name+u"\nНовая категория:"+task_to_edit.category.name+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/regular/"+str(task_to_edit.id),[task_to_edit.worker.mail,task_to_edit.client.mail,old_worker.mail])
+#            if task_to_edit.worker != old_worker:
+#                send_email(u"Изменён исполнитель задачи: "+task_to_edit.name,u"Прежний исполнитель:"+old_worker.fio+u"\nНовый исполнитель:"+task_to_edit.worker.fio+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/regular/"+str(task_to_edit.id),[task_to_edit.worker.mail,task_to_edit.client.mail,old_worker.mail]+admins_mail)
+#            if task_to_edit.stop_date != old_stop_date:
+#                send_email(u"Изменёна дата завершения регулярной задачи: "+task_to_edit.name,u"Прежная проблема:"+str(old_stop_date)+u"\nНовая проблема:"+str(task_to_edit.stop_date)+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/regular/"+str(task_to_edit.id),[task_to_edit.worker.mail,task_to_edit.client.mail,old_worker.mail])
+#            if task_to_edit.client != old_client:
+#                send_email(u"Изменён заказчик задачи: "+task_to_edit.name,u"Прежний заказчик:"+old_client.fio+u"\nНовый заказчик:"+task_to_edit.client.fio+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/regular/"+str(task_to_edit.id),[task_to_edit.worker.mail,task_to_edit.client.mail,old_worker.mail])
+#            if task_to_edit.category != old_category:
+#                send_email(u"Изменёна категория задачи: "+task_to_edit.name,u"Прежная категория:"+old_category.name+u"\nНовая категория:"+task_to_edit.category.name+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/regular/"+str(task_to_edit.id),[task_to_edit.worker.mail,task_to_edit.client.mail,old_worker.mail])
             if task_to_edit.period != old_period:
                 send_email(u"Изменёна периодичность выполонения задачи: "+task_to_edit.name,u"Старый срок:"+crontab_to_russian(period)+u"\nНовый срок:"+crontab_to_russian(task_to_edit.period)+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/regular/"+str(task_to_edit.id),[task_to_edit.worker.mail,task_to_edit.client.mail,old_worker.mail]+admins_mail)
+                
+            if task_to_edit.name != old_name:
+                send_email_alternative(u"Изменёно название задачи: "+old_name,
+                           u"Прежнее название:"+old_name+u"\nНовое название:"+task_to_edit.name+u"\nОписание задачи:\n"+task_to_edit.description+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/regular/"+str(task_to_edit.id),
+                           [task_to_edit.worker.mail,task_to_edit.client.mail]+admins_mail,
+                           fio
+                           )
+            if task_to_edit.worker != old_worker:
+                send_email_alternative(u"Изменён исполнитель задачи: "+task_to_edit.name,
+                           u"Прежний исполнитель:"+old_worker.fio+u"\nНовый исполнитель:"+task_to_edit.worker.fio+u"\nОписание задачи:\n"+task_to_edit.description+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/regular/"+str(task_to_edit.id),
+                           [task_to_edit.worker.mail,task_to_edit.client.mail,old_worker.mail]+admins_mail,
+                           fio
+                           )
+            if task_to_edit.stop_date != old_stop_date:
+                send_email_alternative(u"Изменёна дата завершения регулярной задачи: "+task_to_edit.name,
+                           u"Прежная проблема:"+str(old_stop_date)+u"\nНовая проблема:"+str(task_to_edit.stop_date)+u"\nОписание задачи:\n"+task_to_edit.description+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/regular/"+str(task_to_edit.id),
+                           [task_to_edit.worker.mail,task_to_edit.client.mail]+admins_mail,
+                           fio
+                           )
+                           #send_email(u"Изменёно описание проблемы со слов пользователя для задачи: "+task_to_edit.name,
+                           #u"Прежная проблема:"+old_pbu.name+u"\nНовая проблема:"+task_to_edit.pbu.name+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/one_time/"+str(task_to_edit.id),
+                           #[task_to_edit.worker.mail,task_to_edit.client.mail,old_worker.mail])
+            if task_to_edit.client != old_client:
+                send_email_alternative(u"Изменён заказчик задачи: "+task_to_edit.name,
+                           u"Прежний заказчик:"+old_client.fio+u"\nНовый заказчик:"+task_to_edit.client.fio+u"\nОписание задачи:\n"+task_to_edit.description+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/regular/"+str(task_to_edit.id),
+                           [task_to_edit.worker.mail,task_to_edit.client.mail,old_client.mail]+admins_mail,
+                           fio
+                           )
+                           #send_email(u"Изменён заказчик задачи: "+task_to_edit.name,u"Прежний заказчик:"+old_client.fio+u"\nНовый заказчик:"+task_to_edit.client.fio+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/one_time/"+str(task_to_edit.id),[task_to_edit.worker.mail,task_to_edit.client.mail,old_worker.mail])
+            if task_to_edit.category != old_category:
+                send_email_alternative(u"Изменёна категория задачи: "+task_to_edit.name,
+                           u"Прежная категория:"+old_category.name+u"\nНовая категория:"+task_to_edit.category.name+u"\nОписание задачи:\n"+task_to_edit.description+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/regular/"+str(task_to_edit.id),
+                           [task_to_edit.worker.mail,task_to_edit.client.mail]+admins_mail,
+                           fio
+                           )
+                           #send_email(u"Изменёна категория задачи: "+task_to_edit.name,u"Прежная категория:"+old_category.name+u"\nНовая категория:"+task_to_edit.category.name+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/one_time/"+str(task_to_edit.id),[task_to_edit.worker.mail,task_to_edit.client.mail,old_worker.mail])
+            if task_to_edit.period != old_period:
+                send_email_alternative(u"Изменёна периодичность выполонения задачи: "+task_to_edit.name,
+                           u"Старый срок:"+crontab_to_russian(period)+u"\nНовый срок:"+crontab_to_russian(task_to_edit.period)+u"\nОписание задачи:\n"+task_to_edit.description+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/regular/"+str(task_to_edit.id),
+                           [task_to_edit.worker.mail,task_to_edit.client.mail]+admins_mail,
+                           fio
+                           )
+                           #send_email(u"Изменён срок выполонения задачи: "+task_to_edit.name,u"Старый срок:"+str(old_due_date)+u"\nНовый срок:"+str(task_to_edit.due_date)+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/one_time/"+str(task_to_edit.id),[task_to_edit.worker.mail,task_to_edit.client.mail,old_worker.mail]+admins_mail)
+                
+                
             return HttpResponseRedirect('/tasks/')
     else:
         form = EditRegularTicketForm({'name' : task_to_edit.name,
@@ -371,7 +416,7 @@ def task(request,task_type,task_id):
     try:
         fio = Person.objects.get(login=user)
     except Person.DoesNotExist:
-        fio = 'Нет такого пользователя'
+        fio = FioError()
     try:
         # есть ли здача или она уже удалена?
         task_full = task_types[task_type].objects.get(id=task_id)
@@ -477,7 +522,7 @@ def close_task(request,task_to_close_id):
     try:
         fio = Person.objects.get(login=user)
     except Person.DoesNotExist:
-        fio = 'Нет такого пользователя'
+        fio = FioError()
     try:
         tmp_notes = Note.objects.filter(for_task=task_to_close).order_by('-timestamp')
     except Note.DoesNotExist:
@@ -528,7 +573,7 @@ def unclose_task(request,task_to_unclose_id):
     try:
         fio = Person.objects.get(login=user)
     except Person.DoesNotExist:
-        fio = 'Нет такого пользователя'
+        fio = FioError()
     task_to_unclose.percentage = 50
     task_to_unclose.save()
     send_email(u"Задача открыта заново: "+task_to_unclose.name,u"\nПосмотреть задачу можно тут:\nhttp://192.168.1.157:8080/task/"+str(task_to_unclose.id),[task_to_unclose.client.mail,task_to_unclose.worker.mail]+admins_mail)
@@ -581,7 +626,7 @@ def confirm_task(request,task_to_confirm_id):
     # except Worker.DoesNotExist:
         fio = Person.objects.get(login=user)
     except Person.DoesNotExist:
-        fio = 'Нет такого пользователя'
+        fio = FioError()
     if request.method == 'POST':
         form = TicketConfirmingForm(request.POST)
         if form.is_valid():
@@ -616,6 +661,13 @@ def edit_task(request,task_to_edit_id):
 
     task_to_edit = Task.objects.get(id=task_to_edit_id)
     method = request.method
+    
+    user = request.user.username
+    try:
+        fio = Person.objects.get(login=user)
+    except Person.DoesNotExist:
+        fio = FioError()
+    
     if request.method == 'POST':
         form = TicketEditForm(request.POST)
         # если меняется исполнитель - чтобы оповестить
@@ -624,8 +676,10 @@ def edit_task(request,task_to_edit_id):
         old_client = task_to_edit.client
         old_category = task_to_edit.category
         old_due_date = task_to_edit.due_date
+        old_name = task_to_edit.name
         if form.is_valid():
             data = form.cleaned_data
+            task_to_edit.name=data['name']
             task_to_edit.pbu=data['pbus']
             task_to_edit.description=data['description']
             task_to_edit.client=data['clients']
@@ -637,16 +691,48 @@ def edit_task(request,task_to_edit_id):
             task_to_edit.percentage=data['percentage']
             task_to_edit.when_to_reminder=data['when_to_reminder']
             task_to_edit.save()
+            if task_to_edit.name != old_name:
+                send_email_alternative(u"Изменёно название задачи: "+old_name,
+                           u"Прежнее название:"+old_name+u"\nНовое название:"+task_to_edit.name+u"\nОписание задачи:\n"+task_to_edit.description+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/one_time/"+str(task_to_edit.id),
+                           [task_to_edit.worker.mail,task_to_edit.client.mail]+admins_mail,
+                           fio
+                           )
             if task_to_edit.worker != old_worker:
-                send_email(u"Изменён исполнитель задачи: "+task_to_edit.name,u"Прежний исполнитель:"+old_worker.fio+u"\nНовый исполнитель:"+task_to_edit.worker.fio+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/one_time/"+str(task_to_edit.id),[task_to_edit.worker.mail,task_to_edit.client.mail,old_worker.mail]+admins_mail)
+                send_email_alternative(u"Изменён исполнитель задачи: "+task_to_edit.name,
+                           u"Прежний исполнитель:"+old_worker.fio+u"\nНовый исполнитель:"+task_to_edit.worker.fio+u"\nОписание задачи:\n"+task_to_edit.description+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/one_time/"+str(task_to_edit.id),
+                           [task_to_edit.worker.mail,task_to_edit.client.mail,old_worker.mail]+admins_mail,
+                           fio
+                           )
             if task_to_edit.pbu != old_pbu:
-                send_email(u"Изменёно описание проблемы со слов пользователя для задачи: "+task_to_edit.name,u"Прежная проблема:"+old_pbu.name+u"\nНовая проблема:"+task_to_edit.pbu.name+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/one_time/"+str(task_to_edit.id),[task_to_edit.worker.mail,task_to_edit.client.mail,old_worker.mail])
+                send_email_alternative(u"Изменёно описание проблемы со слов пользователя для задачи: "+task_to_edit.name,
+                           u"Прежная проблема:"+old_pbu.name+u"\nНовая проблема:"+task_to_edit.pbu.name+u"\nОписание задачи:\n"+task_to_edit.description+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/one_time/"+str(task_to_edit.id),
+                           [task_to_edit.worker.mail,task_to_edit.client.mail]+admins_mail,
+                           fio
+                           )
+                           #send_email(u"Изменёно описание проблемы со слов пользователя для задачи: "+task_to_edit.name,
+                           #u"Прежная проблема:"+old_pbu.name+u"\nНовая проблема:"+task_to_edit.pbu.name+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/one_time/"+str(task_to_edit.id),
+                           #[task_to_edit.worker.mail,task_to_edit.client.mail,old_worker.mail])
             if task_to_edit.client != old_client:
-                send_email(u"Изменён заказчик задачи: "+task_to_edit.name,u"Прежний заказчик:"+old_client.fio+u"\nНовый заказчик:"+task_to_edit.client.fio+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/one_time/"+str(task_to_edit.id),[task_to_edit.worker.mail,task_to_edit.client.mail,old_worker.mail])
+                send_email_alternative(u"Изменён заказчик задачи: "+task_to_edit.name,
+                           u"Прежний заказчик:"+old_client.fio+u"\nНовый заказчик:"+task_to_edit.client.fio+u"\nОписание задачи:\n"+task_to_edit.description+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/one_time/"+str(task_to_edit.id),
+                           [task_to_edit.worker.mail,task_to_edit.client.mail,old_client.mail]+admins_mail,
+                           fio
+                           )
+                           #send_email(u"Изменён заказчик задачи: "+task_to_edit.name,u"Прежний заказчик:"+old_client.fio+u"\nНовый заказчик:"+task_to_edit.client.fio+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/one_time/"+str(task_to_edit.id),[task_to_edit.worker.mail,task_to_edit.client.mail,old_worker.mail])
             if task_to_edit.category != old_category:
-                send_email(u"Изменёна категория задачи: "+task_to_edit.name,u"Прежная категория:"+old_category.name+u"\nНовая категория:"+task_to_edit.category.name+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/one_time/"+str(task_to_edit.id),[task_to_edit.worker.mail,task_to_edit.client.mail,old_worker.mail])
+                send_email_alternative(u"Изменёна категория задачи: "+task_to_edit.name,
+                           u"Прежная категория:"+old_category.name+u"\nНовая категория:"+task_to_edit.category.name+u"\nОписание задачи:\n"+task_to_edit.description+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/one_time/"+str(task_to_edit.id),
+                           [task_to_edit.worker.mail,task_to_edit.client.mail]+admins_mail,
+                           fio
+                           )
+                           #send_email(u"Изменёна категория задачи: "+task_to_edit.name,u"Прежная категория:"+old_category.name+u"\nНовая категория:"+task_to_edit.category.name+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/one_time/"+str(task_to_edit.id),[task_to_edit.worker.mail,task_to_edit.client.mail,old_worker.mail])
             if task_to_edit.due_date != old_due_date:
-                send_email(u"Изменён срок выполонения задачи: "+task_to_edit.name,u"Старый срок:"+str(old_due_date)+u"\nНовый срок:"+str(task_to_edit.due_date)+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/one_time/"+str(task_to_edit.id),[task_to_edit.worker.mail,task_to_edit.client.mail,old_worker.mail]+admins_mail)
+                send_email_alternative(u"Изменён срок выполонения задачи: "+task_to_edit.name,
+                           u"Старый срок:"+str(old_due_date)+u"\nНовый срок:"+str(task_to_edit.due_date)+u"\nОписание задачи:\n"+task_to_edit.description+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/one_time/"+str(task_to_edit.id),
+                           [task_to_edit.worker.mail,task_to_edit.client.mail]+admins_mail,
+                           fio
+                           )
+                           #send_email(u"Изменён срок выполонения задачи: "+task_to_edit.name,u"Старый срок:"+str(old_due_date)+u"\nНовый срок:"+str(task_to_edit.due_date)+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/one_time/"+str(task_to_edit.id),[task_to_edit.worker.mail,task_to_edit.client.mail,old_worker.mail]+admins_mail)
             return HttpResponseRedirect('/tasks/')
     else:
         form = TicketEditForm({'name' : task_to_edit.name,
@@ -862,7 +948,7 @@ def test_task(request,task_type,task_id):
     try:
         fio = Person.objects.get(login=user)
     except Person.DoesNotExist:
-        fio = 'Нет такого пользователя'
+        fio = FioError()
     try:
         # есть ли здача или она уже удалена?
         task_full = task_types[task_type].objects.get(id=task_id)
