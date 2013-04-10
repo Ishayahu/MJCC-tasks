@@ -165,13 +165,13 @@ def edit_regular_task(request,task_to_edit_id):
                 
             if task_to_edit.name != old_name:
                 send_email_alternative(u"Изменёно название задачи: "+old_name,
-                           u"Прежнее название:"+old_name+u"\nНовое название:"+task_to_edit.name+u"\nОписание задачи:\n"+task_to_edit.description+"Посмотреть задачу можно тут:\nhttp://"+server_ip+"/task/regular/"+str(task_to_edit.id),
+                           u"Прежнее название:"+old_name+u"\nНовое название:"+task_to_edit.name+u"\nОписание задачи:\n"+task_to_edit.description+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/regular/"+str(task_to_edit.id),
                            [task_to_edit.worker.mail,task_to_edit.client.mail]+admins_mail,
                            fio
                            )
             if task_to_edit.worker != old_worker:
                 send_email_alternative(u"Изменён исполнитель задачи: "+task_to_edit.name,
-                           u"Прежний исполнитель:"+old_worker.fio+u"\nНовый исполнитель:"+task_to_edit.worker.fio+u"\nОписание задачи:\n"+task_to_edit.description+"Посмотреть задачу можно тут:\nhttp://"+server_ip+"/task/regular/"+str(task_to_edit.id),
+                           u"Прежний исполнитель:"+old_worker.fio+u"\nНовый исполнитель:"+task_to_edit.worker.fio+u"\nОписание задачи:\n"+task_to_edit.description+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/regular/"+str(task_to_edit.id),
                            [task_to_edit.worker.mail,task_to_edit.client.mail,old_worker.mail]+admins_mail,
                            fio
                            )
@@ -693,13 +693,13 @@ def edit_task(request,task_to_edit_id):
             task_to_edit.save()
             if task_to_edit.name != old_name:
                 send_email_alternative(u"Изменёно название задачи: "+old_name,
-                           u"Прежнее название:"+old_name+u"\nНовое название:"+task_to_edit.name+u"\nОписание задачи:\n"+task_to_edit.description+"Посмотреть задачу можно тут:\nhttp://"+server_ip+"/task/one_time/"+str(task_to_edit.id),
+                           u"Прежнее название:"+old_name+u"\nНовое название:"+task_to_edit.name+u"\nОписание задачи:\n"+task_to_edit.description+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/one_time/"+str(task_to_edit.id),
                            [task_to_edit.worker.mail,task_to_edit.client.mail]+admins_mail,
                            fio
                            )
             if task_to_edit.worker != old_worker:
                 send_email_alternative(u"Изменён исполнитель задачи: "+task_to_edit.name,
-                           u"Прежний исполнитель:"+old_worker.fio+u"\nНовый исполнитель:"+task_to_edit.worker.fio+u"\nОписание задачи:\n"+task_to_edit.description+"Посмотреть задачу можно тут:\nhttp://"+server_ip+"/task/one_time/"+str(task_to_edit.id),
+                           u"Прежний исполнитель:"+old_worker.fio+u"\nНовый исполнитель:"+task_to_edit.worker.fio+u"\nОписание задачи:\n"+task_to_edit.description+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/one_time/"+str(task_to_edit.id),
                            [task_to_edit.worker.mail,task_to_edit.client.mail,old_worker.mail]+admins_mail,
                            fio
                            )

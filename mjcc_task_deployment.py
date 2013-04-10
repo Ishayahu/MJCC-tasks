@@ -302,7 +302,10 @@ def deploy_server(directory='', project='',type_of_server=''):
 	    run('git pull')
 	    # Переходим в каталог проекта и создаём файл с настройками
 	    with cd(project):
-	        make_and_send_settings(host='192.168.1.24',port='5432',email_host='smtp.gmail.com',email_port='25',email_user='mjcc.sms@gmail.com',email_password='JnghfdrfCvcVRJW',where_to_place='~/tasks/tasks/')
+                if type_of_server=='deploy':
+                    make_and_send_settings(host='192.168.1.24',port='5432',email_host='smtp.gmail.com',email_port='25',email_user='mjcc.sms@gmail.com',email_password='JnghfdrfCvcVRJW',where_to_place='~/tasks/tasks/')
+                if type_of_server=='test':
+                    make_and_send_settings(host='',port='5432',email_host='smtp.gmail.com',email_port='25',email_user='mjcc.sms@gmail.com',email_password='JnghfdrfCvcVRJW',where_to_place='~/tasks/tasks/')
 
 def commit_branch(branch=''):
     """
