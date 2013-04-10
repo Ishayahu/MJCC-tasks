@@ -293,13 +293,16 @@ def deploy_server(directory='', project='',type_of_server=''):
     Обновляем код на тестовом сервере
     """
     # Переходим в каталог, где хранится код
-    print (directory, project)
-    with cd(directory):
-	# Получаем обновления кода для отслеживаемой ветки
-	run('git pull')
-	# Переходим в каталог проекта и создаём файл с настройками
-	with cd(project):
-	    make_and_send_settings(host='192.168.1.24',port='5432',email_host='smtp.gmail.com',email_port='25',email_user='mjcc.sms@gmail.com',email_password='JnghfdrfCvcVRJW',where_to_place='~/tasks/tasks/')
+    env.hosts=servers[type_of_server][0]
+    ans = prompt('Разворачиваем на хосте '+str(env.hosts), default='Д')
+    if ans == 'Д':
+        print (directory, project)
+        with cd(directory):
+	    # Получаем обновления кода для отслеживаемой ветки
+	    run('git pull')
+	    # Переходим в каталог проекта и создаём файл с настройками
+	    with cd(project):
+	        make_and_send_settings(host='192.168.1.24',port='5432',email_host='smtp.gmail.com',email_port='25',email_user='mjcc.sms@gmail.com',email_password='JnghfdrfCvcVRJW',where_to_place='~/tasks/tasks/')
 
 def commit_branch(branch=''):
     """
