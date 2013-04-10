@@ -24,8 +24,9 @@ deployment_folder = '/usr/home/ishayahu/docsrv/scripts/MJCC-tasks/'
 # папка с исходниками в локальном git репозитории
 source_folder = '/usr/home/ishayahu/docsrv/scripts/MJCC-tasks/'
 # Сервера для выполнения задачи
-test = 'ishayahu@192.168.1.249'
-deploy = 'ishayahu@192.168.1.25'
+servers= {'test':['ishayahu@192.168.1.249',],
+          'deploy' : ['ishayahu@192.168.1.25',]
+          }
 
 
 def new_branch(branch=''):
@@ -254,32 +255,40 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 	# Удаляем локальный файл, ибо нафига
 	local('rm settings.py')
 
-def start_deploy_server(branch='', directory='',github='', project=''):
+def start_deploy_server(branch='', directory='',github='', project='',type_of_server=''):
     """
     Задача, подготавливающая сервер к разворачиванию на нём бранча branch проекта (не приложения) project. Код из репозитория github будет выгружаться в каталог directory
     """
     # Создаём каталог, куда будут разворачиваться исходники
-    run('mkdir %s' % directory)
-    # Проверяем, где находимся
-    run('pwd')
-    # Переходим в созданный каталог
-    with cd(directory):
-	# Инициализируем репозиторий
-	run('git init')
-	# Добавляем удалённый репозиторий github под имененм origin и настраиваем отслеживание на бранч branch
-	run('git remote add -t %s origin %s' % (branch, github))
-	# Получаем файлы
-	run('git fetch')
-	# Переключаемся с master на branch
-	run('git checkout %s' % branch)
-	# Переходим в каталог проекта и создаём там файл с настройками
-	with cd(project):
-	    make_and_send_settings(host='192.168.1.24',port='5432',email_host='smtp.gmail.com',email_port='25',email_user='mjcc.sms@gmail.com',email_password='JnghfdrfCvcVRJW',where_to_place='~/tasks/tasks/')
-	# Запускаем сервер для проверки
-	#run('python manage.py runserver 0.0.0.0:8080')
+    env.hosts=servers[type_of_server][0]
+    ans = prompt('Разворачиваем на хосте '+str(env.hosts), default='Д')
+    if ans == 'Д':
+        # надо проверить, есть ли папка, и если есть - удалить её
+        run('rm -rdf %s' % directory)
+        run('mkdir %s' % directory)
+        # Проверяем, где находимся
+        run('pwd')
+        # Переходим в созданный каталог
+        with cd(directory):
+            # Инициализируем репозиторий
+	    run('git init')
+	    # Добавляем удалённый репозиторий github под имененм origin и настраиваем отслеживание на бранч branch
+	    run('git remote add -t %s origin %s' % (branch, github))
+	    # Получаем файлы
+	    run('git fetch')
+	    # Переключаемся с master на branch
+	    run('git checkout %s' % branch)
+	    # Переходим в каталог проекта и создаём там файл с настройками
+	    with cd(project):
+                if type_of_server=='deploy':
+                    make_and_send_settings(host='192.168.1.24',port='5432',email_host='smtp.gmail.com',email_port='25',email_user='mjcc.sms@gmail.com',email_password='JnghfdrfCvcVRJW',where_to_place='~/tasks/tasks/')
+                if type_of_server=='test':
+                    make_and_send_settings(host='',port='5432',email_host='smtp.gmail.com',email_port='25',email_user='mjcc.sms@gmail.com',email_password='JnghfdrfCvcVRJW',where_to_place='~/tasks/tasks/')
+	    # Запускаем сервер для проверки
+	    #run('python manage.py runserver 0.0.0.0:8080')
 	
 
-def deploy_server(directory='', project=''):
+def deploy_server(directory='', project='',type_of_server=''):
     """
     Обновляем код на тестовом сервере
     """
