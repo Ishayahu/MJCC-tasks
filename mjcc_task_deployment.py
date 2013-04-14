@@ -11,6 +11,12 @@ switch_branch(branch='') - переключается на указанную в
 commit_branch(branch='') - коммитит ветку
 push_commit(branch='') - отправляет ветку на сервер репозитория
 start_deploy_server(branch='', directory='',github='', project='') - устанавливает сервер с указанной веткой
+
+
+fab -f mjcc_task_deployment.py commit_branch:branch=bug2
+fab -f mjcc_task_deployment.py deploy_server:directory=tasks,project=tasks,type_of_server=test
+fab -f mjcc_task_deployment.py start_deploy_server:branch=bug2,directory=tasks,project=tasks,type_of_server=test,github=https://github.com/Ishayahu/MJCC-tasks.git
+fab -f mjcc_task_deployment.py change_source_test_to_master:branch=bug2
 """
 
 from __future__ import with_statement

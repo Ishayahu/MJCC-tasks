@@ -317,7 +317,7 @@ def tasks(request):
             task_to_confirm.confirmed = True
             task_to_confirm.confirmed_date = datetime.datetime.now()
             task_to_confirm.save()
-            send_email(u"Завершение задачи подтверждено: "+task_to_confirm.name,u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/one_time/"+str(task_to_confirm.id),[task_to_confirm.worker.mail,task_to_confirm.client.mail])
+            send_email(u"Завершение задачи подтверждено: "+task_to_confirm.name,u"\nОписание задачи:\n"+task_to_edit.description+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/one_time/"+str(task_to_confirm.id),[task_to_confirm.worker.mail,task_to_confirm.client.mail])
         request.session['my_error'] = u'Выполнение задач успешно подтверждено!'
         return HttpResponseRedirect('/tasks/')
     else:
@@ -461,7 +461,7 @@ def task(request,task_type,task_id):
                             acl_list.append(person.login)
                     task_full.acl = ';'.join(acl_list)
                     task_full.save()
-                    send_email_alternative(u"Новый комментарий к задаче: "+task_full.name,note.note+u"\nПосмотреть задачу можно тут:\nhttp://1"+server_ip+"/task/"+task_addr[task_type]+"/"+str(task_full.id),mails,fio)
+                    send_email_alternative(u"Новый комментарий к задаче: "+task_full.name,note.note+u"\nОписание задачи:\n"+task_to_edit.description+u"\nПосмотреть задачу можно тут:\nhttp://1"+server_ip+"/task/"+task_addr[task_type]+"/"+str(task_full.id),mails,fio)
                     return HttpResponseRedirect(request.get_full_path())
                 elif request.POST.get('answer_to_comment'):
                     parent_note = Note.objects.get(id=int(request.POST.get('to_note')))
@@ -474,7 +474,7 @@ def task(request,task_type,task_id):
                     note.parent_note.add(parent_note)
                     note.save()
                     mails = (parent_note.author.mail if parent_note.author.mail else '' ,)
-                    send_email_alternative(u"Ответ на ваш комментарий к задаче: "+task_full.name,note.note+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/"+task_addr[task_type]+"/"+str(task_full.id),mails,fio)
+                    send_email_alternative(u"Ответ на ваш комментарий к задаче: "+task_full.name,u"Ваш комментарий:\n"+parent_note.note+u"\nОтветили:\n"+note.note+u"\nОписание задачи:\n"+task_to_edit.description+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/"+task_addr[task_type]+"/"+str(task_full.id),mails,fio)
                     return HttpResponseRedirect(request.get_full_path())
                 elif request.POST.get('del_comment'):
                     note_to_del_id=request.POST.get('num')
