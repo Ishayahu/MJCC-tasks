@@ -18,7 +18,7 @@ from django.core.mail import EmailMultiAlternatives
 from todoes.ize import decronize, crontab_to_russian, generate_next_reminder, htmlize
 from itertools import chain
 
-server_ip = '192.168.1.25:8080'
+server_ip = 'tasks.local:8080'
 admins = (
     'ishayahu',)
 admins_mail = [
@@ -325,7 +325,7 @@ def tasks(request):
             task_to_confirm.confirmed = True
             task_to_confirm.confirmed_date = datetime.datetime.now()
             task_to_confirm.save()
-            send_email(u"Завершение задачи подтверждено: "+task_to_confirm.name,u"\nОписание задачи:\n"+task_to_edit.description+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/one_time/"+str(task_to_confirm.id),[task_to_confirm.worker.mail,task_to_confirm.client.mail])
+            send_email(u"Завершение задачи подтверждено: "+task_to_confirm.name,u"\nОписание задачи:\n"+task_to_confirm.description+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/one_time/"+str(task_to_confirm.id),[task_to_confirm.worker.mail,task_to_confirm.client.mail])
         request.session['my_error'] = u'Выполнение задач успешно подтверждено!'
         return HttpResponseRedirect('/tasks/')
     else:
