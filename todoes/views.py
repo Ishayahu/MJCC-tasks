@@ -170,6 +170,10 @@ def edit_regular_task(request,task_to_edit_id):
                            fio
                            )
             if task_to_edit.worker != old_worker:
+                # добавление нового исполнителя в acl
+                if task_to_edit.worker.login not in task_to_edit.acl:
+                    task_to_edit.acl=task_to_edit.acl+";"+task_to_edit.worker.login
+                    task_to_edit.save()
                 send_email_alternative(u"Изменён исполнитель задачи: "+task_to_edit.name,
                            u"Прежний исполнитель:"+old_worker.fio+u"\nНовый исполнитель:"+task_to_edit.worker.fio+u"\nОписание задачи:\n"+task_to_edit.description+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/regular/"+str(task_to_edit.id),
                            [task_to_edit.worker.mail,task_to_edit.client.mail,old_worker.mail]+admins_mail,
@@ -185,6 +189,10 @@ def edit_regular_task(request,task_to_edit_id):
                            #u"Прежная проблема:"+old_pbu.name+u"\nНовая проблема:"+task_to_edit.pbu.name+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/one_time/"+str(task_to_edit.id),
                            #[task_to_edit.worker.mail,task_to_edit.client.mail,old_worker.mail])
             if task_to_edit.client != old_client:
+                # добавление нового исполнителя в acl
+                if task_to_edit.client.login not in task_to_edit.acl:
+                    task_to_edit.acl=task_to_edit.acl+";"+task_to_edit.client.login
+                    task_to_edit.save()
                 send_email_alternative(u"Изменён заказчик задачи: "+task_to_edit.name,
                            u"Прежний заказчик:"+old_client.fio+u"\nНовый заказчик:"+task_to_edit.client.fio+u"\nОписание задачи:\n"+task_to_edit.description+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/regular/"+str(task_to_edit.id),
                            [task_to_edit.worker.mail,task_to_edit.client.mail,old_client.mail]+admins_mail,
