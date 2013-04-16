@@ -63,30 +63,6 @@ class Person(models.Model):
     class Meta:
         ordering = ['fio',]
 
-        # class Worker(models.Model):
-    # fio = models.CharField(max_length=140)
-    # tel = models.CharField(max_length=10)
-    # mail = models.EmailField(blank = True, null = True)
-    # raiting = models.CharField(max_length=30, blank = True, null = True)
-    # # password = models.CharField(max_length=140)
-    # login = models.CharField(max_length=140, blank = True, null = True)
-
-    # def __unicode__(self):
-        # return ";".join((self.fio,str(self.login)))
-
-# class Client(models.Model):
-    # fio = models.CharField(max_length=140)
-    # tel = models.CharField(max_length=10)
-    # mail = models.EmailField(blank = True, null = True)
-    # raiting = models.CharField(max_length=30, blank = True, null = True)
-    # password = models.CharField(max_length=140)
-    # login = models.CharField(max_length=140, blank = True, null = True)
-    # def __unicode__(self):
-        # return ";".join((self.fio,str(self.login)))
-# # def file_to_task(instance,filename):
-    # # return '/usr/home/ishayahu/tasks/tasks/files/'+instance.
-    
-
 class Task(models.Model):
     name = models.CharField(max_length=140)
     description = models.TextField()
@@ -148,3 +124,12 @@ class Joker(models.Model):
 class Joker_Visit(models.Model):
     worker = models.ForeignKey(Person)
     joker = models.ForeignKey(Joker)
+
+class Activity(models.Model):
+    login = models.CharField(max_length=140, blank = True, null = True)
+    last_page = models.CharField(max_length=200)
+    timestamp = models.DateTimeField()
+    def __unicode__(self):
+        return u";".join((str(self.id),self.login,self.last_page,str(self.timestamp)))
+    class Meta:
+        ordering = ['timestamp',]

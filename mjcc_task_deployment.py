@@ -12,10 +12,18 @@ commit_branch(branch='') - коммитит ветку
 push_commit(branch='') - отправляет ветку на сервер репозитория
 start_deploy_server(branch='', directory='',github='', project='') - устанавливает сервер с указанной веткой
 
+./manage.py schemamigration southtut --auto
+
+fab -f mjcc_task_deployment.py new_branch:branch=bug2
 
 fab -f mjcc_task_deployment.py commit_branch:branch=bug2
+
+fab -f mjcc_task_deployment.py south_migrate:app=todoes,project=tasks
+
 fab -f mjcc_task_deployment.py deploy_server:directory=tasks,project=tasks,type_of_server=test
+
 fab -f mjcc_task_deployment.py start_deploy_server:branch=bug2,directory=tasks,project=tasks,type_of_server=test,github=https://github.com/Ishayahu/MJCC-tasks.git
+
 fab -f mjcc_task_deployment.py change_source_test_to_master:branch=bug2
 """
 
@@ -34,7 +42,14 @@ servers= {'test':['ishayahu@192.168.1.249',],
           'deploy' : ['ishayahu@192.168.1.25',]
           }
 
-
+def south_migrate(app,directory):
+    run('pwd')
+    run('cd '+directory)
+    run('python manage.py schemamigration %s --auto' % app)
+    ans = prompt('Продолжаем?', default='Д')
+    if ans == 'Д':
+        run('python manage.py migrate '+app)
+        
 def new_branch(branch=''):
     """
     Создаёт новую ветку branch
@@ -293,7 +308,6 @@ def start_deploy_server(branch='', directory='',github='', project='',type_of_se
 	    # Запускаем сервер для проверки
 	    #run('python manage.py runserver 0.0.0.0:8080')
 	
-
 def deploy_server(directory='', project='',type_of_server=''):
     """
     Обновляем код на тестовом сервере

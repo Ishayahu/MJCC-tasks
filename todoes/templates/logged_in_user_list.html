@@ -1,7 +1,7 @@
-{% if users %}
+{% if last_activities %}
 <ul class="user-list">
-    {% for user in users %}
-    <li>{{ user }}</li>
+    {% for activity in last_activities %}
+        <li>{{ activity[0] }}  --  {{ activity[1] }}  --  {{ activity[2] }}</li>
     {% endfor %}
 </ul>
 {% endif %}
