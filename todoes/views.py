@@ -985,8 +985,8 @@ def regular_task_done(request,task_id):
 def get_all_logged_in_users(request):
     user = request.user.username
     if user in admins:
-    last_activities=get_last_activities()
-    return render_to_response('logged_in_user_list.html', {'last_activities':last_activities,},RequestContext(request))
+        last_activities=get_last_activities()
+        return render_to_response('logged_in_user_list.html', {'last_activities':last_activities,},RequestContext(request))
 
 def test_task(request,task_type,task_id):
     # метод постороения дерева заметок

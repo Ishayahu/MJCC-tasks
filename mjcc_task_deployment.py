@@ -42,13 +42,14 @@ servers= {'test':['ishayahu@192.168.1.249',],
           'deploy' : ['ishayahu@192.168.1.25',]
           }
 
-def south_migrate(app,directory):
+def south_migrate(app,project):
     run('pwd')
-    run('cd '+directory)
-    run('python manage.py schemamigration %s --auto' % app)
-    ans = prompt('Продолжаем?', default='Д')
-    if ans == 'Д':
-        run('python manage.py migrate '+app)
+    with cd(project):
+        run('pwd')
+        run('python manage.py schemamigration %s --auto' % app)
+        ans = prompt('Продолжаем?', default='Д')
+        if ans == 'Д':
+            run('python manage.py migrate '+app)
         
 def new_branch(branch=''):
     """
