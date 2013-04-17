@@ -53,8 +53,8 @@ def get_last_activities():
     for user in users:
         try:
             la = Activity.objects.filter(login=user.login)[0]
-            last_activities.append((la.timestamp >= datetime.datetime.now() - datetime.timedelta(minutes=15) ,user.login, la.url, la.timestamp))
-        except:
+            last_activities.append((la.timestamp >= datetime.datetime.now() - datetime.timedelta(minutes=15) ,user.fio, la.last_page, la.timestamp))
+        except IndexError:
             pass
     return last_activities
 # метод постороения дерева заметок

@@ -1,7 +1,26 @@
 {% if last_activities %}
-<ul class="user-list">
+<table>
+    <tr>
+        <td>
+            Пользователь
+        </td>
+        <td>
+            Последняя посещённая страница
+        </td>
+        <td>
+            Дата посещения
+        </td>
+    </tr>
     {% for activity in last_activities %}
-        <li>{{ activity[0] }}  --  {{ activity[1] }}  --  {{ activity[2] }}</li>
+        {% if activity.0 %}
+            <tr>
+        {% else %}
+            <tr bgcolor="red">
+        {% endif %}       
+            <td>{{ activity.1 }}</td>
+            <td>{{ activity.2 }}</td>
+            <td>{{ activity.3 }}</td>
+        </tr>
     {% endfor %}
 </ul>
 {% endif %}

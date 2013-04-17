@@ -38,7 +38,6 @@ urlpatterns = patterns('',
     # удаление повтор€ющейс€ задачи
     url(r'^deleted_tasks/$', views.deleted_tasks),
     url(r'^delete/([^/]+)/(\d+)/$', views.delete_task),
-    url(r'^tasks/to/([^/]+)/$', views.to),
     url(r'^completle_delete/([^/]+)/(\d+)/$', views.completle_delete_task),
     url(r'^undelete/([^/]+)/(\d+)/$', views.undelete_task),
     url(r'^add_children_task/([^/]+)/(\d+)/$', views.add_children_task),
@@ -46,7 +45,10 @@ urlpatterns = patterns('',
     url(r'^move_to_call/([^/]+)/(\d+)/$', views.move_to_call),
     # http://192.168.1.157:8080/set_reminder/47 - установка напоминани€ дл€ задачи
     url(r'^set_reminder/([^/]+)/(\d+)/$', views.set_reminder), 
-
+# ƒл€ администратора:
+    url(r'^users/', views.get_all_logged_in_users),
+    url(r'^tasks/to/([^/]+)/$', views.to),
+    
     url(r'^accounts/$', login),
     url(r'^accounts/login/$', login),
     url(r'^accounts/register/$', views.register),
@@ -58,7 +60,6 @@ urlpatterns = patterns('',
     # Uncomment the next line to enable the admin:
     url(r'^admin/', include(admin.site.urls)),
 # тестовые 
-    url(r'^users/', views.get_all_logged_in_users),
     url(r'^test_task/([^/]+)/(\d+)/$', views.test_task),
     url(r'^$', views.tasks),
 
