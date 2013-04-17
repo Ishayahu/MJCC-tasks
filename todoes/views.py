@@ -51,8 +51,11 @@ def get_last_activities():
     # первый элемент равен True, если последнее событие было в пределах последних 15 минут
     last_activities=[]
     for user in users:
-        la = Activity.objects.get(login=user.login)[0]
-        last_activities.append((la.timestamp >= datetime.datetime.now() - datetime.timedelta(minutes=15) ,user.login, la.url, la.timestamp))
+        try:
+            la = Activity.objects.filter(login=user.login)[0]
+            last_activities.append((la.timestamp >= datetime.datetime.now() - datetime.timedelta(minutes=15) ,user.login, la.url, la.timestamp))
+        except:
+            pass
     return last_activities
 # метод постороения дерева заметок
 def build_note_tree(root_note,notes,current_indent):

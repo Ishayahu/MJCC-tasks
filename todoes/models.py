@@ -132,4 +132,4 @@ class Activity(models.Model):
     def __unicode__(self):
         return u";".join((str(self.id),self.login,self.last_page,str(self.timestamp)))
     class Meta:
-        ordering = ['timestamp',]
+        ordering = ['-timestamp',]
