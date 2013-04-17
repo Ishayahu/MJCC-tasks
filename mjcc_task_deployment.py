@@ -277,7 +277,7 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 	# Удаляем локальный файл, ибо нафига
 	local('rm settings.py')
 
-def start_deploy_server(branch='', directory='',github='', project='',type_of_server=''):
+def start_deploy_server(branch='', directory='',github='', project='',type_of_server='',e_mail='',e_psswd=''):
     """
     Задача, подготавливающая сервер к разворачиванию на нём бранча branch проекта (не приложения) project. Код из репозитория github будет выгружаться в каталог directory
     """
@@ -303,13 +303,13 @@ def start_deploy_server(branch='', directory='',github='', project='',type_of_se
 	    # Переходим в каталог проекта и создаём там файл с настройками
 	    with cd(project):
                 if type_of_server=='deploy':
-                    make_and_send_settings(host='192.168.1.24',port='5432',email_host='smtp.gmail.com',email_port='25',email_user='mjcc.sms@gmail.com',email_password='JnghfdrfCvcVRJW',where_to_place='~/tasks/tasks/')
+                    make_and_send_settings(host='192.168.1.24',port='5432',email_host='smtp.gmail.com',email_port='25',email_user=e_mail,email_password=e_psswd,where_to_place='~/tasks/tasks/')
                 if type_of_server=='test':
-                    make_and_send_settings(host='',port='5432',email_host='smtp.gmail.com',email_port='25',email_user='mjcc.sms@gmail.com',email_password='JnghfdrfCvcVRJW',where_to_place='~/tasks/tasks/')
+                    make_and_send_settings(host='',port='5432',email_host='smtp.gmail.com',email_port='25',email_user=e_mail,email_password=e_psswd,where_to_place='~/tasks/tasks/')
 	    # Запускаем сервер для проверки
 	    #run('python manage.py runserver 0.0.0.0:8080')
 	
-def deploy_server(directory='', project='',type_of_server=''):
+def deploy_server(directory='', project='',type_of_server='',e_mail='',e_psswd=''):
     """
     Обновляем код на тестовом сервере
     """
@@ -324,9 +324,9 @@ def deploy_server(directory='', project='',type_of_server=''):
 	    # Переходим в каталог проекта и создаём файл с настройками
 	    with cd(project):
                 if type_of_server=='deploy':
-                    make_and_send_settings(host='192.168.1.24',port='5432',email_host='smtp.gmail.com',email_port='25',email_user='mjcc.sms@gmail.com',email_password='JnghfdrfCvcVRJW',where_to_place='~/tasks/tasks/')
+                    make_and_send_settings(host='192.168.1.24',port='5432',email_host='smtp.gmail.com',email_port='25',email_user=e_mail,email_password=e_psswd,where_to_place='~/tasks/tasks/')
                 if type_of_server=='test':
-                    make_and_send_settings(host='',port='5432',email_host='smtp.gmail.com',email_port='25',email_user='mjcc.sms@gmail.com',email_password='JnghfdrfCvcVRJW',where_to_place='~/tasks/tasks/')
+                    make_and_send_settings(host='',port='5432',email_host='smtp.gmail.com',email_port='25',email_user=e_mail,email_password=e_psswd,where_to_place='~/tasks/tasks/')
 
 def commit_branch(branch=''):
     """
@@ -379,7 +379,7 @@ def change_source_test_to_master(branch=''):
 	# Выгружаем код
 	local('git push origin master')
 	
-def change_server_test_to_master(directory='', project='', github=''):
+def change_server_test_to_master(directory='', project='', github='',e_mail='',e_psswd=''):
     """
     Делаем из тестового сервера продакшн.
     """
@@ -395,7 +395,7 @@ def change_server_test_to_master(directory='', project='', github=''):
 	run('git checkout master')
 	# Переходим в каталог проекта и создаём файл с настройками
 	with cd(project):
-	    make_and_send_settings(host='192.168.1.24',port='5432',email_host='smtp.gmail.com',email_port='25',email_user='mjcc.sms@gmail.com',email_password='JnghfdrfCvcVRJW',where_to_place='~/tasks/tasks/')
+	    make_and_send_settings(host='192.168.1.24',port='5432',email_host='smtp.gmail.com',email_port='25',email_user=e_mail,email_password=e_psswd,where_to_place='~/tasks/tasks/')
 
 
 	
