@@ -35,12 +35,26 @@ def acl(request,task_type,task_id):
 def set_last_activity(login,url):
     """
     Сохраняем последную деятельность пользователя на сайте - что и когда
+    Если url = /tasks/, то есть просто обновляется страница с заявками, чтобы не плодить мусор в БД просто обновляется последнее аналогичное посещение
     """
-    la = Activity()
-    la.login = login
-    la.last_page = url
-    la.timestamp =datetime.datetime.now()
-    la.save()
+    if url!='/tasks/':
+        la = Activity()
+        la.login = login
+        la.last_page = url
+        la.timestamp =datetime.datetime.now()
+        la.save()
+    else:
+        try:
+            la = Activity.objects.get(login=login,last_page='/tasks/')
+        except Activity.DoesNotExist:
+            la = Activity()
+            la.login = login
+            la.last_page = '/tasks/'
+            la.timestamp =datetime.datetime.now()
+            la.save()
+        else:
+            la.timestamp =datetime.datetime.now()
+            la.save()
 def get_last_activities():
     """
     Получаем список последних действий пользователей - когда и что
