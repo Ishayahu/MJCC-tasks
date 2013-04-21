@@ -834,6 +834,7 @@ def edit_task(request,task_to_edit_id):
     return render_to_response('new_ticket.html', {'form':form, 'method':method},RequestContext(request))
 @login_required
 def delete_task(request,task_type,task_to_delete_id):
+    user = request.user.username
     task_to_delete = task_types[task_type].objects.get(id=task_to_delete_id)
     task_to_delete.deleted = True
     task_to_delete.save()
