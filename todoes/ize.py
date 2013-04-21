@@ -124,12 +124,15 @@ def htmlize(str=''):
     html = ''
     inBold = False
     inItalic = False
+    # для таблицы
+    inTable = False
+    inRow = False
+    inCell = False
     tegs = {True:'</', False:'<'}
     count = 0
     while count < len(str):
-	#print count
-	#print count+1<len(str)
-        if str[count] == '\n':
+        #print count,'||',str[count],'||',inTable,'||',inRow,'||',inCell,'||'
+        if str[count] == '\n' and not inTable:
             html += '<br />'
         elif str[count] == '*' and count+1<len(str) and str[count+1] != '*':
             html = html + tegs[inBold] + 'b>'
@@ -154,6 +157,42 @@ def htmlize(str=''):
         elif str[count] == '&':
             html += '&amp'
             # count +=1
+        # обработка создания таблиц
+        elif count+3<len(str) and str[count]=='|' and str[count+1]=='|':
+            # обрабатываем создание начала таблицы
+            if (str[count-1]=='\n' or count-1<0) and not inTable:
+                html += '<table border="1"><tr><td>'
+                inTable = True
+                inRow = True
+                inCell = True
+            elif inTable and not inRow:
+                html += '<tr><td>'
+                inRow = True
+                inCell = True
+            elif inCell:
+                if str[count+2]!='\n':
+                    html+='</td><td>'
+                    inCell = True
+                if str[count+2] == '\n':
+                    html+='</td></tr>'
+                    inCell = False
+                    inRow=False
+                    count+1
+                    if str[count+3]!='|':
+                        html+='</table>'
+                        inTable=False
+            count+=1
+        elif (count+2>=len(str) and inTable) or (count+3<len(str) and str[count+2]=='\n' and inTable and str[count+3]!='|'):
+            if inCell:
+                html += '</td>'
+                inCell = False
+            if inRow:
+                html += '</tr>'
+                inRow = False
+            html+='</table>'
+            inTable = False
+            count+=1
+            
         else:
             html += str[count]
         count +=1

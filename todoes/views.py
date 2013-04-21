@@ -45,7 +45,7 @@ def set_last_activity(login,url):
         la.save()
     else:
         try:
-            la = Activity.objects.get(login=login,last_page='/tasks/')
+            la = Activity.objects.filter(login=login,last_page='/tasks/')[0]
         except Activity.DoesNotExist:
             la = Activity()
             la.login = login
