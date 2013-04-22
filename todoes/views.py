@@ -985,6 +985,7 @@ def add_children_task(request,parent_task_type,parent_task_id):
     return render_to_response('new_ticket.html', {'form':form, 'method':method},RequestContext(request))
 @login_required
 def regular_task_done(request,task_id):
+    user = request.user.username
     method = request.method
     try:
         # находим задачу
