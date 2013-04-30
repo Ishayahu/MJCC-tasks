@@ -122,6 +122,8 @@ def htmlize(str=''):
     links = re.findall(r'https?://\S*',str)
     # links += re.findall(r'https://\S*',str)       
     html = ''
+    # заменяем \r\n на \n для более простой обработки построения страницы. На выводе это никак не сказывается
+    str = str.replace('\r\n','\n')
     inBold = False
     inItalic = False
     # для таблицы
@@ -131,7 +133,6 @@ def htmlize(str=''):
     tegs = {True:'</', False:'<'}
     count = 0
     while count < len(str):
-        #print count,'||',str[count],'||',inTable,'||',inRow,'||',inCell,'||'
         if str[count] == '\n' and not inTable:
             html += '<br />'
         elif str[count] == '*' and count+1<len(str) and str[count+1] != '*':

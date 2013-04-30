@@ -17,6 +17,7 @@ from django.core.mail import send_mail
 from django.core.mail import EmailMultiAlternatives
 from todoes.ize import decronize, crontab_to_russian, generate_next_reminder, htmlize
 from itertools import chain
+#from textile import textile
 
 server_ip = 'tasks.local:8080'
 admins = (
