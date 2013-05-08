@@ -855,9 +855,13 @@ def undelete_task(request,task_type,task_id):
 def completle_delete_task(request,task_type,task_to_delete_id):
     user = request.user.username
     if user not in admins:
-        return HttpResponseRedirect("/tasks/")
+        return HttpResponseRedirect("/tasks/")      
     try:
-        tmp_notes = Note.objects.filter(for_task=task_to_close).order_by('-timestamp')
+        task = task_types[task_type].objects.get(id=task_to_delete_id)
+    except Task.DoesNotExist, RegularTask.DoesNotExist:
+        return HttpResponseRedirect('/tasks/')
+    try:
+        tmp_notes = Note.objects.filter(for_task=task).order_by('-timestamp')
         notes=[]
 	for note in tmp_notes:
 	    notes.append(note_with_indent(note,0))
@@ -866,8 +870,7 @@ def completle_delete_task(request,task_type,task_to_delete_id):
 	    note.delete()
     except Note.DoesNotExist:
         tmp_notes = ('Нет подходящих заметок',)
-    task_to_delete = task_types[task_type].objects.get(id=task_to_delete_id)
-    task_to_delete.delete()
+    task.delete()
     set_last_activity(user,request.path)
     return HttpResponseRedirect('/tasks/')
 def deleted_tasks(request):
