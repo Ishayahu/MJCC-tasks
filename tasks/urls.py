@@ -39,6 +39,7 @@ urlpatterns = patterns('',
     url(r'^deleted_tasks/$', views.deleted_tasks),
     url(r'^delete/([^/]+)/(\d+)/$', views.delete_task),
     url(r'^completle_delete/([^/]+)/(\d+)/$', views.completle_delete_task),
+    url(r'^completle_delete_all/$', views.completle_delete_all),
     url(r'^undelete/([^/]+)/(\d+)/$', views.undelete_task),
     url(r'^add_children_task/([^/]+)/(\d+)/$', views.add_children_task),
     # http://192.168.1.157:8080/move_to_call/47 - изменение категории на "Звонки"

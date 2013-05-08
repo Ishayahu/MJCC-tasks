@@ -875,10 +875,39 @@ def completle_delete_task(request,task_type,task_to_delete_id):
 	for note in notes:
 	    note.delete()
     except Note.DoesNotExist:
-        tmp_notes = ('Нет подходящих заметок',)
+        pass
     task.delete()
     set_last_activity(user,request.path)
     return HttpResponseRedirect('/deleted_tasks/')
+def completle_delete_all(request):
+    user = request.user.username
+    if user not in admins:
+        return HttpResponseRedirect("/tasks/")
+    try:
+        tasks = list()
+        for task_type in task_types:
+            for task in task_types[task_type].objects.filter(deleted = True):
+                task.task_type=task_type
+                tasks.append(task)
+        tasks = list(chain(tasks))
+    except:
+        pass
+    for task in tasks:
+	try:
+	    tmp_notes = Note.objects.filter(for_task=task).order_by('-timestamp')
+	    notes=[]
+	    for note in tmp_notes:
+		notes.append(note)
+		get_all_notes(note,notes)
+	    for note in notes:
+		note.delete()
+	except Note.DoesNotExist:
+	    pass
+	task.delete()
+    set_last_activity(user,request.path)
+    return HttpResponseRedirect('/tasks/')  
+  
+  
 def deleted_tasks(request):
     user = request.user.username
     if user not in admins:
