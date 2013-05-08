@@ -475,6 +475,7 @@ def task(request,task_type,task_id):
         request.session['my_error'] = u'Нет права доступа к этой задаче!'
         return HttpResponseRedirect("/tasks/")
     user = request.user.username
+    admin = False
     if user in admins:
 	admin = True
     try:
