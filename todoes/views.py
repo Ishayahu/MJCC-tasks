@@ -78,6 +78,12 @@ def build_note_tree(root_note,notes,current_indent):
     for note in childrens:
 	notes.append(note_with_indent(note,current_indent))
 	build_note_tree(note,notes,current_indent+1)
+# получение всех заметок для заявки
+def get_all_notes(root_note,notes):
+    childrens = Note.objects.filter(parent_note=root_note).order_by('timestamp')
+    for note in childrens:
+	notes.append(note)
+	build_note_tree(note,notes)
 # класс для заметки с отступом
 class note_with_indent():
     def __init__(self, note, indent):
@@ -865,14 +871,14 @@ def completle_delete_task(request,task_type,task_to_delete_id):
         notes=[]
 	for note in tmp_notes:
 	    notes.append(note)
-	    build_note_tree(note,notes,1)
+	    get_all_notes(note,notes)
 	for note in notes:
 	    note.delete()
     except Note.DoesNotExist:
         tmp_notes = ('Нет подходящих заметок',)
     task.delete()
     set_last_activity(user,request.path)
-    return HttpResponseRedirect('/tasks/')
+    return HttpResponseRedirect('/deleted_tasks/')
 def deleted_tasks(request):
     user = request.user.username
     if user not in admins:
@@ -1023,134 +1029,3 @@ def get_all_logged_in_users(request):
     if user in admins:
         last_activities=get_last_activities()
         return render_to_response('logged_in_user_list.html', {'last_activities':last_activities,},RequestContext(request))
-
-def test_task(request,task_type,task_id):
-    # метод постороения дерева заметок
-    def build_note_tree(root_note,notes,current_indent):
-        childrens = Note.objects.filter(parent_note=root_note).order_by('timestamp')
-        for note in childrens:
-            notes.append(note_with_indent(note,current_indent))
-            build_note_tree(note,notes,current_indent+1)
-    # класс для заметки с отступом
-    class note_with_indent():
-        def __init__(self, note, indent):
-            self.note = note.note
-            self.id = note.id
-            self.author = note.author
-            self.timestamp = note.timestamp
-            self.indent = '&#9676;'*indent
-            self.indent_pix = 4*indent
-    def handle_uploaded_file(f):
-        destination = open(str(task_type)+'/'+str(task_id)+'/'+f.name, 'wb+')
-        for chunk in f.chunks():
-            destination.write(chunk)
-        destination.close()
-    if not acl(request,task_type,task_id):
-        request.session['my_error'] = u'Нет права доступа к этой задаче!'
-        return HttpResponseRedirect("/tasks/")
-    user = request.user.username
-    try:
-        fio = Person.objects.get(login=user)
-    except Person.DoesNotExist:
-        fio = FioError()
-    try:
-        # есть ли здача или она уже удалена?
-        task_full = task_types[task_type].objects.get(id=task_id)
-        try:
-            if task_type == 'one_time':
-                tmp_notes = Note.objects.filter(for_task=task_full).order_by('-timestamp')
-            if task_type == 'regular':
-                tmp_notes = Note.objects.filter(for_regular_task=task_full).order_by('-timestamp')
-        except Note.DoesNotExist:
-            tmp_notes = ('Нет подходящих заметок',)
-        # notes = _notes    
-        
-        notes=[]
-        for note in tmp_notes:
-            notes.append(note_with_indent(note,0))
-            build_note_tree(note,notes,1)
-        # получаем файлы к заявке
-        try:
-            if task_type == 'one_time':
-                files = File.objects.filter(for_task=task_full).order_by('-timestamp')
-            if task_type == 'regular':
-                files = File.objects.filter(for_regular_task=task_full).order_by('-timestamp')
-        except File.DoesNotExist:
-            files = ('Нет подходящих заметок',)
-        # подготовка к выводу
-        task_full.html_description = htmlize(task_full.description)
-        if task_type=='regular':
-            task_full.russian_period = crontab_to_russian(task_full.period)
-        method = request.method
-        if request.method == 'POST':
-            form = File_and_NoteToTicketAddForm(request.POST, request.FILES)
-            if form.is_valid():
-                handle_uploaded_file(request.FILES['file'])
-                data = form.cleaned_data
-                if request.POST.get('add_comment'):
-                    note = Note(
-                        timestamp = datetime.datetime.now(),
-                        note = data['note'],
-                        author = fio
-                    )
-                    note.save()
-                    if task_type == 'one_time':
-                        note.for_task.add(task_full)
-                    if task_type == 'regular':
-                        note.for_regular_task.add(task_full)
-                    note.save()
-                    mails = [person.mail for person in data['workers']]
-                    acl_list = task_full.acl.split(';')
-                    for person in data['workers']:
-                        if person.login not in acl_list:
-                            acl_list.append(person.login)
-                    task_full.acl = ';'.join(acl_list)
-                    task_full.save()
-                    send_email_alternative(u"Новый комментарий к задаче: "+task_full.name,note.note+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/"+task_addr[task_type]+"/"+str(task_full.id),mails,fio)
-                    return HttpResponseRedirect(request.get_full_path())
-                elif request.POST.get('answer_to_comment'):
-                    parent_note = Note.objects.get(id=int(request.POST.get('to_note')))
-                    note = Note(
-                        timestamp = datetime.datetime.now(),
-                        note = request.POST.get('answer'),
-                        author = fio,
-                    )
-                    note.save()
-                    note.parent_note.add(parent_note)
-                    note.save()
-                    mails = (parent_note.author.mail if parent_note.author.mail else '' ,)
-                    send_email_alternative(u"Ответ на ваш комментарий к задаче: "+task_full.name,note.note+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/"+task_addr[task_type]+"/"+str(task_full.id),mails,fio)
-                    return HttpResponseRedirect(request.get_full_path())
-                elif request.POST.get('del_comment'):
-                    note_to_del_id=request.POST.get('num')
-                    note_to_del = Note.objects.get(id=note_to_del_id)
-                    note_to_del.delete()
-                    return HttpResponseRedirect(request.get_full_path())
-                elif request.POST.get('edit_comment'):
-                    note_to_edit_id = request.POST.get('num')
-                    for note in notes:
-                        if note.id != int(note_to_edit_id):
-                            note.note = htmlize(note.note)
-                    return render_to_response('task.html',{'user':user,'fio':fio,'task':task_full,'notes':notes, 'form':form,'note_to_edit_id':int(note_to_edit_id),'task_type':task_type},RequestContext(request))
-                elif request.POST.get('save_edited_comment'):
-                    note_to_edit_id = request.POST.get('num')
-                    note_to_edit = Note.objects.get(id=note_to_edit_id)
-                    old_comment = note_to_edit.note
-                    note_to_edit.note = request.POST.get('text_note_to_edit')
-                    note_to_edit.save()
-                    send_email_alternative(u"Отредактирован комментарий к задаче: "+task_full.name,u"Старый комментарий:"+old_comment+u"\nНовый комментарий"+note_to_edit.note+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/"+task_addr[task_type]+"/"+str(task_full.id),[task_full.worker.mail,task_full.client.mail],fio)
-                    return HttpResponseRedirect(request.get_full_path())
-
-        else:
-            form = File_and_NoteToTicketAddForm(defaults = (task_full.worker.fio, task_full.client.fio),exclude = (fio,))
-            for note in notes:
-                note.note = htmlize(note.note)
-            return render_to_response('task.html',{'user':user,'fio':fio,'task':task_full,'notes':notes, 'form':form,'task_type':task_type},RequestContext(request))
-    # если задачи нет - возвращаем к списку с ошибкой
-    except Task.DoesNotExist:
-        # print 'here'
-        # return tasks(request, my_error=u'Такой задачи нет. Возможно она была уже удалена')
-        request.session['my_error'] = u'Такой задачи нет. Возможно она была уже удалена'
-        return HttpResponseRedirect('/tasks/')
-    # никогда не выполняется. нужно только для проформы
-    return HttpResponseRedirect("/tasks/")
