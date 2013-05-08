@@ -25,7 +25,14 @@
         {% if tasks %}
             <ol>
                 {% for task in tasks %}
-                    <li><a href="../task/{{task.id}}">{{task.name}}</a>
+                    <li>
+			{% ifequal task.task_type 'one_time' %}
+			    <a href="../task/one_time/{{task.id}}">{{task.name}}
+			{% endifequal %}
+			{% ifequal task.task_type 'regular' %}
+			     <a href="../task/regular/{{task.id}}">{{task.name}}
+			{% endifequal %}
+                    </a>
                     {% ifequal task.task_type 'one_time' %}
                         <a href="../completle_delete/one_time/{{task.id}}" title="Удалить задачу окончательно" onclick="if (confirm('Хотите удалить задачу?')) {return true} else {return false};">&#10008;</a><a href="../undelete/one_time/{{task.id}}" title="Отменить удаление задачи" onclick="if (confirm('Хотите восстановить задачу?')) {return true} else {return false};"> &#9788;;</a></li>
                     {% endifequal %}
