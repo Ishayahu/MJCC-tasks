@@ -864,7 +864,7 @@ def completle_delete_task(request,task_type,task_to_delete_id):
         tmp_notes = Note.objects.filter(for_task=task).order_by('-timestamp')
         notes=[]
 	for note in tmp_notes:
-	    notes.append(note_with_indent(note,0))
+	    notes.append(note)
 	    build_note_tree(note,notes,1)
 	for note in notes:
 	    note.delete()
