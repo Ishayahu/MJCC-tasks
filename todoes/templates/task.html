@@ -143,11 +143,12 @@
                                 {% endifequal %}
                                 {# Если не автор комментария - только отвечать &#9997; #}
                                 {% ifnotequal note.author.login fio.login %}
-                                    <td><div id="answer_to_note_{{note.id}}"><input type="button" value="Ответить" onclick="answer_to_note('answer_to_note_{{note.id}}',{{note.id}})" /></div></td>
+				    <td><div id="answer_to_note_{{note.id}}"><input type="button" value="Ответить" onclick="answer_to_note('answer_to_note_{{note.id}}',{{note.id}})" /></div>
                                         {% if admin %}
 					    <input type="hidden" name="num" value="{{note.id}}" />
 					    <input type="submit" value="&#10005;" title="Удалить комментарий" name="del_comment" /><div id="answer_to_note_{{note.id}}">      
 					{% endif %}
+				    </td>
                                 {% endifnotequal %}
                             </form>
                         </tr>
