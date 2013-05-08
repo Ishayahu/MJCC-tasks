@@ -856,6 +856,12 @@ def completle_delete_task(request,task_type,task_to_delete_id):
     user = request.user.username
     if user not in admins:
         return HttpResponseRedirect("/tasks/")
+    notes=[]
+    for note in tmp_notes:
+        notes.append(note_with_indent(note,0))
+        build_note_tree(note,notes,1)
+    for note in notes:
+	note.delete()
     task_to_delete = task_types[task_type].objects.get(id=task_to_delete_id)
     task_to_delete.delete()
     set_last_activity(user,request.path)
