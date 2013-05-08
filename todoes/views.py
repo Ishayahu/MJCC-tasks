@@ -83,7 +83,7 @@ def get_all_notes(root_note,notes):
     childrens = Note.objects.filter(parent_note=root_note).order_by('timestamp')
     for note in childrens:
 	notes.append(note)
-	build_note_tree(note,notes)
+	get_all_notes(note,notes)
 # класс для заметки с отступом
 class note_with_indent():
     def __init__(self, note, indent):
