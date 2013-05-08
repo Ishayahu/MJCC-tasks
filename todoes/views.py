@@ -475,6 +475,8 @@ def task(request,task_type,task_id):
         request.session['my_error'] = u'Нет права доступа к этой задаче!'
         return HttpResponseRedirect("/tasks/")
     user = request.user.username
+    if user in admins:
+	admin = True
     try:
         fio = Person.objects.get(login=user)
     except Person.DoesNotExist:
@@ -568,7 +570,7 @@ def task(request,task_type,task_id):
             for note in notes:
                 note.note = htmlize(note.note)
             set_last_activity(user,request.path)
-            return render_to_response('task.html',{'user':user,'fio':fio,'task':task_full,'notes':notes, 'form':form,'task_type':task_type},RequestContext(request))
+            return render_to_response('task.html',{'user':user,'fio':fio,'task':task_full,'notes':notes, 'form':form,'task_type':task_type,'admin':admin},RequestContext(request))
     # если задачи нет - возвращаем к списку с ошибкой
     except Task.DoesNotExist:
         # print 'here'

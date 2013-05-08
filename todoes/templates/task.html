@@ -135,12 +135,19 @@
                                         <td colspan=2><input type="hidden" name="num" value="{{note.id}}" /><input type="submit" value="Сохранить комментарий" name="save_edited_comment" /></td>
                                     {% endifequal %}
                                     {% ifnotequal note.id note_to_edit_id %}
-                                        <td><input type="submit" value="&#9998;" title="Редактировать комментарий" name="edit_comment" /><input type="hidden" name="num" value="{{note.id}}" /><input type="submit" value="&#10005;" title="Удалить комментарий" name="del_comment" /><div id="answer_to_note_{{note.id}}"><input type="button" value="Ответить" onclick="answer_to_note('answer_to_note_{{note.id}}',{{note.id}})"/></div></td>
+                                        <td><input type="submit" value="&#9998;" title="Редактировать комментарий" name="edit_comment" />
+                                        <input type="hidden" name="num" value="{{note.id}}" />
+                                        <input type="submit" value="&#10005;" title="Удалить комментарий" name="del_comment" /><div id="answer_to_note_{{note.id}}">
+                                        <input type="button" value="Ответить" onclick="answer_to_note('answer_to_note_{{note.id}}',{{note.id}})"/></div></td>
                                     {% endifnotequal %}
                                 {% endifequal %}
                                 {# Если не автор комментария - только отвечать &#9997; #}
                                 {% ifnotequal note.author.login fio.login %}
                                     <td><div id="answer_to_note_{{note.id}}"><input type="button" value="Ответить" onclick="answer_to_note('answer_to_note_{{note.id}}',{{note.id}})" /></div></td>
+                                        {% if admin %}
+					    <input type="hidden" name="num" value="{{note.id}}" />
+					    <input type="submit" value="&#10005;" title="Удалить комментарий" name="del_comment" /><div id="answer_to_note_{{note.id}}">      
+					{% endif %}
                                 {% endifnotequal %}
                             </form>
                         </tr>
