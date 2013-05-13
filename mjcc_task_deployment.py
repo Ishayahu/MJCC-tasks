@@ -392,25 +392,6 @@ def change_source_test_to_master(branch=''):
 	# Выгружаем код
 	local('git push origin master')
 	
-def change_server_test_to_master(directory='', project='', github='',e_mail='',e_psswd=''):
-    """
-    Делаем из тестового сервера продакшн.
-    """
-    # Переходим в каталог с исходниками
-    with cd(directory):
-	# Удаляем текущее отслеживание
-	run('git remote rm origin')
-	# Добавляем отслеживание мастера
-	run('git remote add -t master origin %s' % github)
-	# Скачиваем код
-	run('git pull')
-	# Переключаемся на мастер для гарантии
-	run('git checkout master')
-	# Переходим в каталог проекта и создаём файл с настройками
-	with cd(project):
-            srv_ip=srv_ip=servers_ip['deploy']
-            bd_ip=bds_ip['deploy']
-            make_and_send_settings(host=bd_ip,port='5432',email_host='smtp.gmail.com',email_port='25',email_user=e_mail,email_password=e_psswd,where_to_place='~/tasks/tasks/',srv_ip=srv_ip)
 
 
 	
