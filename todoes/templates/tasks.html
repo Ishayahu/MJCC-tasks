@@ -25,6 +25,9 @@
         background-color:limegreen;
         /*color: red;*/
         }   
+        .for_my{
+        vertical-align: top
+        }
     </style>
     <meta http-equiv="refresh" content="60">
     {# горячие клавиши #}
@@ -114,7 +117,7 @@
             <th>Заявки для меня</th>
             <th>Заявки от меня</th>
         </tr>
-        <tr>
+        <tr class='for_my'>
             <td>
                 {% if tasks_overdue %}
                     <p>Просроченные задачи</p>
