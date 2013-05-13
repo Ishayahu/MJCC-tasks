@@ -368,6 +368,34 @@ def profile(request):
     return HttpResponseRedirect("/tasks/")
 @login_required
 def tasks(request):
+    def tasks_separation(tasks):
+        class group():
+            def __init__(self,person,tasks):
+                self.person = person
+                self.tasks = tasks
+        class state_task():
+            def __init__(self,state,task):
+                self.state = state
+                self.task = task
+        my_tasks=[]
+        tmp_group=[]
+        worker=tasks[0].worker
+        now = datetime.datetime.now()
+        for task in tasks:
+            if task.worker != worker:
+                my_tasks.append(group(worker,tmp_group))
+                tmp_group=[]
+                worker = task.worker
+            else:
+                state=-9
+                if task.due_date < now:
+                    state = -1
+                elif task.due_date.date() == now.date():
+                    state = 0
+                else:
+                    state = 1
+                tmp_group.append(state_task(state,task))
+        return my_tasks
     # получаем ошибку, если она установлена и сбрасываем её в запросах
     if request.session.get('my_error'):
         my_error = [request.session.get('my_error'),]
@@ -375,7 +403,8 @@ def tasks(request):
         my_error=[]
     request.session['my_error'] = ''
     user = request.user.username
-    method = request.method
+    # method = request.method
+    # Если подтверждаются задачи с главной страницы
     if  request.method == 'POST':
         for task_to_confirm_id in request.POST.getlist('task_to_confirm_id'):
             task_to_confirm = Task.objects.get(id=int(task_to_confirm_id))
@@ -386,14 +415,20 @@ def tasks(request):
         request.session['my_error'] = u'Выполнение задач успешно подтверждено!'
         set_last_activity(user,request.path)
         return HttpResponseRedirect('/tasks/')
+    # Если просто просматриваем список задач
     else:
         try:
-            # worker = Worker.objects.get(login=user)#.order_by("priority")
+            # Получаем объект пользователя, который открыл страницу
             worker = Person.objects.get(login=user)#.order_by("priority")
-        # except Worker.DoesNotExist:
+        # Если такого человека нет в базе, хз как это может быть:
+        # Но если вдруг есть, то надо внести это в my_error и открыть страницу для этой ошибки
+        # Эту же страницу не открывать, так как попадём в замкнутый круг. Вот этого-то ещё и нет
         except Person.DoesNotExist:
-            worker = 'Нет такого пользователя'
+            # worker = 'Нет такого пользователя'
+            my_error.append('Нет такого пользователя')
+        #
         # получаем заявки ДЛЯ человека
+        #
         # просроченные
         try:
             # отображаем только НЕ закрытые заявки, т.е. процент выполнения которых меньше 100
@@ -418,18 +453,18 @@ def tasks(request):
             tasks_future = Task.objects.filter(deleted = False).filter(worker=worker,percentage__lt=100).filter(due_date__gt=datetime.datetime.now()).filter(start_date__lt=datetime.datetime.now()).filter(when_to_reminder__lt=datetime.datetime.now())
         except:
             tasks_future = ''# если задач нет - вывести это в шаблон
-            # my_error.append('Для Вас нет задач')
+        # 
         # получаем заявки ОТ человека
-        # print user
+        #
         try:
             # отображаем только НЕ закрытые заявки, т.е. процент выполнения которых меньше 100
-            try:
-                # client = Client.objects.get(login=user)
-            # except Worker.DoesNotExist:
-                client = Person.objects.get(login=user)
-            except Person.DoesNotExist:
-                client = 'Нет такого пользователя'
-            my_tasks = Task.objects.filter(deleted = False).filter(client=client,percentage__lt=100)
+            #try:
+            #    client = Person.objects.get(login=user)
+            #except Person.DoesNotExist:
+            #    client = 'Нет такого пользователя'
+            my_tasks = Task.objects.filter(deleted = False).filter(client=worker,percentage__lt=100).order_by('worker','due_date')
+            # Теперь их надо разбить по тому, кому они адресованы и выделять цветом их просроченность/нет
+            my_tasks = tasks_separation(my_tasks)
         except:
             # если задач нет - вывести это в шаблон
             my_tasks = ''# если задач нет - вывести это в шаблон

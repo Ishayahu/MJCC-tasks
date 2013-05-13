@@ -185,11 +185,24 @@
             </td>
             <td>
                 {% if my_tasks %}
-                    <ol>
-                        {% for task in my_tasks %}
-                            <li><a href="../task/one_time/{{task.id}}" title="{{task.description}}" target="_blank">{{task.name}}</a></li>
-                        {% endfor %}
-                    </ol>
+                    {% for group in my_tasks %}
+                        <div class={{group.person.login}}>
+                            <b>Задачи для {{group.person.fio}}</b>
+                            <ol>
+                                {% for task in group.tasks %}
+                                    {% ifequal task.state -1 %}
+                                        <li class="overdue">
+                                    {% endifequal %}   
+                                    {% ifequal task.state 0 %}
+                                        <li class="today">
+                                    {% endifequal %}
+                                    {% ifequal task.state -1 %}
+                                        <li class="future">
+                                    {% endifequal %}
+                                    <a href="../task/one_time/{{task.task.id}}" title="{{task.task.description}}" target="_blank">{{task.task.name}}</a></li>
+                                {% endfor %}
+                            </ol>
+                        </div>
                 {% endif %}
                 <p align="center"><a href="/new_ticket/">Добавить задачу</a></p>
                 <p align="center"><a href="/new_regular_ticket/">Добавить повторяющуюся задачу</a></p>
