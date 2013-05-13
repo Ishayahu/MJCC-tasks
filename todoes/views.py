@@ -495,7 +495,7 @@ def tasks(request):
             # получаем Список всех заявок для админов
             try:
                 # отображаем только НЕ закрытые заявки, т.е. процент выполнения которых меньше 100
-                all_tasks = Task.objects.filter(deleted = False).filter(percentage__lt=100).exclude(client=client).exclude(worker=worker)#.order_by("priority")
+                all_tasks = Task.objects.filter(deleted = False).filter(percentage__lt=100).exclude(client=worker).exclude(worker=worker)#.order_by("priority")
             except:
                 all_tasks = ''# если задач нет - вывести это в шаблон
             # получаем заявки ДЛЯ ПОДТВЕРЖДЕНИЯ ЗАКРЫТИЯ если человек - админ
