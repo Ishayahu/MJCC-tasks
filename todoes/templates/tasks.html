@@ -15,7 +15,16 @@
         text-align: center; 
         width: 100%; /* Ширина текстового блока */ 
       }
-
+        .overdue {
+        background-color:peachpuff
+        }
+        .today {
+        
+        }
+        .future {
+        background-color:limegreen;
+        /*color: red;*/
+        }   
     </style>
     <meta http-equiv="refresh" content="60">
     {# горячие клавиши #}
@@ -39,9 +48,11 @@
             var el_btn = document.getElementsByName("button_"+name).item(0);
             if (el_btn.title=="Свернуть") {
                 el_btn.title="Развернуть"
+                el_btn.innerHTML="<b>+ Задачи для "+name+"</b>"
             }
             else {
                 el_btn.title="Свернуть"
+                el_btn.innerHTML="<b>- Задачи для "+name+"</b>"
             }
         }
     
@@ -199,7 +210,7 @@
             <td>
                 {% if my_tasks %}
                     {% for group in my_tasks %}
-                        <div onclick='collapse("{{group.person.fio}}")' name="button_{{group.person.fio}}" title="Свернуть"><b>Задачи для {{group.person.fio}}</b></div>
+                        <div onclick='collapse("{{group.person.fio}}")' name="button_{{group.person.fio}}" title="Свернуть"><b>+ Задачи для {{group.person.fio}}</b></div>
                             <div name="{{group.person.fio}}">
                             <ol>
                                 {% for task in group.tasks %}
