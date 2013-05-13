@@ -50,7 +50,7 @@
 
 {% block content %}
     <div class ="leftstr"><p>Привет, {{ worker.fio }}</p></div>
-    <div class ="rightstr"><p><a target="_new" href="/media/versions.html">v0.2.2b</a></p></div>
+    <div class ="rightstr"><p><a target="_new" href="/media/versions.html">v0.2.2c</a></p></div>
     {% if admin %}
         <ul style="clear:left">
             <li><a href="to/Мотя/">Вопросы к Моте</a></li>
@@ -199,7 +199,7 @@
             <td>
                 {% if my_tasks %}
                     {% for group in my_tasks %}
-                        <div onclick="collapse("{{group.person.fio}}")" name="button_{{group.person.fio}}"><b>Задачи для {{group.person.fio}}</b></div>
+                        <div onclick='collapse("{{group.person.fio}}")' name="button_{{group.person.fio}}"><b>Задачи для {{group.person.fio}}</b></div>
                             <div name="{{group.person.fio}}">
                             <ol>
                                 {% for task in group.tasks %}
