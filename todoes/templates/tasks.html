@@ -31,7 +31,20 @@
 		return false;
 	    }
 	}
-
+	
+	
+        function collapse(name){
+            var el = document.getElementsByName(name).item(0);
+            el.hidden = !el.hidden
+            var el_btn = document.getElementsByName("button_"+name).item(0);
+            if (el_btn.title=="Свернуть") {
+                el_btn.title="Развернуть"
+            }
+            else {
+                el_btn.title="Свернуть"
+            }
+        }
+    
     </script>
 {% endblock %}
 
@@ -186,8 +199,8 @@
             <td>
                 {% if my_tasks %}
                     {% for group in my_tasks %}
-                        <div class={{group.person.login}}>
-                            <b>Задачи для {{group.person.fio}}</b>
+                        <div onclick="collapse("{{group.person.fio}}")" name="button_{{group.person.fio}}"><b>Задачи для {{group.person.fio}}</b></div>
+                            <div name="{{group.person.fio}}">
                             <ol>
                                 {% for task in group.tasks %}
                                     {% ifequal task.state -1 %}
@@ -196,13 +209,14 @@
                                     {% ifequal task.state 0 %}
                                         <li class="today">
                                     {% endifequal %}
-                                    {% ifequal task.state -1 %}
+                                    {% ifequal task.state 1 %}
                                         <li class="future">
                                     {% endifequal %}
                                     <a href="../task/one_time/{{task.task.id}}" title="{{task.task.description}}" target="_blank">{{task.task.name}}</a></li>
                                 {% endfor %}
                             </ol>
                         </div>
+                    {% endfor %}
                 {% endif %}
                 <p align="center"><a href="/new_ticket/">Добавить задачу</a></p>
                 <p align="center"><a href="/new_regular_ticket/">Добавить повторяющуюся задачу</a></p>

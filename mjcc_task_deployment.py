@@ -44,11 +44,11 @@ servers= {'test':['ishayahu@192.168.1.183',],
           'deploy' : ['ishayahu@192.168.1.25',]
           }
 
-servers_ip= {'test':['192.168.1.183',],
-          'deploy' : ['192.168.1.25',]
+servers_ip= {'test':'192.168.1.183',
+          'deploy' : '192.168.1.25'
           }
-bd_ip= {'test':['192.168.1.136',],
-          'deploy' : ['192.168.1.24',]
+bds_ip= {'test':'192.168.1.136',
+          'deploy' : '192.168.1.24'
           }
 
 def south_migrate(app,project):
@@ -312,7 +312,7 @@ def start_deploy_server(branch='', directory='',github='', project='',type_of_se
 	    # Переходим в каталог проекта и создаём там файл с настройками
 	    with cd(project):
                 srv_ip=servers_ip[type_of_server]
-                bd_ip=bd_ip[type_of_server]
+                bd_ip=bds_ip[type_of_server]
                 if type_of_server=='deploy':
                     make_and_send_settings(host=bd_ip,port='5432',email_host='smtp.gmail.com',email_port='25',email_user=e_mail,email_password=e_psswd,where_to_place='~/tasks/tasks/',srv_ip=srv_ip)
                 if type_of_server=='test':
@@ -335,7 +335,7 @@ def deploy_server(directory='', project='',type_of_server='',e_mail='',e_psswd='
 	    # Переходим в каталог проекта и создаём файл с настройками
 	    with cd(project):
                 srv_ip=servers_ip[type_of_server]
-                bd_ip=bd_ip[type_of_server]
+                bd_ip=bds_ip[type_of_server]
                 if type_of_server=='deploy':
                     make_and_send_settings(host=bd_ip,port='5432',email_host='smtp.gmail.com',email_port='25',email_user=e_mail,email_password=e_psswd,where_to_place='~/tasks/tasks/',srv_ip=srv_ip)
                 if type_of_server=='test':
@@ -409,7 +409,7 @@ def change_server_test_to_master(directory='', project='', github='',e_mail='',e
 	# Переходим в каталог проекта и создаём файл с настройками
 	with cd(project):
             srv_ip=srv_ip=servers_ip['deploy']
-            bd_ip=bd_ip['deploy']
+            bd_ip=bds_ip['deploy']
             make_and_send_settings(host=bd_ip,port='5432',email_host='smtp.gmail.com',email_port='25',email_user=e_mail,email_password=e_psswd,where_to_place='~/tasks/tasks/',srv_ip=srv_ip)
 
 
