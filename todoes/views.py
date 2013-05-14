@@ -371,8 +371,8 @@ def tasks(request):
     def tasks_separation(tasks):
         class group():
             def __init__(self,person,tasks):
-            self.person = person
-            self.tasks = tasks
+                self.person = person
+                self.tasks = tasks
         class state_task():
             def __init__(self,state,task):
                 self.state = state
