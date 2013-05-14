@@ -386,6 +386,14 @@ def tasks(request):
                 my_tasks.append(group(worker,tmp_group))
                 tmp_group=[]
                 worker = task.worker
+                state=-9
+                if task.due_date < now:
+                    state = -1
+                elif task.due_date.date() == now.date():
+                    state = 0
+                else:
+                    state = 1
+                tmp_group.append(state_task(state,task))
             else:
                 state=-9
                 if task.due_date < now:
