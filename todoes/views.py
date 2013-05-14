@@ -371,8 +371,8 @@ def tasks(request):
     def tasks_separation(tasks):
         class group():
             def __init__(self,person,tasks):
-                self.person = person
-                self.tasks = tasks
+            self.person = person
+            self.tasks = tasks
         class state_task():
             def __init__(self,state,task):
                 self.state = state
@@ -403,6 +403,7 @@ def tasks(request):
                 else:
                     state = 1
                 tmp_group.append(state_task(state,task))
+        my_tasks.append(group(worker,tmp_group))
         return my_tasks
     # получаем ошибку, если она установлена и сбрасываем её в запросах
     if request.session.get('my_error'):
