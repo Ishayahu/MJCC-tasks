@@ -29,7 +29,7 @@
         vertical-align: top
         }
     </style>
-    <meta http-equiv="refresh" content="60">
+    <!--<meta http-equiv="refresh" content="60"> -->
     {# горячие клавиши #}
     <script>
 	document.onkeydown = function(e) {
@@ -46,27 +46,27 @@
 	/*
 	Поддерживаем свёрнутыми те разделы, которые были свёрнуты
 	*/
-	document.onLoad = function(e) {
-            for (x=0;x=window.localStorage.length;x++) {
-                if (document.getElementsByName(window.localStorage.key(0))) {
-                    collapse(window.localStorage.key(0))
+	window.onload = function(e) {
+            for (var x=0;x<window.localStorage.length;x++) {
+                if (document.getElementsByName(window.localStorage.key(x))) {
+                    collapse(window.localStorage.key(x));
                 }
             }
 	}
 	
         function collapse(name){
             var el = document.getElementsByName(name).item(0);
-            el.hidden = !el.hidden
+            el.hidden = !el.hidden;
             var el_btn = document.getElementsByName("button_"+name).item(0);
             if (el_btn.title=="Свернуть") {
-                el_btn.title="Развернуть"
-                el_btn.innerHTML="<b>+ Задачи для "+name+"</b>"
-                window.localStorage.setItem(name,'true')
+                el_btn.title="Развернуть";
+                el_btn.innerHTML="<b>+ Задачи для "+name+"</b>";
+                window.localStorage.setItem(name,'true');
             }
             else {
-                el_btn.title="Свернуть"
-                el_btn.innerHTML="<b>- Задачи для "+name+"</b>"
-                window.localStorage.removeItem(name)
+                el_btn.title="Свернуть";
+                el_btn.innerHTML="<b>- Задачи для "+name+"</b>";
+                window.localStorage.removeItem(name);
             }
         }
     
@@ -224,7 +224,7 @@
             <td>
                 {% if my_tasks %}
                     {% for group in my_tasks %}
-                        <div onclick='collapse("{{group.person.fio}}")' name="button_{{group.person.fio}}" title="Свернуть"><b>+ Задачи для {{group.person.fio}}</b></div>
+                        <div onclick='collapse("{{group.person.fio}}")' name="button_{{group.person.fio}}" title="Свернуть"><b>- Задачи для {{group.person.fio}}</b></div>
                             <div name="{{group.person.fio}}">
                             <ol>
                                 {% for task in group.tasks %}
