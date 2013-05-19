@@ -43,10 +43,13 @@
 		return false;
 	    }
 	}
+	/*
+	Поддерживаем свёрнутыми те разделы, которые были свёрнуты
+	*/
 	document.onLoad = function(e) {
             for (x=0;x=window.localStorage.length;x++) {
-                if (document.getElementsByName(window.localStorage.key(x))) {
-                    collapse(window.localStorage.key(x))
+                if (document.getElementsByName(window.localStorage.key(0))) {
+                    collapse(window.localStorage.key(0))
                 }
             }
 	}
