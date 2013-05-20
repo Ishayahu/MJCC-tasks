@@ -1,3 +1,6 @@
+# -*- coding:utf-8 -*-
+# coding=<utf8>
+
 from django.db import models
 
 # Create your models here.
@@ -74,8 +77,10 @@ class Task(models.Model):
     done_date = models.DateTimeField(blank = True, null = True)
     when_to_reminder = models.DateTimeField()
     # worker = models.ForeignKey(Worker)
-    worker = models.ForeignKey(Person, related_name = "worker_for_task",blank = True, null = True)
-    client = models.ForeignKey(Person, related_name = "client_for_task",blank = True, null = True)
+    #worker = models.ForeignKey(Person, related_name = "worker_for_task",blank = True, null = True)
+    #client = models.ForeignKey(Person, related_name = "client_for_task",blank = True, null = True)
+    worker = models.ForeignKey(Person)
+    client = models.ForeignKey(Person)
     resource = models.ForeignKey(Resource, blank = True, null = True)
     note = models.ManyToManyField(Note, related_name = "for_task",blank = True, null = True)
     file = models.ForeignKey(File, related_name = "for_task", blank = True, null = True)
