@@ -60,7 +60,7 @@ def crontab_to_russian(fstr):
     return result
     
 def generate_next_reminder(ranges, stop_date):
-    print ranges
+    #print ranges
     minute = datetime.datetime.now().minute
     hour = datetime.datetime.now().hour
     day = datetime.datetime.now().day
@@ -91,14 +91,14 @@ def generate_next_reminder(ranges, stop_date):
                     to_next = True
         else:
             if to_next:
-                print 'here'
+                #print 'here'
                 crit_dict['day'] += 1
                 crit_dict['wday'] += 1
                 if crit_dict['wday'] == 7:
                     crit_dict['wday'] = 1
                 to_next = False
             while True: # crit_dict['day'] <= crit_max['day'] and crit_dict['wday'] <= crit_max['wday']:
-                print crit_dict
+                #print crit_dict
                 if crit_dict['day'] in ranges['day'] or  crit_dict['wday'] in ranges['wday']:
                     break
                 crit_dict['day'] += 1
