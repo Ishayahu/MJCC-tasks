@@ -47,7 +47,7 @@ def set_last_activity(login,url):
     else:
         try:
             la = Activity.objects.filter(login=login,last_page='/tasks/')[0]
-        except Activity.DoesNotExist:
+        except (Activity.DoesNotExist,IndexError):
             la = Activity()
             la.login = login
             la.last_page = '/tasks/'
@@ -126,10 +126,7 @@ def new_ticket(request):
                 percentage=data['percentage'],
                 acl = data['clients'].login+';'+data['workers'].login)
             t.save()
-            # отправляем уведомление исполнителю по мылу
-            # send_mail(u"Новая задача: "+t.name,t.description+u"\nПосмотреть задачу можно тут:\nhttp://192.168.1.157:8080/task/"+str(t.id),"meoc-it@mail.ru",[data['workers'].mail,])
-            # send_email(u"Новая задача: "+t.name,t.description+u"\nПосмотреть задачу можно тут:\nhttp://192.168.1.157:8080/task/"+str(t.id),[data['workers'].mail,])
-            send_email_alternative(u"Новая задача: "+t.name,t.description+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/one_time/"+str(t.id),[data['workers'].mail,data['clients'].mail],fio)
+            send_email_alternative(u"Новая задача: "+t.name,u"*Описание*:\n\<table cellpadding='5' border='1'\>\<tr\>\<td\>"+t.description+u"\</tr\>\</td\>\</table\>\n\n*Посмотреть задачу можно тут*:\nhttp://"+server_ip+"/task/one_time/"+str(t.id),[data['workers'].mail,data['clients'].mail],fio)
             set_last_activity(user,request.path)
             return HttpResponseRedirect('/tasks/')
     else:
@@ -163,13 +160,13 @@ def new_regular_ticket(request):
                 period = request.POST.get('cronized'))                
             t.save()
             # отправляем уведомление исполнителю по мылу
-            send_email_alternative(u"Новая повторяющаяся задача: "+t.name,t.description+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/regular/"+str(t.id),[data['workers'].mail,data['clients'].mail],fio)
+            send_email_alternative(u"Новая повторяющаяся задача: "+t.name,u"*Описание*:\n\<table cellpadding='5' border='1'\>\<tr\>\<td\>"+t.description+u"\</tr\>\</td\>\</table\>\n\n*Посмотреть задачу можно тут*:\nhttp://"+server_ip+"/task/regular/"+str(t.id),[data['workers'].mail,data['clients'].mail],fio)
             set_last_activity(user,request.path)
             return HttpResponseRedirect('/tasks/')
     else:
         form = NewRegularTicketForm({'start_date':datetime.datetime.now(),'due_date':datetime.datetime.now(),'priority':3})
     set_last_activity(user,request.path)
-    return render_to_response('new_regular_task.html', {'form':form, 'method':method},RequestContext(request))
+    return render_to_response('new_regular_task.html', {'page_title':u'Новая повторяющаяся задача','form':form, 'method':method},RequestContext(request))
 @login_required
 def edit_regular_task(request,task_to_edit_id):
     if not acl(request,'regular',task_to_edit_id):
@@ -190,6 +187,7 @@ def edit_regular_task(request,task_to_edit_id):
         old_client = task_to_edit.client
         old_category = task_to_edit.category
         old_stop_date = task_to_edit.stop_date
+        old_start_date = task_to_edit.start_date
         old_name = task_to_edit.name
         if form.is_valid() and request.POST.get('cronized'):
             data = form.cleaned_data
@@ -201,21 +199,17 @@ def edit_regular_task(request,task_to_edit_id):
             task_to_edit.stop_date=data['stop_date']
             task_to_edit.worker=data['workers']
             task_to_edit.when_to_reminder=data['when_to_reminder']
-            task_to_edit.save()
-#            if task_to_edit.worker != old_worker:
-#                send_email(u"Изменён исполнитель задачи: "+task_to_edit.name,u"Прежний исполнитель:"+old_worker.fio+u"\nНовый исполнитель:"+task_to_edit.worker.fio+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/regular/"+str(task_to_edit.id),[task_to_edit.worker.mail,task_to_edit.client.mail,old_worker.mail]+admins_mail)
-#            if task_to_edit.stop_date != old_stop_date:
-#                send_email(u"Изменёна дата завершения регулярной задачи: "+task_to_edit.name,u"Прежная проблема:"+str(old_stop_date)+u"\nНовая проблема:"+str(task_to_edit.stop_date)+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/regular/"+str(task_to_edit.id),[task_to_edit.worker.mail,task_to_edit.client.mail,old_worker.mail])
-#            if task_to_edit.client != old_client:
-#                send_email(u"Изменён заказчик задачи: "+task_to_edit.name,u"Прежний заказчик:"+old_client.fio+u"\nНовый заказчик:"+task_to_edit.client.fio+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/regular/"+str(task_to_edit.id),[task_to_edit.worker.mail,task_to_edit.client.mail,old_worker.mail])
-#            if task_to_edit.category != old_category:
-#                send_email(u"Изменёна категория задачи: "+task_to_edit.name,u"Прежная категория:"+old_category.name+u"\nНовая категория:"+task_to_edit.category.name+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/regular/"+str(task_to_edit.id),[task_to_edit.worker.mail,task_to_edit.client.mail,old_worker.mail])
-            if task_to_edit.period != old_period:
-                send_email(u"Изменёна периодичность выполонения задачи: "+task_to_edit.name,u"Старый срок:"+crontab_to_russian(period)+u"\nНовый срок:"+crontab_to_russian(task_to_edit.period)+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/regular/"+str(task_to_edit.id),[task_to_edit.worker.mail,task_to_edit.client.mail,old_worker.mail]+admins_mail)
-                
+            task_to_edit.period=request.POST.get('cronized')
+            task_to_edit.save()            
+            if task_to_edit.start_date != old_start_date:
+                send_email_alternative(u"Изменена дата начала задачи: "+task_to_edit.name,
+                           u"\<table cellpadding='5' border='1'\>\<tr\>\<td\>Прежняя дата начала\</td\>\<td\>"+str(old_start_date)+u"\</td\>\</tr\>\<tr\>\<td\>Новая дата начала\</td\>\<td\>"+str(task_to_edit.start_date)+u"\</td\>\</tr\>\</table\>\n\n*Описание задачи*\<table cellpadding='5' border='1'\>\<tr\>\<td\>"+task_to_edit.description+u"\</td\>\</tr\>\</table\>\n\n*Посмотреть задачу можно тут*:\nhttp://"+server_ip+"/task/one_time/"+str(task_to_edit.id),
+                           [task_to_edit.worker.mail,task_to_edit.client.mail]+admins_mail,
+                           fio
+                           )
             if task_to_edit.name != old_name:
                 send_email_alternative(u"Изменёно название задачи: "+old_name,
-                           u"Прежнее название:"+old_name+u"\nНовое название:"+task_to_edit.name+u"\nОписание задачи:\n"+task_to_edit.description+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/regular/"+str(task_to_edit.id),
+                           u"\<table cellpadding='5' border='1'\>\<tr\>\<td\>Прежнее название\</td\>\<td\>"+old_name+u"\</td\>\</tr\>\<tr\>\<td\>Новое название\</td\>\<td\>"+task_to_edit.name+u"\</td\>\</tr\>\<tr\>\<td\>Описание задачи\</td\>\<td\>"+task_to_edit.description+u"\</td\>\</tr\>\</table\>\n*Посмотреть задачу можно тут*:\nhttp://"+server_ip+"/task/regular/"+str(task_to_edit.id),
                            [task_to_edit.worker.mail,task_to_edit.client.mail]+admins_mail,
                            fio
                            )
@@ -225,44 +219,38 @@ def edit_regular_task(request,task_to_edit_id):
                     task_to_edit.acl=task_to_edit.acl+";"+task_to_edit.worker.login
                     task_to_edit.save()
                 send_email_alternative(u"Изменён исполнитель задачи: "+task_to_edit.name,
-                           u"Прежний исполнитель:"+old_worker.fio+u"\nНовый исполнитель:"+task_to_edit.worker.fio+u"\nОписание задачи:\n"+task_to_edit.description+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/regular/"+str(task_to_edit.id),
+                           u"\<table cellpadding='5' border='1'\>\<tr\>\<td\>Прежний исполнитель\</td\>\<td\>"+old_worker.fio+u"\</td\>\</tr\>\<tr\>\<td\>Новый исполнитель\</td\>\<td\>"+task_to_edit.worker.fio+u"\</td\>\</tr\>\<tr\>\<td\>Описание задачи\</td\>\<td\>"+task_to_edit.description+u"\</td\>\</tr\>\</table\>\n*Посмотреть задачу можно тут*:\nhttp://"+server_ip+"/task/regular/"+str(task_to_edit.id),
                            [task_to_edit.worker.mail,task_to_edit.client.mail,old_worker.mail]+admins_mail,
                            fio
                            )
             if task_to_edit.stop_date != old_stop_date:
                 send_email_alternative(u"Изменёна дата завершения регулярной задачи: "+task_to_edit.name,
-                           u"Прежная проблема:"+str(old_stop_date)+u"\nНовая проблема:"+str(task_to_edit.stop_date)+u"\nОписание задачи:\n"+task_to_edit.description+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/regular/"+str(task_to_edit.id),
+                           u"\<table cellpadding='5' border='1'\>\<tr\>\<td\>Прежная проблема\</td\>\<td\>"+str(old_stop_date)+u"\</td\>\</tr\>\<tr\>\<td\>Новая проблема\</td\>\<td\>"+str(task_to_edit.stop_date)+u"\</td\>\</tr\>\<tr\>\<td\>Описание задачи\</td\>\<td\>"+task_to_edit.description+u"\</td\>\</tr\>\</table\>\n*Посмотреть задачу можно тут*:\nhttp://"+server_ip+"/task/regular/"+str(task_to_edit.id),
                            [task_to_edit.worker.mail,task_to_edit.client.mail]+admins_mail,
                            fio
                            )
-                           #send_email(u"Изменёно описание проблемы со слов пользователя для задачи: "+task_to_edit.name,
-                           #u"Прежная проблема:"+old_pbu.name+u"\nНовая проблема:"+task_to_edit.pbu.name+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/one_time/"+str(task_to_edit.id),
-                           #[task_to_edit.worker.mail,task_to_edit.client.mail,old_worker.mail])
             if task_to_edit.client != old_client:
                 # добавление нового исполнителя в acl
                 if task_to_edit.client.login not in task_to_edit.acl:
                     task_to_edit.acl=task_to_edit.acl+";"+task_to_edit.client.login
                     task_to_edit.save()
                 send_email_alternative(u"Изменён заказчик задачи: "+task_to_edit.name,
-                           u"Прежний заказчик:"+old_client.fio+u"\nНовый заказчик:"+task_to_edit.client.fio+u"\nОписание задачи:\n"+task_to_edit.description+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/regular/"+str(task_to_edit.id),
+                           u"\<table cellpadding='5' border='1'\>\<tr\>\<td\>Прежний заказчик\</td\>\<td\>"+old_client.fio+u"\</td\>\</tr\>\<tr\>\<td\>Новый заказчик\</td\>\<td\>"+task_to_edit.client.fio+u"\</td\>\</tr\>\<tr\>\<td\>Описание задачи\</td\>\<td\>"+task_to_edit.description+u"\</td\>\</tr\>\</table\>\n*Посмотреть задачу можно тут*:\nhttp://"+server_ip+"/task/regular/"+str(task_to_edit.id),
                            [task_to_edit.worker.mail,task_to_edit.client.mail,old_client.mail]+admins_mail,
                            fio
                            )
-                           #send_email(u"Изменён заказчик задачи: "+task_to_edit.name,u"Прежний заказчик:"+old_client.fio+u"\nНовый заказчик:"+task_to_edit.client.fio+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/one_time/"+str(task_to_edit.id),[task_to_edit.worker.mail,task_to_edit.client.mail,old_worker.mail])
             if task_to_edit.category != old_category:
                 send_email_alternative(u"Изменёна категория задачи: "+task_to_edit.name,
-                           u"Прежная категория:"+old_category.name+u"\nНовая категория:"+task_to_edit.category.name+u"\nОписание задачи:\n"+task_to_edit.description+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/regular/"+str(task_to_edit.id),
+                           u"\<table cellpadding='5' border='1'\>\<tr\>\<td\>Прежная категория\</td\>\<td\>"+old_category.name+u"\</td\>\</tr\>\<tr\>\<td\>Новая категория\</td\>\<td\>"+task_to_edit.category.name+u"\</td\>\</tr\>\<tr\>\<td\>Описание задачи\</td\>\<td\>"+task_to_edit.description+u"\</td\>\</tr\>\</table\>\n*Посмотреть задачу можно тут*:\nhttp://"+server_ip+"/task/regular/"+str(task_to_edit.id),
                            [task_to_edit.worker.mail,task_to_edit.client.mail]+admins_mail,
                            fio
                            )
-                           #send_email(u"Изменёна категория задачи: "+task_to_edit.name,u"Прежная категория:"+old_category.name+u"\nНовая категория:"+task_to_edit.category.name+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/one_time/"+str(task_to_edit.id),[task_to_edit.worker.mail,task_to_edit.client.mail,old_worker.mail])
             if task_to_edit.period != old_period:
                 send_email_alternative(u"Изменёна периодичность выполонения задачи: "+task_to_edit.name,
-                           u"Старый срок:"+crontab_to_russian(period)+u"\nНовый срок:"+crontab_to_russian(task_to_edit.period)+u"\nОписание задачи:\n"+task_to_edit.description+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/regular/"+str(task_to_edit.id),
+                           u"\<table cellpadding='5' border='1'\>\<tr\>\<td\>Старый срок\</td\>\<td\>"+crontab_to_russian(old_period)+u"\</td\>\</tr\>\<tr\>\<td\>Новый срок\</td\>\<td\>"+crontab_to_russian(task_to_edit.period)+u"\</td\>\</tr\>\<tr\>\<td\>Описание задачи\</td\>\<td\>"+task_to_edit.description+u"\</td\>\</tr\>\</table\>\n*Посмотреть задачу можно тут*:\nhttp://"+server_ip+"/task/regular/"+str(task_to_edit.id),
                            [task_to_edit.worker.mail,task_to_edit.client.mail]+admins_mail,
                            fio
                            )
-                           #send_email(u"Изменён срок выполонения задачи: "+task_to_edit.name,u"Старый срок:"+str(old_due_date)+u"\nНовый срок:"+str(task_to_edit.due_date)+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/one_time/"+str(task_to_edit.id),[task_to_edit.worker.mail,task_to_edit.client.mail,old_worker.mail]+admins_mail)
                 
             set_last_activity(user,request.path)
             return HttpResponseRedirect('/tasks/')
@@ -278,7 +266,7 @@ def edit_regular_task(request,task_to_edit_id):
             'workers' : task_to_edit.worker,
         })
     set_last_activity(user,request.path)
-    return render_to_response('new_regular_task.html', {'form':form, 'method':method,'period':task_to_edit.period,'russian_period':crontab_to_russian(task_to_edit.period)},RequestContext(request))
+    return render_to_response('new_regular_task.html', {'page_title':u'Редактировать повторяющуюся задачу','form':form, 'method':method,'period':task_to_edit.period,'russian_period':crontab_to_russian(task_to_edit.period)},RequestContext(request))
 
     
 @login_required
@@ -420,8 +408,8 @@ def tasks(request):
             task_to_confirm.confirmed = True
             task_to_confirm.confirmed_date = datetime.datetime.now()
             task_to_confirm.save()
-            send_email(u"Завершение задачи подтверждено: "+task_to_confirm.name,u"\nОписание задачи:\n"+task_to_confirm.description+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/one_time/"+str(task_to_confirm.id),[task_to_confirm.worker.mail,task_to_confirm.client.mail])
-        request.session['my_error'] = u'Выполнение задач успешно подтверждено!'
+            send_email_alternative(u"Завершение задачи подтверждено: "+task_to_confirm.name,u"Описание задачи\<table cellpadding='5' border='1'\>\<tr\>\<td\>"+task_to_confirm.description+u"\</td\>\</tr\>\</table\>\n*Посмотреть задачу можно тут*:\nhttp://"+server_ip+"/task/one_time/"+str(task_to_confirm.id),[task_to_confirm.worker.mail,task_to_confirm.client.mail])
+            request.session['my_error'] = u'Выполнение задач успешно подтверждено!'
         set_last_activity(user,request.path)
         return HttpResponseRedirect('/tasks/')
     # Если просто просматриваем список задач
@@ -576,7 +564,7 @@ def task(request,task_type,task_id):
                             acl_list.append(person.login)
                     task_full.acl = ';'.join(acl_list)
                     task_full.save()
-                    send_email_alternative(u"Новый комментарий к задаче: "+task_full.name,note.note+u"\nОписание задачи:\n"+task_full.description+u"\nПосмотреть задачу можно тут:\nhttp://1"+server_ip+"/task/"+task_addr[task_type]+"/"+str(task_full.id),mails,fio)
+                    send_email_alternative(u"Новый комментарий к задаче: "+task_full.name,u"*Комментарий*\<table cellpadding='5' border='1'\>\<tr\>\<td\>"+note.note+u"\</td\>\</tr\>\</table\>\n\n*Описание задачи*\<table cellpadding='5' border='1'\>\<tr\>\<td\>"+task_full.description+u"\</td\>\</tr\>\</table\>\n*Посмотреть задачу можно тут*:\nhttp://1"+server_ip+"/task/"+task_addr[task_type]+"/"+str(task_full.id),mails,fio)
                     set_last_activity(user,request.path)
                     return HttpResponseRedirect(request.get_full_path())
                 elif request.POST.get('answer_to_comment'):
@@ -590,12 +578,36 @@ def task(request,task_type,task_id):
                     note.parent_note.add(parent_note)
                     note.save()
                     mails = (parent_note.author.mail if parent_note.author.mail else '' ,)
-                    send_email_alternative(u"Ответ на ваш комментарий к задаче: "+task_full.name,u"Ваш комментарий:\n"+parent_note.note+u"\nОтветили:\n"+note.note+u"\nОписание задачи:\n"+task_full.description+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/"+task_addr[task_type]+"/"+str(task_full.id),mails,fio)
+                    send_email_alternative(u"Ответ на ваш комментарий к задаче: "+task_full.name,u"\<table cellpadding='5' border='1'\>\<tr\>\<td\>Ваш комментарий\</td\>\<td\>"+parent_note.note+u"\</td\>\</tr\>\<tr\>\<td\>Ответ\</td\>\<td\>\<table cellpadding='20'\>\<tr\>\<td\> "+note.note+u"\</td\>\</tr\>\</table\>\</td\>\</tr\>\</table\>\n\n*Описание задачи*:\<table border='1'\>\<tr\>\<td\>"+task_full.description+u"\</td\>\</tr\>\</table\>\n*Посмотреть задачу можно тут*:\nhttp://"+server_ip+"/task/"+task_addr[task_type]+"/"+str(task_full.id),mails,fio)
                     set_last_activity(user,request.path)
                     return HttpResponseRedirect(request.get_full_path())
                 elif request.POST.get('del_comment'):
                     note_to_del_id=request.POST.get('num')
                     note_to_del = Note.objects.get(id=note_to_del_id)
+                    # Если есть дочерние комментарии - прикрепить к родительской заметке или к задаче
+                    children_note=''
+                    parent_note=''
+                    try:
+                        children_note = note_to_del.children_note.get()
+                    except Note.DoesNotExist:
+                        pass
+                    try:
+                        parent_note= note_to_del.parent_note.get()
+                    except Note.DoesNotExist:
+                        pass
+                    # Если есть дочерний комментарий - работаем
+                    if children_note:
+                        # Если есть родительский комментарий - прикрепляем к нему
+                        if parent_note:
+                            parent_note.children_note.add(children_note)
+                            parent_note.save()
+                        # Если родительского комментария нет - прикрепляем к задаче
+                        else:
+                            if task_type == 'one_time':
+                                children_note.for_task.add(task_full)
+                            if task_type == 'regular':
+                                children_note.for_regular_task.add(task_full)
+                            children_note.save()                    
                     note_to_del.delete()
                     set_last_activity(user,request.path)
                     return HttpResponseRedirect(request.get_full_path())
@@ -612,7 +624,7 @@ def task(request,task_type,task_id):
                     old_comment = note_to_edit.note
                     note_to_edit.note = request.POST.get('text_note_to_edit')
                     note_to_edit.save()
-                    send_email_alternative(u"Отредактирован комментарий к задаче: "+task_full.name,u"Старый комментарий:"+old_comment+u"\nНовый комментарий"+note_to_edit.note+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/"+task_addr[task_type]+"/"+str(task_full.id),[task_full.worker.mail,task_full.client.mail],fio)
+                    send_email_alternative(u"Отредактирован комментарий к задаче: "+task_full.name,u"\<table cellpadding='5' border='1'\>\<tr\>\<td\>Старый комментарий\</td\>\<td\>"+old_comment+u"\</td\>\</tr\>\<tr\>\<td\>Новый комментарий\</td\>\<td\>"+note_to_edit.note+u"\</td\>\</tr\>\</table\>\n\n*Посмотреть задачу можно тут*:\nhttp://"+server_ip+"/task/"+task_addr[task_type]+"/"+str(task_full.id),[task_full.worker.mail,task_full.client.mail],fio)
                     set_last_activity(user,request.path)
                     return HttpResponseRedirect(request.get_full_path())
 
@@ -662,8 +674,7 @@ def close_task(request,task_to_close_id):
             task_to_close.percentage=100
             task_to_close.save()
             request.session['my_error'] = u'Задача благополучно закрыта! Ещё одну? ;)'
-            # send_email(u"Задача закрыта и требует подтверждения: "+task_to_close.name,u"\nПосмотреть задачу можно тут:\nhttp://192.168.1.157:8080/task/regular/"+str(task_to_close.id),[task_to_close.client.mail,]+admins_mail)
-            send_email_alternative(u"Задача закрыта и требует подтверждения: "+task_to_close.name,u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/one_time/"+str(task_to_close.id),[task_to_close.client.mail,]+admins_mail,fio)
+            send_email_alternative(u"Задача закрыта и требует подтверждения: "+task_to_close.name,u"*Описание задачи*\<table cellpadding='5' border='1'\>\<tr\>\<td\>"+task_to_close.description+u"\</td\>\</tr\>\</table\>\n\n*Посмотреть задачу можно тут*:\nhttp://"+server_ip+"/task/one_time/"+str(task_to_close.id),[task_to_close.client.mail,]+admins_mail,fio)
             return HttpResponseRedirect('/tasks/')
     # если хотим закрыть заявку
     else: 
@@ -699,7 +710,7 @@ def unclose_task(request,task_to_unclose_id):
         fio = FioError()
     task_to_unclose.percentage = 50
     task_to_unclose.save()
-    send_email(u"Задача открыта заново: "+task_to_unclose.name,u"\nПосмотреть задачу можно тут:\nhttp://192.168.1.157:8080/task/"+str(task_to_unclose.id),[task_to_unclose.client.mail,task_to_unclose.worker.mail]+admins_mail)
+    send_email_alternative(u"Задача открыта заново: "+task_to_unclose.name,u"*Описание задачи*\<table cellpadding='5' border='1'\>\<tr\>\<td\>"+task_to_unclose.description+u"\</td\>\</tr\>\</table\>\n\n*Посмотреть задачу можно тут*:\nhttp://"+server_ip+"/task/one_time/"+str(task_to_unclose.id),[task_to_unclose.client.mail,task_to_unclose.worker.mail]+admins_mail,fio)
     set_last_activity(user,request.path)
     return HttpResponseRedirect('/tasks/')
 @login_required
@@ -761,7 +772,7 @@ def confirm_task(request,task_to_confirm_id):
                 task_to_confirm.confirmed_date=data['confirmed_date']
                 task_to_confirm.save()
                 request.session['my_error'] = u'Выполнение задачи успешно подтверждено!'
-                send_email(u"Завершение задачи подтверждено: "+task_to_confirm.name,u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/"+str(task_to_confirm.id),[task_to_confirm.worker.mail,task_to_confirm.client.mail])
+                send_email_alternative(u"Завершение задачи подтверждено: "+task_to_confirm.name,u"*Описание задачи*\<table cellpadding='5' border='1'\>\<tr\>\<td\>"+task_to_confirm.description+u"\</td\>\</tr\>\</table\>\n\n*Посмотреть задачу можно тут*:\nhttp://"+server_ip+"/task/one_time/"+str(task_to_confirm.id),[task_to_confirm.worker.mail,task_to_confirm.client.mail],fio)
                 set_last_activity(user,request.path)
                 return HttpResponseRedirect('/tasks/')
             elif request.POST.get('del_comment'):
@@ -802,6 +813,7 @@ def edit_task(request,task_to_edit_id):
         old_worker = task_to_edit.worker
         old_pbu = task_to_edit.pbu
         old_client = task_to_edit.client
+        old_start_date = task_to_edit.start_date
         old_category = task_to_edit.category
         old_due_date = task_to_edit.due_date
         old_name = task_to_edit.name
@@ -821,7 +833,7 @@ def edit_task(request,task_to_edit_id):
             task_to_edit.save()
             if task_to_edit.name != old_name:
                 send_email_alternative(u"Изменёно название задачи: "+old_name,
-                           u"Прежнее название:"+old_name+u"\nНовое название:"+task_to_edit.name+u"\nОписание задачи:\n"+task_to_edit.description+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/one_time/"+str(task_to_edit.id),
+                           u"\<table cellpadding='5' border='1'\>\<tr\>\<td\>Прежнее название\</td\>\<td\>"+old_name+u"\</td\>\</tr\>\<tr\>\<td\>Новое название\</td\>\<td\>"+task_to_edit.name+u"\</td\>\</tr\>\</table\>\n\n*Описание задачи*\<table cellpadding='5' border='1'\>\<tr\>\<td\>"+task_to_edit.description+u"\</td\>\</tr\>\</table\>\n\n*Посмотреть задачу можно тут*:\nhttp://"+server_ip+"/task/one_time/"+str(task_to_edit.id),
                            [task_to_edit.worker.mail,task_to_edit.client.mail]+admins_mail,
                            fio
                            )
@@ -831,44 +843,44 @@ def edit_task(request,task_to_edit_id):
                     task_to_edit.acl=task_to_edit.acl+";"+task_to_edit.worker.login
                     task_to_edit.save()
                 send_email_alternative(u"Изменён исполнитель задачи: "+task_to_edit.name,
-                           u"Прежний исполнитель:"+old_worker.fio+u"\nНовый исполнитель:"+task_to_edit.worker.fio+u"\nОписание задачи:\n"+task_to_edit.description+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/one_time/"+str(task_to_edit.id),
+                           u"\<table cellpadding='5' border='1'\>\<tr\>\<td\>Прежний исполнитель\</td\>\<td\>"+old_worker.fio+u"\</td\>\</tr\>\<tr\>\<td\>Новый исполнитель\</td\>\<td\>"+task_to_edit.worker.fio+u"\</td\>\</tr\>\</table\>\n\n*Описание задачи*\<table cellpadding='5' border='1'\>\<tr\>\<td\>"+task_to_edit.description+u"\</td\>\</tr\>\</table\>\n\n*Посмотреть задачу можно тут*:\nhttp://"+server_ip+"/task/one_time/"+str(task_to_edit.id),
                            [task_to_edit.worker.mail,task_to_edit.client.mail,old_worker.mail]+admins_mail,
                            fio
                            )
             if task_to_edit.pbu != old_pbu:
                 send_email_alternative(u"Изменёно описание проблемы со слов пользователя для задачи: "+task_to_edit.name,
-                           u"Прежная проблема:"+old_pbu.name+u"\nНовая проблема:"+task_to_edit.pbu.name+u"\nОписание задачи:\n"+task_to_edit.description+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/one_time/"+str(task_to_edit.id),
+                           u"\<table cellpadding='5' border='1'\>\<tr\>\<td\>Прежная проблема\</td\>\<td\>"+old_pbu.name+u"\</td\>\</tr\>\<tr\>\<td\>Новая проблема\</td\>\<td\>"+task_to_edit.pbu.name+u"\</td\>\</tr\>\</table\>\n\n*Описание задачи*\<table cellpadding='5' border='1'\>\<tr\>\<td\>"+task_to_edit.description+u"\</td\>\</tr\>\</table\>\n\n*Посмотреть задачу можно тут*:\nhttp://"+server_ip+"/task/one_time/"+str(task_to_edit.id),
                            [task_to_edit.worker.mail,task_to_edit.client.mail]+admins_mail,
                            fio
                            )
-                           #send_email(u"Изменёно описание проблемы со слов пользователя для задачи: "+task_to_edit.name,
-                           #u"Прежная проблема:"+old_pbu.name+u"\nНовая проблема:"+task_to_edit.pbu.name+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/one_time/"+str(task_to_edit.id),
-                           #[task_to_edit.worker.mail,task_to_edit.client.mail,old_worker.mail])
             if task_to_edit.client != old_client:
                 # добавление нового заказчика в acl
                 if task_to_edit.client.login not in task_to_edit.acl:
                     task_to_edit.acl=task_to_edit.acl+";"+task_to_edit.client.login
                     task_to_edit.save()
                 send_email_alternative(u"Изменён заказчик задачи: "+task_to_edit.name,
-                           u"Прежний заказчик:"+old_client.fio+u"\nНовый заказчик:"+task_to_edit.client.fio+u"\nОписание задачи:\n"+task_to_edit.description+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/one_time/"+str(task_to_edit.id),
+                           u"\<table cellpadding='5' border='1'\>\<tr\>\<td\>Прежний заказчик\</td\>\<td\>"+old_client.fio+u"\</td\>\</tr\>\<tr\>\<td\>Новый заказчик\</td\>\<td\>"+task_to_edit.client.fio+u"\</td\>\</tr\>\</table\>\n\n*Описание задачи*\<table cellpadding='5' border='1'\>\<tr\>\<td\>"+task_to_edit.description+u"\</td\>\</tr\>\</table\>\n\n*Посмотреть задачу можно тут*:\nhttp://"+server_ip+"/task/one_time/"+str(task_to_edit.id),
                            [task_to_edit.worker.mail,task_to_edit.client.mail,old_client.mail]+admins_mail,
                            fio
                            )
-                           #send_email(u"Изменён заказчик задачи: "+task_to_edit.name,u"Прежний заказчик:"+old_client.fio+u"\nНовый заказчик:"+task_to_edit.client.fio+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/one_time/"+str(task_to_edit.id),[task_to_edit.worker.mail,task_to_edit.client.mail,old_worker.mail])
             if task_to_edit.category != old_category:
                 send_email_alternative(u"Изменёна категория задачи: "+task_to_edit.name,
-                           u"Прежная категория:"+old_category.name+u"\nНовая категория:"+task_to_edit.category.name+u"\nОписание задачи:\n"+task_to_edit.description+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/one_time/"+str(task_to_edit.id),
+                           u"\<table cellpadding='5' border='1'\>\<tr\>\<td\>Прежная категория\</td\>\<td\>"+old_category.name+u"\</td\>\</tr\>\<tr\>\<td\>Новая категория\</td\>\<td\>"+task_to_edit.category.name+u"\</td\>\</tr\>\</table\>\n\n*Описание задачи*\<table cellpadding='5' border='1'\>\<tr\>\<td\>"+task_to_edit.description+u"\</td\>\</tr\>\</table\>\n\n*Посмотреть задачу можно тут*:\nhttp://"+server_ip+"/task/one_time/"+str(task_to_edit.id),
                            [task_to_edit.worker.mail,task_to_edit.client.mail]+admins_mail,
                            fio
                            )
-                           #send_email(u"Изменёна категория задачи: "+task_to_edit.name,u"Прежная категория:"+old_category.name+u"\nНовая категория:"+task_to_edit.category.name+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/one_time/"+str(task_to_edit.id),[task_to_edit.worker.mail,task_to_edit.client.mail,old_worker.mail])
             if task_to_edit.due_date != old_due_date:
                 send_email_alternative(u"Изменён срок выполонения задачи: "+task_to_edit.name,
-                           u"Старый срок:"+str(old_due_date)+u"\nНовый срок:"+str(task_to_edit.due_date)+u"\nОписание задачи:\n"+task_to_edit.description+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/one_time/"+str(task_to_edit.id),
+                           u"\<table cellpadding='5' border='1'\>\<tr\>\<td\>Старый срок\</td\>\<td\>"+str(old_due_date)+u"\</td\>\</tr\>\<tr\>\<td\>Новый срок\</td\>\<td\>"+str(task_to_edit.due_date)+u"\</td\>\</tr\>\</table\>\n\n*Описание задачи*\<table cellpadding='5' border='1'\>\<tr\>\<td\>"+task_to_edit.description+u"\</td\>\</tr\>\</table\>\n\n*Посмотреть задачу можно тут*:\nhttp://"+server_ip+"/task/one_time/"+str(task_to_edit.id),
                            [task_to_edit.worker.mail,task_to_edit.client.mail]+admins_mail,
                            fio
                            )
-                           #send_email(u"Изменён срок выполонения задачи: "+task_to_edit.name,u"Старый срок:"+str(old_due_date)+u"\nНовый срок:"+str(task_to_edit.due_date)+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/one_time/"+str(task_to_edit.id),[task_to_edit.worker.mail,task_to_edit.client.mail,old_worker.mail]+admins_mail)
+            if task_to_edit.start_date != old_start_date:
+                send_email_alternative(u"Изменена дата начала задачи: "+task_to_edit.name,
+                           u"\<table cellpadding='5' border='1'\>\<tr\>\<td\>Прежняя дата начала\</td\>\<td\>"+str(old_start_date)+u"\</td\>\</tr\>\<tr\>\<td\>Новая дата начала\</td\>\<td\>"+str(task_to_edit.start_date)+u"\</td\>\</tr\>\</table\>\n\n*Описание задачи*\<table cellpadding='5' border='1'\>\<tr\>\<td\>"+task_to_edit.description+u"\</td\>\</tr\>\</table\>\n\n*Посмотреть задачу можно тут*:\nhttp://"+server_ip+"/task/one_time/"+str(task_to_edit.id),
+                           [task_to_edit.worker.mail,task_to_edit.client.mail]+admins_mail,
+                           fio
+                           )
             set_last_activity(user,request.path)
             return HttpResponseRedirect('/tasks/')
     else:
@@ -967,10 +979,7 @@ def deleted_tasks(request):
         task = ('Нет таких задач',)
     set_last_activity(user,request.path)
     return render_to_response('deleted_tasks.html', {'tasks':tasks,},RequestContext(request))
-def send_email(subject,message,to):
-    good_mails=[mail for mail in to if mail!='']
-    send_mail(subject,message,"meoc-it@mail.ru",good_mails)
-def send_email_alternative(subject,message,to,fio):
+def send_email_alternative(subject,message,to,fio=''):
     message_html = htmlize(message)
     good_mails=[mail for mail in to if mail!='']
     # good_mails.remove(fio.mail)
@@ -1072,7 +1081,9 @@ def add_children_task(request,parent_task_type,parent_task_id):
                 t.parent_regular_task.add(parent_task)
             t.save()
             # отправляем уведомление исполнителю по мылу
-            send_email(u"Новая подзадача: "+t.name+u" для задачи "+parent_task.name,t.description+u"\nПосмотреть подзадачу можно тут:\nhttp://"+server_ip+"/task/"+str(t.id)+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/"+str(parent_task.id),[data['workers'].mail,])
+            send_email_alternative(u"Новая подзадача: '"+t.name+u"' для задачи '"+parent_task.name+u"'",
+                       u"*Описание*\<table border='1' cellpadding='5'\>\<tr\>\<td\>"+t.description+u"\</td\>\</tr\>\</table\>\n\n*Посмотреть подзадачу можно тут*:\nhttp://"+server_ip+"/task/one_time/"+str(t.id)+u"\n*Посмотреть задачу можно тут*:\nhttp://"+server_ip+"/task/"+parent_task_type+"/"+str(parent_task.id),
+                       [data['workers'].mail,])
             set_last_activity(user,request.path)
             return HttpResponseRedirect('/tasks/')
     else:
