@@ -1026,6 +1026,8 @@ def all_tasks(request):
                 finded_rtasks_names = RegularTask.objects.filter(name__icontains = data['name'])
                 finded_rtasks_desc = RegularTask.objects.filter(description__icontains = data['name'])
                 notes = Note.objects.filter(note__icontains = data['name'])
+                finded_tasks_notes=[]
+                finded_rtasks_notes=[]
                 for note in notes:
                     finded_tasks_notes = find_parent_task(note = note,task_type='one_time')
                     finded_rtasks_notes = find_parent_task(note = note,task_type='regular')
