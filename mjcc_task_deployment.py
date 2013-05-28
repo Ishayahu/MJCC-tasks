@@ -391,7 +391,5 @@ def change_source_test_to_master(branch=''):
 	local('git merge %s' % branch)
 	# Выгружаем код
 	local('git push origin master')
-	
-
 
 	

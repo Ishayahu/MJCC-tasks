@@ -88,7 +88,7 @@ class UserCreationFormMY(UserCreationForm):
     tel = forms.CharField(label='Телефон', max_length=10, min_length=10)
     
 class TicketSearchForm(forms.Form):
-    name = forms.CharField(max_length=140, label='Название заявки')
+    name = forms.CharField(max_length=140, label='Текст для поиска')
 
 class NoteToTicketAddForm(forms.Form):
     def __init__(self, *args, **kwargs):

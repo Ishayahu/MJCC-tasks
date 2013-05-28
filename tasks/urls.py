@@ -60,8 +60,7 @@ urlpatterns = patterns('',
 
     # Uncomment the next line to enable the admin:
     url(r'^admin/', include(admin.site.urls)),
-# тестовые 
-    #url(r'^test_task/([^/]+)/(\d+)/$', views.test_task),
+    # тестовые 
     url(r'^$', views.tasks),
 
 )

@@ -45,17 +45,25 @@ def set_last_activity(login,url):
         la.timestamp =datetime.datetime.now()
         la.save()
     else:
-        try:
-            la = Activity.objects.filter(login=login,last_page='/tasks/')[0]
-        except (Activity.DoesNotExist,IndexError):
-            la = Activity()
-            la.login = login
-            la.last_page = '/tasks/'
-            la.timestamp =datetime.datetime.now()
-            la.save()
-        else:
-            la.timestamp =datetime.datetime.now()
-            la.save()
+        #try:
+            #la = Activity.objects.filter(login=login,last_page='/tasks/')[0]
+        #except Activity.DoesNotExist:
+            #la = Activity()
+            #la.login = login
+            #la.last_page = '/tasks/'
+            #la.timestamp =datetime.datetime.now()
+            #la.save()
+        #else:
+            #la.timestamp =datetime.datetime.now()
+            #la.save()
+        # Используем более короткий методы вышезакомментированного:
+        # Получаем последее посещение /tasks/ или создаём его, если его ещё нет и задаём текущее время для этой записи
+        la = Activity.objects.get_or_create(
+            login=login,
+            last_page='/tasks/',
+            defaults={'timestamp':datetime.datetime.now()})
+        la.timestamp =datetime.datetime.now()
+        la.save()
 def get_last_activities():
     """
     Получаем список последних действий пользователей - когда и что
@@ -251,7 +259,6 @@ def edit_regular_task(request,task_to_edit_id):
                            [task_to_edit.worker.mail,task_to_edit.client.mail]+admins_mail,
                            fio
                            )
-                
             set_last_activity(user,request.path)
             return HttpResponseRedirect('/tasks/')
     else:
@@ -758,8 +765,6 @@ def confirm_task(request,task_to_confirm_id):
     task_to_confirm = Task.objects.get(id=task_to_confirm_id)
     method = request.method
     try:
-        # fio = Worker.objects.get(login=user)
-    # except Worker.DoesNotExist:
         fio = Person.objects.get(login=user)
     except Person.DoesNotExist:
         fio = FioError()
@@ -992,6 +997,18 @@ def send_email_alternative(subject,message,to,fio=''):
     msg.send()
 @login_required
 def all_tasks(request):
+    def find_parent_task(note,task_type):
+        """
+        Поиск родительской заявки для примечания
+        """
+        try:
+            if note.parent_note:
+                return find_parent_task(note.parent_note.get(),task_type)
+        except Note.DoesNotExist:
+            if task_type=='one_time':
+                return Task.objects.filter(note = note)
+            else:
+                return RegularTask.objects.filter(note = note)
     user = request.user.username
     not_finded = False
     finded_tasks = False
@@ -1000,6 +1017,8 @@ def all_tasks(request):
         form = TicketSearchForm(request.POST)
         if form.is_valid():
             data = form.cleaned_data
+            # какая-то фигня - поиск должен не зависеть от регистра. Если ищем ascii - работает, если кирилицу - нет(
+            
             try:
                 finded_tasks_names = Task.objects.filter(name__icontains = data['name'])
                 finded_tasks_desc = Task.objects.filter(description__icontains = data['name'])
@@ -1007,8 +1026,8 @@ def all_tasks(request):
                 finded_rtasks_desc = RegularTask.objects.filter(description__icontains = data['name'])
                 notes = Note.objects.filter(note__icontains = data['name'])
                 for note in notes:
-                    finded_tasks_notes = Task.objects.filter(note = note)
-                    finded_rtasks_notes = RegularTask.objects.filter(note = note)
+                    finded_tasks_notes = find_parent_task(note = note,task_type='one_time')
+                    finded_rtasks_notes = find_parent_task(note = note,task_type='regular')
                 finded_tasks = list(chain(finded_tasks_names, finded_tasks_desc, finded_rtasks_names,finded_rtasks_desc,finded_tasks_notes,finded_rtasks_notes))
                 if not finded_tasks:
                     not_finded = True
