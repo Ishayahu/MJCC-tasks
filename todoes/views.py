@@ -1029,7 +1029,7 @@ def all_tasks(request):
                 for note in notes:
                     finded_tasks_notes = find_parent_task(note = note,task_type='one_time')
                     finded_rtasks_notes = find_parent_task(note = note,task_type='regular')
-                finded_tasks = list(chain(finded_tasks_names, finded_tasks_desc, finded_rtasks_names,finded_rtasks_desc,finded_tasks_notes,finded_rtasks_notes))
+                finded_tasks = list(set(chain(finded_tasks_names, finded_tasks_desc, finded_rtasks_names,finded_rtasks_desc,finded_tasks_notes,finded_rtasks_notes)))
                 if not finded_tasks:
                     not_finded = True
             except:
