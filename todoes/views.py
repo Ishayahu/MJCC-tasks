@@ -62,6 +62,7 @@ def set_last_activity(login,url):
             login=login,
             last_page='/tasks/',
             defaults={'timestamp':datetime.datetime.now()})
+        la=la[0]
         la.timestamp =datetime.datetime.now()
         la.save()
 def get_last_activities():

@@ -24,7 +24,7 @@ fab -f mjcc_task_deployment.py south_migrate:app=todoes,project=tasks
 
 fab -f mjcc_task_deployment.py deploy_server:directory=tasks,project=tasks,type_of_server=test
 
-fab -f mjcc_task_deployment.py start_deploy_server:branch=bug2,directory=tasks,project=tasks,type_of_server=test,github=https://github.com/Ishayahu/MJCC-tasks.git
+fab -f mjcc_task_deployment.py start_deploy_server:branch=,directory=tasks,project=tasks,type_of_server=test,github=https://github.com/Ishayahu/MJCC-tasks.git,e_mail='',e_pss=''
 
 fab -f mjcc_task_deployment.py change_source_test_to_master:branch=bug2
 """
