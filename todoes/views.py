@@ -2,12 +2,9 @@
 # coding=<utf8>
 
 from django.http import HttpResponse, Http404, HttpResponseRedirect
-# from django.template.loader import get_template
-# from django.template import Context
 from django.shortcuts import render_to_response
 import datetime
 from todoes.models import Note, Resource, File, Person, Task, ProblemByWorker, ProblemByUser, Categories, RegularTask, Activity
-# from todoes.models import Worker, Client
 from todoes.forms import NewTicketForm, NoteToTicketAddForm, UserCreationFormMY, TicketClosingForm, TicketConfirmingForm, TicketEditForm,TicketSearchForm, NewRegularTicketForm, EditRegularTicketForm, File_and_NoteToTicketAddForm
 from django.contrib.auth.decorators import login_required
 from django import forms
@@ -15,85 +12,26 @@ from django.contrib.auth.forms import UserCreationForm
 from django.template import RequestContext
 from django.core.mail import send_mail
 from django.core.mail import EmailMultiAlternatives
-from todoes.ize import decronize, crontab_to_russian, generate_next_reminder, htmlize
 from itertools import chain
-#from textile import textile
 
-server_ip = 'tasks.local:8080'
-admins = (
-    'ishayahu',)
-admins_mail = [
-    'meoc-it@mail.ru',]
+from djlib.cron_utils import decronize, crontab_to_russian, generate_next_reminder
+from djlib.text_utils import htmlize
+from djlib.acl_utils import acl
+from djlib.user_tracking import set_last_activity_model, get_last_activities
+from djlib.mail_utils import send_email_alternative
+
+from user_settings import server_ip, admins, admins_mail
+from user_settings import todoes_url_not_to_track as url_not_to_track
+from user_settings import todoes_url_one_record as url_one_record
+
+from todoes.utils import build_note_tree, note_with_indent, FioError
+
 task_types = {'one_time':Task,'regular':RegularTask}
 task_addr = {'one_time':'one_time','regular':'regular'}
-def acl(request,task_type,task_id):
-    user = request.user.username
-    task = task_types[task_type].objects.get(id = task_id)
-    if user in task.acl.split(';') or user in admins or not task.acl:
-        return True
-    else:
-        return False
-def set_last_activity(login,url):
-    """
-    Сохраняем последную деятельность пользователя на сайте - что и когда
-    Если url = /tasks/, то есть просто обновляется страница с заявками, чтобы не плодить мусор в БД просто обновляется последнее аналогичное посещение
-    """
-    if url!='/tasks/':
-        la = Activity()
-        la.login = login
-        la.last_page = url
-        la.timestamp =datetime.datetime.now()
-        la.save()
-    else:
-        try:
-            la = Activity.objects.filter(login=login,last_page='/tasks/')[0]
-        except Activity.DoesNotExist:
-            la = Activity()
-            la.login = login
-            la.last_page = '/tasks/'
-            la.timestamp =datetime.datetime.now()
-            la.save()
-        else:
-            la.timestamp =datetime.datetime.now()
-            la.save()
-def get_last_activities():
-    """
-    Получаем список последних действий пользователей - когда и что
-    """
-    # получаем список пользователей
-    users = Person.objects.all()
-    # для каждого пользователя получаем его последний url и дату и добавляем их в возвращаемый [] и давно ли это было
-    # первый элемент равен True, если последнее событие было в пределах последних 15 минут
-    last_activities=[]
-    for user in users:
-        try:
-            la = Activity.objects.filter(login=user.login)[0]
-            last_activities.append((la.timestamp >= datetime.datetime.now() - datetime.timedelta(minutes=15) ,user.fio, la.last_page, la.timestamp))
-        except IndexError:
-            pass
-    return last_activities
-# метод постороения дерева заметок
-def build_note_tree(root_note,notes,current_indent):
-    childrens = Note.objects.filter(parent_note=root_note).order_by('timestamp')
-    for note in childrens:
-	notes.append(note_with_indent(note,current_indent))
-	build_note_tree(note,notes,current_indent+1)
-# класс для заметки с отступом
-class note_with_indent():
-    def __init__(self, note, indent):
-	self.note = note.note
-	self.id = note.id
-	self.author = note.author
-	self.timestamp = note.timestamp
-	self.indent = '&#9676;'*indent
-	self.indent_pix = 4*indent
 
-class FioError():
-    def __init__(self):
-        self.mail=''
-        self.message='Нет такого пользователя'
-    def __str__(self):
-        return self.message
+
+def set_last_activity(login,url):
+    set_last_activity_model(login,url,url_not_to_track,url_one_record)
 
 @login_required
 def new_ticket(request):
@@ -121,8 +59,6 @@ def new_ticket(request):
                 acl = data['clients'].login+';'+data['workers'].login)
             t.save()
             # отправляем уведомление исполнителю по мылу
-            # send_mail(u"Новая задача: "+t.name,t.description+u"\nПосмотреть задачу можно тут:\nhttp://192.168.1.157:8080/task/"+str(t.id),"meoc-it@mail.ru",[data['workers'].mail,])
-            # send_email(u"Новая задача: "+t.name,t.description+u"\nПосмотреть задачу можно тут:\nhttp://192.168.1.157:8080/task/"+str(t.id),[data['workers'].mail,])
             send_email_alternative(u"Новая задача: "+t.name,t.description+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/one_time/"+str(t.id),[data['workers'].mail,data['clients'].mail],fio)
             set_last_activity(user,request.path)
             return HttpResponseRedirect('/tasks/')
@@ -196,14 +132,6 @@ def edit_regular_task(request,task_to_edit_id):
             task_to_edit.worker=data['workers']
             task_to_edit.when_to_reminder=data['when_to_reminder']
             task_to_edit.save()
-#            if task_to_edit.worker != old_worker:
-#                send_email(u"Изменён исполнитель задачи: "+task_to_edit.name,u"Прежний исполнитель:"+old_worker.fio+u"\nНовый исполнитель:"+task_to_edit.worker.fio+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/regular/"+str(task_to_edit.id),[task_to_edit.worker.mail,task_to_edit.client.mail,old_worker.mail]+admins_mail)
-#            if task_to_edit.stop_date != old_stop_date:
-#                send_email(u"Изменёна дата завершения регулярной задачи: "+task_to_edit.name,u"Прежная проблема:"+str(old_stop_date)+u"\nНовая проблема:"+str(task_to_edit.stop_date)+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/regular/"+str(task_to_edit.id),[task_to_edit.worker.mail,task_to_edit.client.mail,old_worker.mail])
-#            if task_to_edit.client != old_client:
-#                send_email(u"Изменён заказчик задачи: "+task_to_edit.name,u"Прежний заказчик:"+old_client.fio+u"\nНовый заказчик:"+task_to_edit.client.fio+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/regular/"+str(task_to_edit.id),[task_to_edit.worker.mail,task_to_edit.client.mail,old_worker.mail])
-#            if task_to_edit.category != old_category:
-#                send_email(u"Изменёна категория задачи: "+task_to_edit.name,u"Прежная категория:"+old_category.name+u"\nНовая категория:"+task_to_edit.category.name+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/regular/"+str(task_to_edit.id),[task_to_edit.worker.mail,task_to_edit.client.mail,old_worker.mail])
             if task_to_edit.period != old_period:
                 send_email(u"Изменёна периодичность выполонения задачи: "+task_to_edit.name,u"Старый срок:"+crontab_to_russian(period)+u"\nНовый срок:"+crontab_to_russian(task_to_edit.period)+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/regular/"+str(task_to_edit.id),[task_to_edit.worker.mail,task_to_edit.client.mail,old_worker.mail]+admins_mail)
                 
@@ -229,9 +157,6 @@ def edit_regular_task(request,task_to_edit_id):
                            [task_to_edit.worker.mail,task_to_edit.client.mail]+admins_mail,
                            fio
                            )
-                           #send_email(u"Изменёно описание проблемы со слов пользователя для задачи: "+task_to_edit.name,
-                           #u"Прежная проблема:"+old_pbu.name+u"\nНовая проблема:"+task_to_edit.pbu.name+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/one_time/"+str(task_to_edit.id),
-                           #[task_to_edit.worker.mail,task_to_edit.client.mail,old_worker.mail])
             if task_to_edit.client != old_client:
                 # добавление нового исполнителя в acl
                 if task_to_edit.client.login not in task_to_edit.acl:
@@ -242,22 +167,18 @@ def edit_regular_task(request,task_to_edit_id):
                            [task_to_edit.worker.mail,task_to_edit.client.mail,old_client.mail]+admins_mail,
                            fio
                            )
-                           #send_email(u"Изменён заказчик задачи: "+task_to_edit.name,u"Прежний заказчик:"+old_client.fio+u"\nНовый заказчик:"+task_to_edit.client.fio+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/one_time/"+str(task_to_edit.id),[task_to_edit.worker.mail,task_to_edit.client.mail,old_worker.mail])
             if task_to_edit.category != old_category:
                 send_email_alternative(u"Изменёна категория задачи: "+task_to_edit.name,
                            u"Прежная категория:"+old_category.name+u"\nНовая категория:"+task_to_edit.category.name+u"\nОписание задачи:\n"+task_to_edit.description+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/regular/"+str(task_to_edit.id),
                            [task_to_edit.worker.mail,task_to_edit.client.mail]+admins_mail,
                            fio
                            )
-                           #send_email(u"Изменёна категория задачи: "+task_to_edit.name,u"Прежная категория:"+old_category.name+u"\nНовая категория:"+task_to_edit.category.name+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/one_time/"+str(task_to_edit.id),[task_to_edit.worker.mail,task_to_edit.client.mail,old_worker.mail])
             if task_to_edit.period != old_period:
                 send_email_alternative(u"Изменёна периодичность выполонения задачи: "+task_to_edit.name,
                            u"Старый срок:"+crontab_to_russian(period)+u"\nНовый срок:"+crontab_to_russian(task_to_edit.period)+u"\nОписание задачи:\n"+task_to_edit.description+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/regular/"+str(task_to_edit.id),
                            [task_to_edit.worker.mail,task_to_edit.client.mail]+admins_mail,
                            fio
-                           )
-                           #send_email(u"Изменён срок выполонения задачи: "+task_to_edit.name,u"Старый срок:"+str(old_due_date)+u"\nНовый срок:"+str(task_to_edit.due_date)+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/one_time/"+str(task_to_edit.id),[task_to_edit.worker.mail,task_to_edit.client.mail,old_worker.mail]+admins_mail)
-                
+                           )                
             set_last_activity(user,request.path)
             return HttpResponseRedirect('/tasks/')
     else:
@@ -297,7 +218,6 @@ def set_reminder(request,task_type,task_id):
         dtt = datetime.datetime(*map(int,([data.strip().split('/')[2],data.strip().split('/')[1],data.strip().split('/')[0]]+time.strip().split(':'))))
         task_full.when_to_reminder = dtt
         task_full.save()
-        # return render_to_response('set_reminder.html', {'method':method,'data':data, 'time':time,'dtt':dtt},RequestContext(request))
         set_last_activity(user,request.path)
         return HttpResponseRedirect('/tasks/')
     else:
@@ -328,7 +248,6 @@ def move_to_call(request,task_type,task_id):
         cat_call = Categories.objects.get(name = 'Звонки')
         task_full.category = cat_call
         task_full.save()
-        # return render_to_response('set_reminder.html', {'method':method,'data':data, 'time':time,'dtt':dtt},RequestContext(request))
         set_last_activity(user,request.path)
         return HttpResponseRedirect('/tasks/')
     else:
@@ -382,9 +301,7 @@ def tasks(request):
         return HttpResponseRedirect('/tasks/')
     else:
         try:
-            # worker = Worker.objects.get(login=user)#.order_by("priority")
-            worker = Person.objects.get(login=user)#.order_by("priority")
-        # except Worker.DoesNotExist:
+            worker = Person.objects.get(login=user)
         except Person.DoesNotExist:
             worker = 'Нет такого пользователя'
         # получаем заявки ДЛЯ человека
@@ -412,14 +329,10 @@ def tasks(request):
             tasks_future = Task.objects.filter(deleted = False).filter(worker=worker,percentage__lt=100).filter(due_date__gt=datetime.datetime.now()).filter(start_date__lt=datetime.datetime.now()).filter(when_to_reminder__lt=datetime.datetime.now())
         except:
             tasks_future = ''# если задач нет - вывести это в шаблон
-            # my_error.append('Для Вас нет задач')
         # получаем заявки ОТ человека
-        # print user
         try:
             # отображаем только НЕ закрытые заявки, т.е. процент выполнения которых меньше 100
             try:
-                # client = Client.objects.get(login=user)
-            # except Worker.DoesNotExist:
                 client = Person.objects.get(login=user)
             except Person.DoesNotExist:
                 client = 'Нет такого пользователя'
@@ -435,7 +348,6 @@ def tasks(request):
             regular_tasks = RegularTask.objects.filter(deleted = False).filter(worker=worker).filter(next_date__lt=datetime.datetime.now()).filter(when_to_reminder__lt=datetime.datetime.now())
         except:
             regular_tasks = ''# если задач нет - вывести это в шаблон
-            # my_error.append('Для Вас нет задач')
         
         # получаем кол-во заявок в этот раз и сравниваем с тем, что было для уведомления всплывающим окном или ещё какой фигней
         alert = False
@@ -489,8 +401,6 @@ def task(request,task_type,task_id):
                 tmp_notes = Note.objects.filter(for_regular_task=task_full).order_by('-timestamp')
         except Note.DoesNotExist:
             tmp_notes = ('Нет подходящих заметок',)
-        # notes = _notes    
-        
         notes=[]
         for note in tmp_notes:
             notes.append(note_with_indent(note,0))
@@ -609,7 +519,6 @@ def close_task(request,task_to_close_id):
             task_to_close.percentage=100
             task_to_close.save()
             request.session['my_error'] = u'Задача благополучно закрыта! Ещё одну? ;)'
-            # send_email(u"Задача закрыта и требует подтверждения: "+task_to_close.name,u"\nПосмотреть задачу можно тут:\nhttp://192.168.1.157:8080/task/regular/"+str(task_to_close.id),[task_to_close.client.mail,]+admins_mail)
             send_email_alternative(u"Задача закрыта и требует подтверждения: "+task_to_close.name,u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/one_time/"+str(task_to_close.id),[task_to_close.client.mail,]+admins_mail,fio)
             return HttpResponseRedirect('/tasks/')
     # если хотим закрыть заявку
@@ -671,7 +580,6 @@ def to(request, to_who):
                 task.task_type=task_type
                 tasks.append(task)
     tasks_to = list(chain(tasks))
-    # tasks_to = Task.objects.filter(deleted = False).filter(category=Categories.objects.get(name=to_who).id)
     notes={}
     for task in tasks_to:
         task.description = htmlize(task.description)
@@ -694,8 +602,6 @@ def confirm_task(request,task_to_confirm_id):
     task_to_confirm = Task.objects.get(id=task_to_confirm_id)
     method = request.method
     try:
-        # fio = Worker.objects.get(login=user)
-    # except Worker.DoesNotExist:
         fio = Person.objects.get(login=user)
     except Person.DoesNotExist:
         fio = FioError()
@@ -788,9 +694,6 @@ def edit_task(request,task_to_edit_id):
                            [task_to_edit.worker.mail,task_to_edit.client.mail]+admins_mail,
                            fio
                            )
-                           #send_email(u"Изменёно описание проблемы со слов пользователя для задачи: "+task_to_edit.name,
-                           #u"Прежная проблема:"+old_pbu.name+u"\nНовая проблема:"+task_to_edit.pbu.name+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/one_time/"+str(task_to_edit.id),
-                           #[task_to_edit.worker.mail,task_to_edit.client.mail,old_worker.mail])
             if task_to_edit.client != old_client:
                 # добавление нового заказчика в acl
                 if task_to_edit.client.login not in task_to_edit.acl:
@@ -801,21 +704,18 @@ def edit_task(request,task_to_edit_id):
                            [task_to_edit.worker.mail,task_to_edit.client.mail,old_client.mail]+admins_mail,
                            fio
                            )
-                           #send_email(u"Изменён заказчик задачи: "+task_to_edit.name,u"Прежний заказчик:"+old_client.fio+u"\nНовый заказчик:"+task_to_edit.client.fio+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/one_time/"+str(task_to_edit.id),[task_to_edit.worker.mail,task_to_edit.client.mail,old_worker.mail])
             if task_to_edit.category != old_category:
                 send_email_alternative(u"Изменёна категория задачи: "+task_to_edit.name,
                            u"Прежная категория:"+old_category.name+u"\nНовая категория:"+task_to_edit.category.name+u"\nОписание задачи:\n"+task_to_edit.description+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/one_time/"+str(task_to_edit.id),
                            [task_to_edit.worker.mail,task_to_edit.client.mail]+admins_mail,
                            fio
                            )
-                           #send_email(u"Изменёна категория задачи: "+task_to_edit.name,u"Прежная категория:"+old_category.name+u"\nНовая категория:"+task_to_edit.category.name+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/one_time/"+str(task_to_edit.id),[task_to_edit.worker.mail,task_to_edit.client.mail,old_worker.mail])
             if task_to_edit.due_date != old_due_date:
                 send_email_alternative(u"Изменён срок выполонения задачи: "+task_to_edit.name,
                            u"Старый срок:"+str(old_due_date)+u"\nНовый срок:"+str(task_to_edit.due_date)+u"\nОписание задачи:\n"+task_to_edit.description+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/one_time/"+str(task_to_edit.id),
                            [task_to_edit.worker.mail,task_to_edit.client.mail]+admins_mail,
                            fio
                            )
-                           #send_email(u"Изменён срок выполонения задачи: "+task_to_edit.name,u"Старый срок:"+str(old_due_date)+u"\nНовый срок:"+str(task_to_edit.due_date)+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/one_time/"+str(task_to_edit.id),[task_to_edit.worker.mail,task_to_edit.client.mail,old_worker.mail]+admins_mail)
             set_last_activity(user,request.path)
             return HttpResponseRedirect('/tasks/')
     else:
@@ -857,6 +757,7 @@ def completle_delete_task(request,task_type,task_to_delete_id):
     task_to_delete.delete()
     set_last_activity(user,request.path)
     return HttpResponseRedirect('/tasks/')
+@login_required
 def deleted_tasks(request):
     user = request.user.username
     if user not in admins:
@@ -875,17 +776,7 @@ def deleted_tasks(request):
 def send_email(subject,message,to):
     good_mails=[mail for mail in to if mail!='']
     send_mail(subject,message,"meoc-it@mail.ru",good_mails)
-def send_email_alternative(subject,message,to,fio):
-    message_html = htmlize(message)
-    good_mails=[mail for mail in to if mail!='']
-    # good_mails.remove(fio.mail)
-    # send_mail(subject,message,"meoc-it@mail.ru",good_mails)
-    from_email = "meoc-it@mail.ru"
-    # text_content = 'This is an important message.'
-    # html_content = '<p>This is an <strong>important</strong> message.</p>'
-    msg = EmailMultiAlternatives(subject, message, from_email, good_mails)
-    msg.attach_alternative(message_html, "text/html")
-    msg.send()
+
 @login_required
 def all_tasks(request):
     user = request.user.username
@@ -1007,134 +898,3 @@ def get_all_logged_in_users(request):
     if user in admins:
         last_activities=get_last_activities()
         return render_to_response('logged_in_user_list.html', {'last_activities':last_activities,},RequestContext(request))
-
-def test_task(request,task_type,task_id):
-    # метод постороения дерева заметок
-    def build_note_tree(root_note,notes,current_indent):
-        childrens = Note.objects.filter(parent_note=root_note).order_by('timestamp')
-        for note in childrens:
-            notes.append(note_with_indent(note,current_indent))
-            build_note_tree(note,notes,current_indent+1)
-    # класс для заметки с отступом
-    class note_with_indent():
-        def __init__(self, note, indent):
-            self.note = note.note
-            self.id = note.id
-            self.author = note.author
-            self.timestamp = note.timestamp
-            self.indent = '&#9676;'*indent
-            self.indent_pix = 4*indent
-    def handle_uploaded_file(f):
-        destination = open(str(task_type)+'/'+str(task_id)+'/'+f.name, 'wb+')
-        for chunk in f.chunks():
-            destination.write(chunk)
-        destination.close()
-    if not acl(request,task_type,task_id):
-        request.session['my_error'] = u'Нет права доступа к этой задаче!'
-        return HttpResponseRedirect("/tasks/")
-    user = request.user.username
-    try:
-        fio = Person.objects.get(login=user)
-    except Person.DoesNotExist:
-        fio = FioError()
-    try:
-        # есть ли здача или она уже удалена?
-        task_full = task_types[task_type].objects.get(id=task_id)
-        try:
-            if task_type == 'one_time':
-                tmp_notes = Note.objects.filter(for_task=task_full).order_by('-timestamp')
-            if task_type == 'regular':
-                tmp_notes = Note.objects.filter(for_regular_task=task_full).order_by('-timestamp')
-        except Note.DoesNotExist:
-            tmp_notes = ('Нет подходящих заметок',)
-        # notes = _notes    
-        
-        notes=[]
-        for note in tmp_notes:
-            notes.append(note_with_indent(note,0))
-            build_note_tree(note,notes,1)
-        # получаем файлы к заявке
-        try:
-            if task_type == 'one_time':
-                files = File.objects.filter(for_task=task_full).order_by('-timestamp')
-            if task_type == 'regular':
-                files = File.objects.filter(for_regular_task=task_full).order_by('-timestamp')
-        except File.DoesNotExist:
-            files = ('Нет подходящих заметок',)
-        # подготовка к выводу
-        task_full.html_description = htmlize(task_full.description)
-        if task_type=='regular':
-            task_full.russian_period = crontab_to_russian(task_full.period)
-        method = request.method
-        if request.method == 'POST':
-            form = File_and_NoteToTicketAddForm(request.POST, request.FILES)
-            if form.is_valid():
-                handle_uploaded_file(request.FILES['file'])
-                data = form.cleaned_data
-                if request.POST.get('add_comment'):
-                    note = Note(
-                        timestamp = datetime.datetime.now(),
-                        note = data['note'],
-                        author = fio
-                    )
-                    note.save()
-                    if task_type == 'one_time':
-                        note.for_task.add(task_full)
-                    if task_type == 'regular':
-                        note.for_regular_task.add(task_full)
-                    note.save()
-                    mails = [person.mail for person in data['workers']]
-                    acl_list = task_full.acl.split(';')
-                    for person in data['workers']:
-                        if person.login not in acl_list:
-                            acl_list.append(person.login)
-                    task_full.acl = ';'.join(acl_list)
-                    task_full.save()
-                    send_email_alternative(u"Новый комментарий к задаче: "+task_full.name,note.note+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/"+task_addr[task_type]+"/"+str(task_full.id),mails,fio)
-                    return HttpResponseRedirect(request.get_full_path())
-                elif request.POST.get('answer_to_comment'):
-                    parent_note = Note.objects.get(id=int(request.POST.get('to_note')))
-                    note = Note(
-                        timestamp = datetime.datetime.now(),
-                        note = request.POST.get('answer'),
-                        author = fio,
-                    )
-                    note.save()
-                    note.parent_note.add(parent_note)
-                    note.save()
-                    mails = (parent_note.author.mail if parent_note.author.mail else '' ,)
-                    send_email_alternative(u"Ответ на ваш комментарий к задаче: "+task_full.name,note.note+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/"+task_addr[task_type]+"/"+str(task_full.id),mails,fio)
-                    return HttpResponseRedirect(request.get_full_path())
-                elif request.POST.get('del_comment'):
-                    note_to_del_id=request.POST.get('num')
-                    note_to_del = Note.objects.get(id=note_to_del_id)
-                    note_to_del.delete()
-                    return HttpResponseRedirect(request.get_full_path())
-                elif request.POST.get('edit_comment'):
-                    note_to_edit_id = request.POST.get('num')
-                    for note in notes:
-                        if note.id != int(note_to_edit_id):
-                            note.note = htmlize(note.note)
-                    return render_to_response('task.html',{'user':user,'fio':fio,'task':task_full,'notes':notes, 'form':form,'note_to_edit_id':int(note_to_edit_id),'task_type':task_type},RequestContext(request))
-                elif request.POST.get('save_edited_comment'):
-                    note_to_edit_id = request.POST.get('num')
-                    note_to_edit = Note.objects.get(id=note_to_edit_id)
-                    old_comment = note_to_edit.note
-                    note_to_edit.note = request.POST.get('text_note_to_edit')
-                    note_to_edit.save()
-                    send_email_alternative(u"Отредактирован комментарий к задаче: "+task_full.name,u"Старый комментарий:"+old_comment+u"\nНовый комментарий"+note_to_edit.note+u"\nПосмотреть задачу можно тут:\nhttp://"+server_ip+"/task/"+task_addr[task_type]+"/"+str(task_full.id),[task_full.worker.mail,task_full.client.mail],fio)
-                    return HttpResponseRedirect(request.get_full_path())
-
-        else:
-            form = File_and_NoteToTicketAddForm(defaults = (task_full.worker.fio, task_full.client.fio),exclude = (fio,))
-            for note in notes:
-                note.note = htmlize(note.note)
-            return render_to_response('task.html',{'user':user,'fio':fio,'task':task_full,'notes':notes, 'form':form,'task_type':task_type},RequestContext(request))
-    # если задачи нет - возвращаем к списку с ошибкой
-    except Task.DoesNotExist:
-        # print 'here'
-        # return tasks(request, my_error=u'Такой задачи нет. Возможно она была уже удалена')
-        request.session['my_error'] = u'Такой задачи нет. Возможно она была уже удалена'
-        return HttpResponseRedirect('/tasks/')
-    # никогда не выполняется. нужно только для проформы
-    return HttpResponseRedirect("/tasks/")

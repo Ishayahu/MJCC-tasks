@@ -13,40 +13,40 @@ admin.autodiscover()
 # from django.contrib import admin
 # admin.autodiscover()
 urlpatterns = patterns('',
-    # просмотр задач
+    # РїСЂРѕСЃРјРѕС‚СЂ Р·Р°РґР°С‡
     url(r'^tasks/$', todoes.views.tasks),
-    # просмотр всех задач
+    # РїСЂРѕСЃРјРѕС‚СЂ РІСЃРµС… Р·Р°РґР°С‡
     url(r'^all_task/$', todoes.views.all_tasks),
 
-# обычные задачи
+# РѕР±С‹С‡РЅС‹Рµ Р·Р°РґР°С‡Рё
     url(r'^new_ticket/$', todoes.views.new_ticket),
     url(r'^edit/([^/]+)/$', todoes.views.edit_task),
-    # закрытие / отмена закрытия заявки
+    # Р·Р°РєСЂС‹С‚РёРµ / РѕС‚РјРµРЅР° Р·Р°РєСЂС‹С‚РёСЏ Р·Р°СЏРІРєРё
     url(r'^close/([^/]+)/$', todoes.views.close_task),
     url(r'^unclose/([^/]+)/$', todoes.views.unclose_task),
-    # подтверждение выполнения задачи
+    # РїРѕРґС‚РІРµСЂР¶РґРµРЅРёРµ РІС‹РїРѕР»РЅРµРЅРёСЏ Р·Р°РґР°С‡Рё
     url(r'^confirm/([^/]+)/$', todoes.views.confirm_task),
-# повторяющиеся задачи    
-    # создание повторяющейся задачи
+# РїРѕРІС‚РѕСЂСЏСЋС‰РёРµСЃСЏ Р·Р°РґР°С‡Рё    
+    # СЃРѕР·РґР°РЅРёРµ РїРѕРІС‚РѕСЂСЏСЋС‰РµР№СЃСЏ Р·Р°РґР°С‡Рё
     url(r'^new_regular_ticket/$', todoes.views.new_regular_ticket),
-    # редактирование повторяющейся задачи
+    # СЂРµРґР°РєС‚РёСЂРѕРІР°РЅРёРµ РїРѕРІС‚РѕСЂСЏСЋС‰РµР№СЃСЏ Р·Р°РґР°С‡Рё
     url(r'^edit_regular/([^/]+)/$', todoes.views.edit_regular_task),
-    # отметка как сделанная повторяющейся задачи
+    # РѕС‚РјРµС‚РєР° РєР°Рє СЃРґРµР»Р°РЅРЅР°СЏ РїРѕРІС‚РѕСЂСЏСЋС‰РµР№СЃСЏ Р·Р°РґР°С‡Рё
     url(r'^regular_task_done/([^/]+)/$', views.regular_task_done),
-# общее для всех задач    
+# РѕР±С‰РµРµ РґР»СЏ РІСЃРµС… Р·Р°РґР°С‡    
     url(r'^task/([^/]+)/(\d+)/$', todoes.views.task),
-    # установка напоминалки повторяющейся задачи
-    # удаление повторяющейся задачи
+    # СѓСЃС‚Р°РЅРѕРІРєР° РЅР°РїРѕРјРёРЅР°Р»РєРё РїРѕРІС‚РѕСЂСЏСЋС‰РµР№СЃСЏ Р·Р°РґР°С‡Рё
+    # СѓРґР°Р»РµРЅРёРµ РїРѕРІС‚РѕСЂСЏСЋС‰РµР№СЃСЏ Р·Р°РґР°С‡Рё
     url(r'^deleted_tasks/$', todoes.views.deleted_tasks),
     url(r'^delete/([^/]+)/(\d+)/$', todoes.views.delete_task),
     url(r'^completle_delete/([^/]+)/(\d+)/$', todoes.views.completle_delete_task),
     url(r'^undelete/([^/]+)/(\d+)/$', todoes.views.undelete_task),
     url(r'^add_children_task/([^/]+)/(\d+)/$', todoes.views.add_children_task),
-    # http://192.168.1.157:8080/move_to_call/47 - изменение категории на "Звонки"
+    # http://192.168.1.157:8080/move_to_call/47 - РёР·РјРµРЅРµРЅРёРµ РєР°С‚РµРіРѕСЂРёРё РЅР° "Р—РІРѕРЅРєРё"
     url(r'^move_to_call/([^/]+)/(\d+)/$', todoes.views.move_to_call),
-    # http://192.168.1.157:8080/set_reminder/47 - установка напоминания для задачи
+    # http://192.168.1.157:8080/set_reminder/47 - СѓСЃС‚Р°РЅРѕРІРєР° РЅР°РїРѕРјРёРЅР°РЅРёСЏ РґР»СЏ Р·Р°РґР°С‡Рё
     url(r'^set_reminder/([^/]+)/(\d+)/$', todoes.views.set_reminder), 
-# Для администратора:
+# Р”Р»СЏ Р°РґРјРёРЅРёСЃС‚СЂР°С‚РѕСЂР°:
     url(r'^users/', todoes.views.get_all_logged_in_users),
     url(r'^tasks/to/([^/]+)/$', todoes.views.to),
     
@@ -60,8 +60,6 @@ urlpatterns = patterns('',
 
     # Uncomment the next line to enable the admin:
     url(r'^admin/', include(admin.site.urls)),
-# тестовые 
-    url(r'^test_task/([^/]+)/(\d+)/$', todoes.views.test_task),
     url(r'^$', todoes.views.tasks),
 
 )

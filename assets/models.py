@@ -41,6 +41,7 @@ class Garanty(models.Model):
     number = models.IntegerField() 
 class Asset_type(models.Model):
     asset_type = models.CharField(max_length=200)
+    catalogue_name = models.CharField(max_length=30)
 class Status(models.Model):
     status = models.CharField(max_length=100)
 class Budget(models.Model):
@@ -85,6 +86,7 @@ class Cartridge_Printer(model.Models):
 # Все варианты выбора, такие как производители, форм-факторы памяти и т.д. хранятся в catalogue.py
 import catalogue
 class ROM(models.Model):
+    model_name = models.CharField(max_length=50)
     firm = models.CharField(max_length=50, choises = catalogue.ROM_firms)
     rom_type = models.CharField(max_length=50, choises = catalogue.ROM_type)
     form_factor = models.CharField(max_length=50, choises = catalogue.ROM_form_factors)
@@ -94,6 +96,7 @@ class ROM(models.Model):
     low_profile = models.BooleanField(default=False)
     radiator = models.BooleanField(default=False)
 class Cooler(models.Model):
+    model_name = models.CharField(max_length=50)
     firm = models.CharField(max_length=50, choises = catalogue.Cooler_firms)
     destination = models.CharField(max_length=50, choises = catalogue.Cooler_destination)
     sockets = models.TextField(blank = True, null = True)
@@ -104,6 +107,7 @@ class Cooler(models.Model):
     cfm = models.CharField(max_length=15)
     noise  = models.CharField(max_length=20)
 class Storage(models.Model):
+    model_name = models.CharField(max_length=50)
     firm = models.CharField(max_length=50, choises = catalogue.Storage_firms)
     form_factor = models.CharField(max_length=10, choises = catalogue.Storage_form_factor)
     volume = models.IntegerField()
@@ -113,6 +117,7 @@ class Storage(models.Model):
     v_read = models.IntegerField()
     v_write = models.IntegerField()
 class Acoustics(models.Model):
+    model_name = models.CharField(max_length=50)
     firm = models.CharField(max_length=50, choises = catalogue.Acoustics_firms)
     acoustics_type = models.CharField(max_length=10, choises = catalogue.Acoustics_type)
     # Суммарная мощность в ваттах
@@ -126,6 +131,7 @@ class Acoustics(models.Model):
     # В децебелах
     signal_noise_ratio = models.CharField(max_length=20)
 class Telephone(models.Model):
+    model_name = models.CharField(max_length=50)
     firm = models.CharField(max_length=50, choises = catalogue.Telephone_firms)
     aon = models.BooleanField(default=False)
     display = models.BooleanField(default=False)
@@ -138,16 +144,19 @@ class Telephone(models.Model):
     GAP = models.BooleanField(default=False)
     headset = models.BooleanField(default=False)
 class Battery(models.Model):
+    model_name = models.CharField(max_length=50)
     firm = models.CharField(max_length=50, choises = catalogue.Battery_firms)
     battery_type = models.CharField(max_length=10, choises = catalogue.Battery_type)
     rechargeable = models.BooleanField(default=False)
 class Optical_Drive(models.Model):
+    model_name = models.CharField(max_length=50)
     firm = models.CharField(max_length=50, choises = catalogue.Optical_Drive_firms)
     optical_drive_type = models.CharField(max_length=10, choises = catalogue.Optical_drive_type)
     interface = models.CharField(max_length=20, choises = catalogue.Optical_Drive_interfaces)
 class Network_equipment(models.Model):
+    model_name = models.CharField(max_length=50)
     firm = models.CharField(max_length=50, choises = catalogue.Network_equipment_firms)
-    firm = models.CharField(max_length=15, choises = catalogue.Network_equipment_type)
+    equipment_type = models.CharField(max_length=15, choises = catalogue.Network_equipment_type)
     # Можно устанавливать в стойку
     rackable = models.BooleanField(default=False)
     dhcp_server = models.BooleanField(default=False)
@@ -155,16 +164,96 @@ class Network_equipment(models.Model):
     nat = models.BooleanField(default=False)
     vpn = models.BooleanField(default=False)
     ipv6_ready = models.BooleanField(default=False)
-    WiFi= models.CharField(max_length=20, choises = catalogue.Network_equipment_WiFi_type)    
+    WiFi = models.CharField(max_length=20, choises = catalogue.Network_equipment_WiFi_type)    
     SNMP = models.BooleanField(default=False)
     Web = models.BooleanField(default=False)
     Telnet = models.BooleanField(default=False)
     Serial = models.BooleanField(default=False)
 class Printer(models.Model):
-    network
-    firm
-    color
-    v_print
+    model_name = models.CharField(max_length=50)
+    network = models.BooleanField(default=False)
+    firm = models.CharField(max_length=20, choises = catalogue.Printer_firm)    
+    color = models.BooleanField(default=False)
+    v_print = models.IntegerField()
+class Power_suply(models.Model):
+    model_name = models.CharField(max_length=50)
+    firm = models.CharField(max_length=20, choises = catalogue.Power_suply_firm) 
+    power = models.IntegerField()
+    modular = models.BooleanField(default=False)
+    performance = models.IntegerField(max_digits=2)
+    ATX_version = models.CharField(max_length=10, choises = catalogue.Power_ATX_version) 
+    number_of_sata = models.IntegerField(max_digits=1)
+    number_of_molex = models.IntegerField(max_digits=1)
+class Motherboard(models.Model):
+    model_name = models.CharField(max_length=50)
+    firm = models.CharField(max_length=20, choises = catalogue.Motherboard_firm) 
+    socket = models.CharField(max_length=20, choises = catalogue.Sockets) 
+    chipset = models.CharField(max_length=20, choises = catalogue.Motherboard_chipset) 
+    EFI = models.BooleanField(default=False)
+    rom_type = models.CharField(max_length=20, choises = catalogue.Motherboard_rom_types) 
+    rom_number = models.IntegerField()
+    rom_max_value = models.IntegerField()
+    rom_frequency = models.CharField(max_length=50)
+    FSB  = models.CharField(max_length=50)
+    FDD = models.IntegerField()
+    IDE = models.IntegerField()
+    COM = models.IntegerField()
+    USB2 = models.IntegerField()
+    USB3 = models.IntegerField()
+    PCI_E_number = models.IntegerField()
+    PCI_E_type = models.CharField(max_length=10, choises = catalogue.Motherboard_pci_e_types) 
+    graphics = models.CharField(max_length=10, choises = catalogue.Motherboard_integrated_graphics) 
+    form_factor = models.CharField(max_length=10, choises = catalogue.Motherboard_form_factor) 
+    HDMI = models.BooleanField(default=False)
+    SLI = models.BooleanField(default=False)
+    CrossFire = models.BooleanField(default=False)
+    eSATA = models.IntegerField()
+    SATA_RAID = models.CharField(max_length=15) 
+    Ethernet = models.CharField(max_length=20, choises = catalogue.Ethernet_types) 
+    Ethernet_number = models.IntegerField()
+    WiFi = models.CharField(max_length=20, choises = catalogue.WiFi_types) 
+    Bluetooth = models.BooleanField(default=False)
+    Audio = models.CharField(max_length=10, choises = catalogue.Motherboard_audio) 
+    FireWire = models.IntegerField()
+    LPT = models.IntegerField()
+    PS_2 = models.IntegerField()
+    DisplayPort = models.IntegerField()
+    SupportedROM = models.TextField()
+    SupportedCPU = models.TextField()
+class CPU(models.Model):
+    model_name = models.CharField(max_length=50)
+    firm = models.CharField(max_length=20, choises = catalogue.CPU_firm) 
+    socket = models.CharField(max_length=20, choises = catalogue.Sockets) 
+    frequency = models.CharField(max_length=20) 
+    core = models.CharField(max_length=20, choises = catalogue.CPU_core) 
+    L1 = models.CharField(max_length=20, choises = catalogue.CPU_L1) 
+    L2 = models.CharField(max_length=20, choises = catalogue.CPU_L2) 
+    L3 = models.CharField(max_length=20, choises = catalogue.CPU_L3) 
+    technology = models.CharField(max_length=20, choises = catalogue.CPU_technology) 
+    core_number = models.IntegerField()
+    VT = models.BooleanField(default=False)
+    integrated_graphics = models.BooleanField(default=False)
+    TPD = models.CharField(max_length=20) 
+class Case(models.Model):
+    model_name = models.CharField(max_length=50)
+    firm = models.CharField(max_length=20, choises = catalogue.Case_firm)     
+    form_factor = models.CharField(max_length=20, choises = catalogue.Case_form_factor)   
+    supported_mb_types = models.TextField()   
+    place_of_power_suply = models.CharField(max_length=20, choises = catalogue.Case_power_suply_place)     
+    usb_fp = models.IntegerField()
+    audio_fp = models.IntegerField()
+    eSATA_fp = models.IntegerField()
+    eSATA_rp = models.IntegerField()
+    FireWire_fp = models.IntegerField()
+    FireWire_rp = models.IntegerField()
+    number_of_35 = models.IntegerField()
+    number_of_525 = models.IntegerField()
+    water_ready = models.BooleanField(default=False)
+    number_of_extension_slot = models.IntegerField()
+    number_of_fan_places = models.IntegerField()
+    size = models.CharField(max_length=50)
+    
+    
     
     
 """
