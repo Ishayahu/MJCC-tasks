@@ -31,6 +31,14 @@ class Cashless(models.Model):
     date_of_documents = models.DateTimeField()
     price = models.DecimalField(decimal_places=2, max_digits=8)
     contractor = models.ForeignKey('Contractor')
+class Claim(models.Model):
+    date_of_invoice = models.DateTimeField()
+    dates = models.TextField()
+    stages = models.TextField()
+    date_of_assets = models.DateTimeField()
+    date_of_documents = models.DateTimeField()
+    price = models.DecimalField(decimal_places=2, max_digits=8)
+    contractor = models.ForeignKey('Contractor')
 class Contractor(models.Model):
     name = models.CharField(max_length=140)
     tel = models.CharField(max_length=10,blank = True, null = True)
@@ -61,7 +69,7 @@ class Repair(models.Model):
 class Place_Asset(models.Model):
     installation_date = models.DateTimeField()
     drawdown_date = models.DateTimeField()
-    asset = models.ForeignKey('Asset')
+    asset = models.ForeignKey('Asset',related_name='for_asset')
     place = models.ForeignKey('Place')
     reason_of_drawdown = models.TextField()
 class Place(models.Model):
@@ -180,10 +188,10 @@ class Power_suply(models.Model):
     firm = models.CharField(max_length=20, choices = catalogue.Power_suply_firm) 
     power = models.IntegerField()
     modular = models.BooleanField(default=False)
-    performance = models.DecimalField(max_digits=2)
+    performance = models.DecimalField(max_digits=4,decimal_places=2)
     ATX_version = models.CharField(max_length=10, choices = catalogue.Power_ATX_version) 
-    number_of_sata = models.DecimalField(max_digits=1)
-    number_of_molex = models.DecimalField(max_digits=1)
+    number_of_sata = models.DecimalField(max_digits=1,decimal_places=0)
+    number_of_molex = models.DecimalField(max_digits=1,decimal_places=0)
 class Motherboard(models.Model):
     model_name = models.CharField(max_length=50)
     firm = models.CharField(max_length=20, choices = catalogue.Motherboard_firm) 
