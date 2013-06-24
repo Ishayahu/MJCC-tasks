@@ -6,3 +6,4 @@ admins_mail = [
 todoes_url_one_record = (
         '/tasks/',
         )
+todoes_url_not_to_track=''

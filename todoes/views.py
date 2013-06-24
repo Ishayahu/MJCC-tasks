@@ -19,12 +19,13 @@ from djlib.text_utils import htmlize
 from djlib.acl_utils import acl
 from djlib.user_tracking import set_last_activity_model, get_last_activities
 from djlib.mail_utils import send_email_alternative
+from djlib.error_utils import FioError
 
-from user_settings import server_ip, admins, admins_mail
-from user_settings import todoes_url_not_to_track as url_not_to_track
-from user_settings import todoes_url_one_record as url_one_record
+from user_settings.settings import server_ip, admins, admins_mail
+from user_settings.settings import todoes_url_not_to_track as url_not_to_track
+from user_settings.settings import todoes_url_one_record as url_one_record
 
-from todoes.utils import build_note_tree, note_with_indent, FioError
+from todoes.utils import build_note_tree, note_with_indent
 
 task_types = {'one_time':Task,'regular':RegularTask}
 task_addr = {'one_time':'one_time','regular':'regular'}

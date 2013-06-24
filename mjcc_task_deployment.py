@@ -31,14 +31,14 @@ from __future__ import with_statement
 from fabric.api import *
 from fabric.contrib.console import confirm
 # Словарь паролей
-env.passwords={'ishayahu@192.168.1.25':'aA111111','ishayahu@192.168.1.249':'aA111111'}
+env.passwords={'ishayahu@192.168.1.25':'aA111111','ishayahu@192.168.1.183':'aA111111'}
 env.shell='/bin/csh -c'
 # папка с fab файлом
 deployment_folder = '/usr/home/ishayahu/docsrv/scripts/MJCC-tasks/'
 # папка с исходниками в локальном git репозитории
 source_folder = '/usr/home/ishayahu/docsrv/scripts/MJCC-tasks/'
 # Сервера для выполнения задачи
-servers= {'test':['ishayahu@192.168.1.249',],
+servers= {'test':['ishayahu@192.168.1.183',],
           'deploy' : ['ishayahu@192.168.1.25',]
           }
 
@@ -306,7 +306,7 @@ def start_deploy_server(branch='', directory='',github='', project='',type_of_se
                 if type_of_server=='deploy':
                     make_and_send_settings(host='192.168.1.24',port='5432',email_host='smtp.gmail.com',email_port='25',email_user=e_mail,email_password=e_psswd,where_to_place='~/tasks/tasks/')
                 if type_of_server=='test':
-                    make_and_send_settings(host='',port='5432',email_host='smtp.gmail.com',email_port='25',email_user=e_mail,email_password=e_psswd,where_to_place='~/tasks/tasks/')
+                    make_and_send_settings(host='192.168.1.136',port='5432',email_host='smtp.gmail.com',email_port='25',email_user=e_mail,email_password=e_psswd,where_to_place='~/tasks/tasks/')
 	    # Запускаем сервер для проверки
 	    #run('python manage.py runserver 0.0.0.0:8080')
 	
@@ -327,7 +327,7 @@ def deploy_server(directory='', project='',type_of_server='',e_mail='',e_psswd='
                 if type_of_server=='deploy':
                     make_and_send_settings(host='192.168.1.24',port='5432',email_host='smtp.gmail.com',email_port='25',email_user=e_mail,email_password=e_psswd,where_to_place='~/tasks/tasks/')
                 if type_of_server=='test':
-                    make_and_send_settings(host='',port='5432',email_host='smtp.gmail.com',email_port='25',email_user=e_mail,email_password=e_psswd,where_to_place='~/tasks/tasks/')
+                    make_and_send_settings(host='192.168.1.136',port='5432',email_host='smtp.gmail.com',email_port='25',email_user=e_mail,email_password=e_psswd,where_to_place='~/tasks/tasks/')
 
 def commit_branch(branch=''):
     """

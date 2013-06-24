@@ -62,6 +62,9 @@ urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
     url(r'^$', todoes.views.tasks),
 
+# Работа с активами
+    # Добавление актива
+    url(r'^assets/add/([^/]+)/$', assets.views.asset_add),
 )
 if settings.DEBUG:
     urlpatterns += patterns('',

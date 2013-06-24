@@ -8,7 +8,7 @@ from django.db import models
 class Asset(models.Model):
     asset_type = models.ForeignKey('Asset_type')
     payment = models.ForeignKey('Payment')
-    date_of_write_off = models.DateTimeField()
+    date_of_write_off = models.DateTimeField(blank=True, null=True)
     garanty = models.ForeignKey('Garanty')
     current_place = models.ForeignKey('Place_Asset')
     model = models.CharField(max_length=140)

@@ -16,10 +16,3 @@ class note_with_indent():
         self.timestamp = note.timestamp
         self.indent = '&#9676;'*indent
         self.indent_pix = 4*indent
-
-class FioError():
-    def __init__(self):
-        self.mail=''
-        self.message='Нет такого пользователя'
-    def __str__(self):
-        return self.message
