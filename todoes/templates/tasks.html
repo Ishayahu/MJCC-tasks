@@ -15,7 +15,19 @@
         text-align: center; 
         width: 100%; /* Ширина текстового блока */ 
       }
-
+        .overdue {
+        background-color:peachpuff
+        }
+        .today {
+        
+        }
+        .future {
+        background-color:limegreen;
+        /*color: red;*/
+        }   
+        .for_my{
+        vertical-align: top
+        }
     </style>
     <meta http-equiv="refresh" content="60">
     {# горячие клавиши #}
@@ -31,13 +43,39 @@
 		return false;
 	    }
 	}
-
+	/*
+	Поддерживаем свёрнутыми те разделы, которые были свёрнуты
+	*/
+	window.onload = function(e) {
+            for (var x=0;x<window.localStorage.length;x++) {
+                if (document.getElementsByName(window.localStorage.key(x))) {
+                    collapse(window.localStorage.key(x));
+                }
+            }
+	}
+	
+        function collapse(name){
+            var el = document.getElementsByName(name).item(0);
+            el.hidden = !el.hidden;
+            var el_btn = document.getElementsByName("button_"+name).item(0);
+            if (el_btn.title=="Свернуть") {
+                el_btn.title="Развернуть";
+                el_btn.innerHTML="<b>+ Задачи для "+name+"</b>";
+                window.localStorage.setItem(name,'true');
+            }
+            else {
+                el_btn.title="Свернуть";
+                el_btn.innerHTML="<b>- Задачи для "+name+"</b>";
+                window.localStorage.removeItem(name);
+            }
+        }
+    
     </script>
 {% endblock %}
 
 {% block content %}
     <div class ="leftstr"><p>Привет, {{ worker.fio }}</p></div>
-    <div class ="rightstr"><p><a target="_new" href="/media/versions.html">v0.2.2b</a></p></div>
+    <div class ="rightstr"><p><a target="_new" href="/media/versions.html">v0.2.3b</a></p></div>
     {% if admin %}
         <ul style="clear:left">
             <li><a href="to/Мотя/">Вопросы к Моте</a></li>
@@ -90,7 +128,7 @@
             <th>Заявки для меня</th>
             <th>Заявки от меня</th>
         </tr>
-        <tr>
+        <tr class='for_my'>
             <td>
                 {% if tasks_overdue %}
                     <p>Просроченные задачи</p>
@@ -185,11 +223,25 @@
             </td>
             <td>
                 {% if my_tasks %}
-                    <ol>
-                        {% for task in my_tasks %}
-                            <li><a href="../task/one_time/{{task.id}}" title="{{task.description}}" target="_blank">{{task.name}}</a></li>
-                        {% endfor %}
-                    </ol>
+                    {% for group in my_tasks %}
+                        <div onclick='collapse("{{group.person.fio}}")' name="button_{{group.person.fio}}" title="Свернуть"><b>- Задачи для {{group.person.fio}}</b></div>
+                            <div name="{{group.person.fio}}">
+                            <ol>
+                                {% for task in group.tasks %}
+                                    {% ifequal task.state -1 %}
+                                        <li class="overdue">
+                                    {% endifequal %}   
+                                    {% ifequal task.state 0 %}
+                                        <li class="today">
+                                    {% endifequal %}
+                                    {% ifequal task.state 1 %}
+                                        <li class="future">
+                                    {% endifequal %}
+                                    <a href="../task/one_time/{{task.task.id}}" title="{{task.task.description}}" target="_blank">{{task.task.name}}</a></li>
+                                {% endfor %}
+                            </ol>
+                        </div>
+                    {% endfor %}
                 {% endif %}
                 <p align="center"><a href="/new_ticket/">Добавить задачу</a></p>
                 <p align="center"><a href="/new_regular_ticket/">Добавить повторяющуюся задачу</a></p>

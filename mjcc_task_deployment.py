@@ -16,13 +16,15 @@ start_deploy_server(branch='', directory='',github='', project='') - устан�
 
 fab -f mjcc_task_deployment.py new_branch:branch=bug2
 
+fab -f mjcc_task_deployment.py switch_branch:branch=bug2
+
 fab -f mjcc_task_deployment.py commit_branch:branch=bug2
 
 fab -f mjcc_task_deployment.py south_migrate:app=todoes,project=tasks
 
 fab -f mjcc_task_deployment.py deploy_server:directory=tasks,project=tasks,type_of_server=test
 
-fab -f mjcc_task_deployment.py start_deploy_server:branch=bug2,directory=tasks,project=tasks,type_of_server=test,github=https://github.com/Ishayahu/MJCC-tasks.git
+fab -f mjcc_task_deployment.py start_deploy_server:branch=,directory=tasks,project=tasks,type_of_server=test,github=https://github.com/Ishayahu/MJCC-tasks.git,e_mail='',e_pss=''
 
 fab -f mjcc_task_deployment.py change_source_test_to_master:branch=bug2
 """
@@ -40,6 +42,13 @@ source_folder = '/usr/home/ishayahu/docsrv/scripts/MJCC-tasks/'
 # Сервера для выполнения задачи
 servers= {'test':['ishayahu@192.168.1.183',],
           'deploy' : ['ishayahu@192.168.1.25',]
+          }
+
+servers_ip= {'test':'192.168.1.183',
+          'deploy' : '192.168.1.25'
+          }
+bds_ip= {'test':'192.168.1.136',
+          'deploy' : '192.168.1.24'
           }
 
 def south_migrate(app,project):
@@ -71,7 +80,7 @@ def switch_branch(branch=''):
     local ('git checkout %s' % branch)
 
 
-def make_and_send_settings(host='',port='5432',email_host='',email_port='',email_user='',email_password='',where_to_place=''):
+def make_and_send_settings(host='',port='5432',email_host='',email_port='',email_user='',email_password='',where_to_place='',srv_ip=''):
     """
     Создаёт файл settings.py локально, выгружает его каталог where_to_place. Для того, чтобы настройки и пароли не хранились на github
     host - IP сервера БД, сервер именно PostgreSQL
@@ -138,7 +147,7 @@ MEDIA_ROOT = '/usr/home/ishayahu/tasks/todoes/files/'
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
 # Examples: "http://media.lawrence.com/media/", "http://example.com/media/"
-MEDIA_URL = 'http://192.168.1.225:8080/media/'
+MEDIA_URL = 'http://%s:8080/media/'
 
 # Absolute path to the directory static files should be collected to.
 # Don't put anything in this directory yourself; store your static files
@@ -169,7 +178,7 @@ STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 #    'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
-""" % (host,port) + """
+""" % (host,port,srv_ip) + """
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = 'b%2gll0&rnk^8vw$+s=#05vc&%=b^n4fi1r24is=vsz4ajgggr'
 """  + """
@@ -303,10 +312,12 @@ def start_deploy_server(branch='', directory='',github='', project='',type_of_se
 	    run('git checkout %s' % branch)
 	    # Переходим в каталог проекта и создаём там файл с настройками
 	    with cd(project):
+                srv_ip=servers_ip[type_of_server]
+                bd_ip=bds_ip[type_of_server]
                 if type_of_server=='deploy':
-                    make_and_send_settings(host='192.168.1.24',port='5432',email_host='smtp.gmail.com',email_port='25',email_user=e_mail,email_password=e_psswd,where_to_place='~/tasks/tasks/')
+                    make_and_send_settings(host=bd_ip,port='5432',email_host='smtp.gmail.com',email_port='25',email_user=e_mail,email_password=e_psswd,where_to_place='~/tasks/tasks/',srv_ip=srv_ip)
                 if type_of_server=='test':
-                    make_and_send_settings(host='192.168.1.136',port='5432',email_host='smtp.gmail.com',email_port='25',email_user=e_mail,email_password=e_psswd,where_to_place='~/tasks/tasks/')
+                    make_and_send_settings(host=bd_ip,port='5432',email_host='smtp.gmail.com',email_port='25',email_user=e_mail,email_password=e_psswd,where_to_place='~/tasks/tasks/',srv_ip=srv_ip)
 	    # Запускаем сервер для проверки
 	    #run('python manage.py runserver 0.0.0.0:8080')
 	
@@ -324,10 +335,12 @@ def deploy_server(directory='', project='',type_of_server='',e_mail='',e_psswd='
 	    run('git pull')
 	    # Переходим в каталог проекта и создаём файл с настройками
 	    with cd(project):
+                srv_ip=servers_ip[type_of_server]
+                bd_ip=bds_ip[type_of_server]
                 if type_of_server=='deploy':
-                    make_and_send_settings(host='192.168.1.24',port='5432',email_host='smtp.gmail.com',email_port='25',email_user=e_mail,email_password=e_psswd,where_to_place='~/tasks/tasks/')
+                    make_and_send_settings(host=bd_ip,port='5432',email_host='smtp.gmail.com',email_port='25',email_user=e_mail,email_password=e_psswd,where_to_place='~/tasks/tasks/',srv_ip=srv_ip)
                 if type_of_server=='test':
-                    make_and_send_settings(host='192.168.1.136',port='5432',email_host='smtp.gmail.com',email_port='25',email_user=e_mail,email_password=e_psswd,where_to_place='~/tasks/tasks/')
+                    make_and_send_settings(host=bd_ip,port='5432',email_host='smtp.gmail.com',email_port='25',email_user=e_mail,email_password=e_psswd,where_to_place='~/tasks/tasks/',srv_ip=srv_ip)
 
 def commit_branch(branch=''):
     """
@@ -379,24 +392,5 @@ def change_source_test_to_master(branch=''):
 	local('git merge %s' % branch)
 	# Выгружаем код
 	local('git push origin master')
-	
-def change_server_test_to_master(directory='', project='', github='',e_mail='',e_psswd=''):
-    """
-    Делаем из тестового сервера продакшн.
-    """
-    # Переходим в каталог с исходниками
-    with cd(directory):
-	# Удаляем текущее отслеживание
-	run('git remote rm origin')
-	# Добавляем отслеживание мастера
-	run('git remote add -t master origin %s' % github)
-	# Скачиваем код
-	run('git pull')
-	# Переключаемся на мастер для гарантии
-	run('git checkout master')
-	# Переходим в каталог проекта и создаём файл с настройками
-	with cd(project):
-	    make_and_send_settings(host='192.168.1.24',port='5432',email_host='smtp.gmail.com',email_port='25',email_user=e_mail,email_password=e_psswd,where_to_place='~/tasks/tasks/')
-
 
 	

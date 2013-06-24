@@ -21,7 +21,7 @@
 {% block content %}
     <form action="" method="post">
         {% csrf_token %}
-        <p><input type="datetime-local" {# id="datepicker" #} name="datepicker" value="{{today}}"/>
+        <p><input type="datetime" {# id="datepicker" #} name="datepicker" value="{{today}}"/>
          <input type="time" name="time" value="{{after_hour}}"/> 
        
         </p>

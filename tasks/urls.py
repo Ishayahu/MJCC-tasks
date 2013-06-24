@@ -49,6 +49,7 @@ urlpatterns = patterns('',
 # Для администратора:
     url(r'^users/', todoes.views.get_all_logged_in_users),
     url(r'^tasks/to/([^/]+)/$', todoes.views.to),
+
     
     url(r'^accounts/$', login),
     url(r'^accounts/login/$', login),
@@ -61,6 +62,7 @@ urlpatterns = patterns('',
     # Uncomment the next line to enable the admin:
     url(r'^admin/', include(admin.site.urls)),
     url(r'^$', todoes.views.tasks),
+
 
 # Работа с активами
     # Добавление актива
