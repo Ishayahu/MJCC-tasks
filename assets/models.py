@@ -10,7 +10,7 @@ class Asset(models.Model):
     payment = models.ForeignKey('Payment')
     date_of_write_off = models.DateTimeField(blank=True, null=True)
     garanty = models.ForeignKey('Garanty')
-    current_place = models.ForeignKey('Place_Asset')
+    current_place = models.ForeignKey('Place_Asset',related_name='for_asset')
     model = models.CharField(max_length=140)
     status = models.ForeignKey('Status')
     claim = models.ForeignKey('Claim')
@@ -50,6 +50,8 @@ class Garanty(models.Model):
 class Asset_type(models.Model):
     asset_type = models.CharField(max_length=200)
     catalogue_name = models.CharField(max_length=30)
+    def __str__(self):
+        return u';'.join((str(self.id),self.asset_type,self.catalogue_name))
 class Status(models.Model):
     status = models.CharField(max_length=100)
 class Budget(models.Model):
@@ -69,7 +71,7 @@ class Repair(models.Model):
 class Place_Asset(models.Model):
     installation_date = models.DateTimeField()
     drawdown_date = models.DateTimeField()
-    asset = models.ForeignKey('Asset',related_name='for_asset')
+    asset = models.ForeignKey('Asset')
     place = models.ForeignKey('Place')
     reason_of_drawdown = models.TextField()
 class Place(models.Model):

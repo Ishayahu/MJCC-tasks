@@ -4,6 +4,7 @@
 from django.conf.urls.defaults import patterns, include, url
 import todoes.views 
 import assets.views
+import djlib
 from django.contrib import admin
 from django.contrib.auth.views import login, logout
 from django.conf import settings
@@ -32,7 +33,7 @@ urlpatterns = patterns('',
     # редактирование повторяющейся задачи
     url(r'^edit_regular/([^/]+)/$', todoes.views.edit_regular_task),
     # отметка как сделанная повторяющейся задачи
-    url(r'^regular_task_done/([^/]+)/$', views.regular_task_done),
+    url(r'^regular_task_done/([^/]+)/$', todoes.views.regular_task_done),
 # общее для всех задач    
     url(r'^task/([^/]+)/(\d+)/$', todoes.views.task),
     # установка напоминалки повторяющейся задачи
@@ -63,10 +64,12 @@ urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
     url(r'^$', todoes.views.tasks),
 
+# изменение языка интерфейса
+    url(r'^language/([^/]+)/$', djlib.multilanguage_utils.change_language),
 
 # Работа с активами
     # Добавление актива
-    url(r'^assets/add/([^/]+)/$', assets.views.asset_add),
+    url(r'^assets/add/(\d+)/$', assets.views.asset_add),
 )
 if settings.DEBUG:
     urlpatterns += patterns('',

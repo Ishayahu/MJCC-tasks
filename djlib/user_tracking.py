@@ -1,5 +1,7 @@
 # -*- coding:utf-8 -*-
 # coding=<utf8>
+from todoes.models import Activity, Person
+import datetime
 
 def set_last_activity_model(login,url,url_not_to_track=[],url_one_record=[]):
     """

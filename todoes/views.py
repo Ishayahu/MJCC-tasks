@@ -1,6 +1,8 @@
 # -*- coding:utf-8 -*-
 # coding=<utf8>
 
+#TODO: сделать возможность изменения языков
+
 from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.shortcuts import render_to_response
 import datetime
@@ -22,13 +24,42 @@ from djlib.mail_utils import send_email_alternative
 from djlib.error_utils import FioError
 
 from user_settings.settings import server_ip, admins, admins_mail
-from user_settings.settings import todoes_url_not_to_track as url_not_to_track
-from user_settings.settings import todoes_url_one_record as url_one_record
+try:
+    from user_settings.settings import todoes_url_not_to_track as url_not_to_track
+except ImportError:
+    url_not_to_track=('',)
+try:
+    from user_settings.settings import todoes_url_one_record as url_one_record
+except ImportError:
+    url_one_record=('',)
+
+
 
 from todoes.utils import build_note_tree, note_with_indent
 
 task_types = {'one_time':Task,'regular':RegularTask}
 task_addr = {'one_time':'one_time','regular':'regular'}
+
+# Делаем переводы
+from djlib.multilanguage_utils import select_language
+languages={'ru':'RUS/',
+            'eng':'ENG/'}
+forms_RUS = {'NewClientForm':NewClientForm, 'EditClientForm':EditClientForm, 'ClientSearchForm':ClientSearchForm, 'NoteToClientAddForm':NoteToClientAddForm, 'UserCreationFormMY':UserCreationFormMY}
+forms_ENG = {'NewClientForm':NewClientForm_ENG, 'EditClientForm':EditClientForm_ENG, 'ClientSearchForm':ClientSearchForm_ENG, 'NoteToClientAddForm':NoteToClientAddForm_ENG, 'UserCreationFormMY':UserCreationFormMY_ENG}
+l_forms = {'ru':forms_RUS,
+           'eng':forms_ENG,
+    }
+    
+    #lang=select_language(request)
+    #..........
+    #if request.method == 'POST':
+        #form = NewClientForm(request.POST)
+    #.....................
+    #else:
+        #form = l_forms[lang]['NewClientForm']()
+    #return render_to_response(languages[lang]+'new_ticket.html', {'form':form, 'met......
+    
+    
 def set_last_activity(login,url):
     set_last_activity_model(login,url,url_not_to_track,url_one_record)
 
