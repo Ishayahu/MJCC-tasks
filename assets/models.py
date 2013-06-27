@@ -15,28 +15,30 @@ class Asset(models.Model):
     status = models.ForeignKey('Status')
     claim = models.ForeignKey('Claim')
     guarantee_period = models.IntegerField()
-    note = models.TextField()
+    note = models.TextField(blank=True, null=True)
+    price = models.DecimalField(decimal_places=2, max_digits=8)
 class Payment(models.Model):
     cash = models.ForeignKey('Cash')
     cashless = models.ForeignKey('Cashless')
 class Cash(models.Model):
     date = models.DateTimeField()
-    price = models.DecimalField(decimal_places=2, max_digits=8)
     contractor = models.ForeignKey('Contractor')
+# Счёт по безналу
 class Cashless(models.Model):
     date_of_invoice = models.DateTimeField()
     dates = models.TextField()
     stages = models.TextField()
     date_of_assets = models.DateTimeField()
     date_of_documents = models.DateTimeField()
-    price = models.DecimalField(decimal_places=2, max_digits=8)
     contractor = models.ForeignKey('Contractor')
+# Заявка
 class Claim(models.Model):
     date_of_invoice = models.DateTimeField()
     dates = models.TextField()
     stages = models.TextField()
     date_of_assets = models.DateTimeField()
     date_of_documents = models.DateTimeField()
+    # Сколько денег дано по заявке
     price = models.DecimalField(decimal_places=2, max_digits=8)
     contractor = models.ForeignKey('Contractor')
 class Contractor(models.Model):
@@ -45,15 +47,19 @@ class Contractor(models.Model):
     email = models.EmailField(blank = True, null = True)
     tel_of_support = models.CharField(max_length=10,blank = True, null = True) 
     contact_name = models.CharField(max_length=140)
+    def __unicode__(self):
+        return u';'.join((str(self.id),self.name,self.contact_name))
 class Garanty(models.Model):
     number = models.IntegerField() 
 class Asset_type(models.Model):
     asset_type = models.CharField(max_length=200)
     catalogue_name = models.CharField(max_length=30)
-    def __str__(self):
+    def __unicode__(self):
         return u';'.join((str(self.id),self.asset_type,self.catalogue_name))
 class Status(models.Model):
     status = models.CharField(max_length=100)
+    def __unicode__(self):
+        return str(self.id)+';'+self.status
 class Budget(models.Model):
     start = models.DateTimeField()
     end = models.DateTimeField()

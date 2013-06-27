@@ -1,0 +1,87 @@
+{# нужно для работы списка с возможностью ввода своих данных #}
+<style>
+#dropdown{
+list-style: none;
+/*position:absolute; */
+background:#ffffaa; 
+cursor: default; 
+/*margin: -20px 0px 0px 229px; */
+padding: 2px 0px 2px 0px;
+/* width:155px */
+}
+#dropdown li{
+padding: 3px 3px 3px 3px;
+}
+#dropdown li:hover{
+color:#fff;
+padding: 3px 3px 3px 3px;
+background:#0000FF; 
+}
+</style>
+<script>
+function list_down()
+{
+  var a = document.getElementById('dropdown');
+  if ( a.style.display == 'none' )
+    a.style.display = 'block'
+  else
+    if ( a.style.display == 'block' )
+    a.style.display = 'none';
+};
+function select_contractor(id,val_date){
+        var c_list = [
+            {% for c in contractors %}
+                "{{c.name}}",
+            {% endfor %}
+            ];
+        var b = document.getElementById('contractor');
+        var c = document.getElementById('contractor_id');
+        b.value=val_date;
+        c.value=id;
+        list_down();
+        check_contractor();
+}
+function check_contractor() {
+    var a = document.getElementById('dropdown');
+    if ( a.style.display == 'block' )
+        a.style.display = 'none';
+    var c_list = [
+            {% for c in contractors %}
+                "{{c.name}}",
+            {% endfor %}
+            ];
+    var b = document.getElementById('contractor');
+    // Если ввели нового поставщика
+    if (c_list.indexOf(b.value)==-1) {
+        if (confirm ("Хотите добавить нового поставщика?")) {
+            // скрываем поле счёта
+            $("#content_to_hide").hide();
+            // загружаем форму добавления новго поставщика
+            $("#additional_content").load("/api/get_new_contractor_add_form/"+b.value+"/");
+        }
+    }      
+}
+</script>
+{# конец нужно... #}
+<table>
+    <tr>
+        <td>
+            <input name="contractor" type="text" id="contractor" size="20" maxlength="50" onclick="list_down()" onChange="check_contractor()" value="{{name_to_select}}" />
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <input type="hidden" id="contractor_id" value="{{contractor}}" />
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <ul id="dropdown" style="display:none;">
+                {% for c in contractors %}
+                    <li onclick="select_contractor({{c.id}},'{{c.name}}')">{{c.name}}</li>
+                {% endfor %}
+            </ul>
+        </td>
+    </tr>
+</table>
+

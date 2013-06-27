@@ -4,6 +4,7 @@
 from django.conf.urls.defaults import patterns, include, url
 import todoes.views 
 import assets.views
+import assets.api
 import djlib
 from django.contrib import admin
 from django.contrib.auth.views import login, logout
@@ -68,8 +69,17 @@ urlpatterns = patterns('',
     url(r'^language/([^/]+)/$', djlib.multilanguage_utils.change_language),
 
 # Работа с активами
-    # Добавление актива
-    url(r'^assets/add/(\d+)/$', assets.views.asset_add),
+    # Добавление чека, где указывается плата + сколько там чего
+    url(r'^bill/add/$', assets.views.bill_add),
+# API для работы с активами
+    # Выдача формы добавления актива, в качестве параметра - категория актива
+    url(r'^api/get_asset_add_form/(\d+)/$', assets.api.get_asset_add_form),
+    # Выдача списка поставщиков, в качестве параметра - тот поставщик, который должен быть указан, name
+    url(r'^api/get_contractors_list/([^/]*)/$', assets.api.get_contractors_list),
+    # Выдача формы добавления поставщика, в качестве параметра - название
+    url(r'^api/get_new_contractor_add_form/([^/]*)/$', assets.api.get_new_contractor_add_form),
+    # Сохраняем нового поставщика
+    url(r'^api/save_new_contractor/$', assets.api.save_new_contractor),    
 )
 if settings.DEBUG:
     urlpatterns += patterns('',

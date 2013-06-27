@@ -1,0 +1,22 @@
+{% extends "RUS/base.html" %}
+{% block title %}
+    Новый счёт
+{% endblock %}
+{% block style %}
+    <script>
+    </script>
+    <style>
+    </style>
+{% endblock %}
+{% block content %}
+    {% if form.errors %}
+    {#    {{form.errors}} #}
+    {% endif %}
+    <form action="" method="post">
+        {% csrf_token %}
+        <table border=1>
+            {{ form.as_table }}
+        </table>
+        <input type="submit">
+    </form>
+{% endblock %}

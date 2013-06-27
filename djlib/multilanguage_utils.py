@@ -1,3 +1,5 @@
+from django.contrib.auth.decorators import login_required
+
 def select_language(request):
     if request.session.get('language'):
         lang = request.session.get('language')

@@ -7,7 +7,8 @@ from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.shortcuts import render_to_response
 import datetime
 from todoes.models import Note, Resource, File, Person, Task, ProblemByWorker, ProblemByUser, Categories, RegularTask, Activity
-from todoes.forms import NewTicketForm, NoteToTicketAddForm, UserCreationFormMY, TicketClosingForm, TicketConfirmingForm, TicketEditForm,TicketSearchForm, NewRegularTicketForm, EditRegularTicketForm, File_and_NoteToTicketAddForm
+from todoes.forms_rus import NewTicketForm_RUS, NoteToTicketAddForm_RUS, UserCreationFormMY_RUS, TicketClosingForm_RUS, TicketConfirmingForm_RUS, TicketEditForm_RUS,TicketSearchForm_RUS, NewRegularTicketForm_RUS, EditRegularTicketForm_RUS, File_and_NoteToTicketAddForm_RUS
+from todoes.forms_eng import NewTicketForm_ENG, NoteToTicketAddForm_ENG, UserCreationFormMY_ENG, TicketClosingForm_ENG, TicketConfirmingForm_ENG, TicketEditForm_ENG,TicketSearchForm_ENG, NewRegularTicketForm_ENG, EditRegularTicketForm_ENG, File_and_NoteToTicketAddForm_ENG
 from django.contrib.auth.decorators import login_required
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
@@ -44,8 +45,8 @@ task_addr = {'one_time':'one_time','regular':'regular'}
 from djlib.multilanguage_utils import select_language
 languages={'ru':'RUS/',
             'eng':'ENG/'}
-forms_RUS = {'NewClientForm':NewClientForm, 'EditClientForm':EditClientForm, 'ClientSearchForm':ClientSearchForm, 'NoteToClientAddForm':NoteToClientAddForm, 'UserCreationFormMY':UserCreationFormMY}
-forms_ENG = {'NewClientForm':NewClientForm_ENG, 'EditClientForm':EditClientForm_ENG, 'ClientSearchForm':ClientSearchForm_ENG, 'NoteToClientAddForm':NoteToClientAddForm_ENG, 'UserCreationFormMY':UserCreationFormMY_ENG}
+forms_RUS = {'NewTicketForm':NewTicketForm_RUS, 'NoteToTicketAddForm':NoteToTicketAddForm_RUS, 'UserCreationFormMY':UserCreationFormMY_RUS, 'TicketClosingForm':TicketClosingForm_RUS, 'TicketConfirmingForm':TicketConfirmingForm_RUS, 'TicketEditForm':TicketEditForm_RUS,'TicketSearchForm':TicketSearchForm_RUS, 'NewRegularTicketForm':NewRegularTicketForm_RUS, 'EditRegularTicketForm':EditRegularTicketForm_RUS, 'File_and_NoteToTicketAddForm':File_and_NoteToTicketAddForm_RUS}
+forms_ENG = {'NewTicketForm':NewTicketForm_ENG, 'NoteToTicketAddForm':NoteToTicketAddForm_ENG, 'UserCreationFormMY':UserCreationFormMY_ENG, 'TicketClosingForm':TicketClosingForm_ENG, 'TicketConfirmingForm':TicketConfirmingForm_ENG, 'TicketEditForm':TicketEditForm_ENG,'TicketSearchForm':TicketSearchForm_ENG, 'NewRegularTicketForm':NewRegularTicketForm_ENG, 'EditRegularTicketForm':EditRegularTicketForm_ENG, 'File_and_NoteToTicketAddForm':File_and_NoteToTicketAddForm_ENG}
 l_forms = {'ru':forms_RUS,
            'eng':forms_ENG,
     }
@@ -57,7 +58,7 @@ l_forms = {'ru':forms_RUS,
     #.....................
     #else:
         #form = l_forms[lang]['NewClientForm']()
-    #return render_to_response(languages[lang]+'new_ticket.html', {'form':form, 'met......
+    #return render_to_response(languages[lang]+languages[lang]+'new_ticket.html', {'form':form, 'met......
     
     
 def set_last_activity(login,url):
@@ -65,6 +66,7 @@ def set_last_activity(login,url):
 
 @login_required
 def new_ticket(request):
+    lang=select_language(request)
     user = request.user.username
     try:
         fio = Person.objects.get(login=user)
@@ -92,12 +94,13 @@ def new_ticket(request):
             set_last_activity(user,request.path)
             return HttpResponseRedirect('/tasks/')
     else:
-        form = NewTicketForm({'percentage':0,'start_date':datetime.datetime.now(),'due_date':datetime.datetime.now(),'priority':3})
+        form =l_forms[lang]['NewTicketForm']({'percentage':0,'start_date':datetime.datetime.now(),'due_date':datetime.datetime.now(),'priority':3})
     set_last_activity(user,request.path)
-    return render_to_response('new_ticket.html', {'form':form, 'method':method},RequestContext(request))
+    return render_to_response(languages[lang]+'new_ticket.html', {'form':form, 'method':method},RequestContext(request))
 
 @login_required
 def new_regular_ticket(request):
+    lang=select_language(request)
     user = request.user.username
     try:
         fio = Person.objects.get(login=user)
@@ -126,11 +129,12 @@ def new_regular_ticket(request):
             set_last_activity(user,request.path)
             return HttpResponseRedirect('/tasks/')
     else:
-        form = NewRegularTicketForm({'start_date':datetime.datetime.now(),'due_date':datetime.datetime.now(),'priority':3})
+        form =l_forms[lang]['NewRegularTicketForm'] ({'start_date':datetime.datetime.now(),'due_date':datetime.datetime.now(),'priority':3})
     set_last_activity(user,request.path)
-    return render_to_response('new_regular_task.html', {'page_title':u'Новая повторяющаяся задача','form':form, 'method':method},RequestContext(request))
+    return render_to_response(languages[lang]+'new_regular_task.html', {'page_title':u'Новая повторяющаяся задача','form':form, 'method':method},RequestContext(request))
 @login_required
 def edit_regular_task(request,task_to_edit_id):
+    lang=select_language(request)
     if not acl(request,'regular',task_to_edit_id):
         request.session['my_error'] = u'Нет права доступа к этой задаче!'
         return HttpResponseRedirect("/tasks/")
@@ -216,7 +220,7 @@ def edit_regular_task(request,task_to_edit_id):
             set_last_activity(user,request.path)
             return HttpResponseRedirect('/tasks/')
     else:
-        form = EditRegularTicketForm({'name' : task_to_edit.name,
+        form = l_forms[lang]['EditRegularTicketForm']({'name' : task_to_edit.name,
             'description' : task_to_edit.description,
             'clients' : task_to_edit.client,
             'priority' : task_to_edit.priority,
@@ -227,11 +231,12 @@ def edit_regular_task(request,task_to_edit_id):
             'workers' : task_to_edit.worker,
         })
     set_last_activity(user,request.path)
-    return render_to_response('new_regular_task.html', {'page_title':u'Редактировать повторяющуюся задачу','form':form, 'method':method,'period':task_to_edit.period,'russian_period':crontab_to_russian(task_to_edit.period)},RequestContext(request))
+    return render_to_response(languages[lang]+'new_regular_task.html', {'page_title':u'Редактировать повторяющуюся задачу','form':form, 'method':method,'period':task_to_edit.period,'russian_period':crontab_to_russian(task_to_edit.period)},RequestContext(request))
 
     
 @login_required
 def set_reminder(request,task_type,task_id):
+    lang=select_language(request)
     if not acl(request,task_type,task_id):
         request.session['my_error'] = u'Нет права доступа к этой задаче!'
         return HttpResponseRedirect("/tasks/")
@@ -258,9 +263,10 @@ def set_reminder(request,task_type,task_id):
         after_hour = str(datetime.datetime.now().hour+1)+":"+str(datetime.datetime.now().minute)
         today = str(datetime.datetime.now().day)+"/"+str(datetime.datetime.now().month)+"/"+str(datetime.datetime.now().year)
     set_last_activity(user,request.path)
-    return render_to_response('set_reminder.html', {'method':method,'today':today,'after_hour':after_hour},RequestContext(request))
+    return render_to_response(languages[lang]+'set_reminder.html', {'method':method,'today':today,'after_hour':after_hour},RequestContext(request))
 @login_required
 def move_to_call(request,task_type,task_id):
+    lang=select_language(request)
     if not acl(request,task_type,task_id):
         request.session['my_error'] = u'Нет права доступа к этой задаче!'
         return HttpResponseRedirect("/tasks/")
@@ -288,10 +294,11 @@ def move_to_call(request,task_type,task_id):
         after_hour = str(datetime.datetime.now().hour+1)+":"+str(datetime.datetime.now().minute)
         today = str(datetime.datetime.now().day)+"/"+str(datetime.datetime.now().month)+"/"+str(datetime.datetime.now().year)
     set_last_activity(user,request.path)
-    return render_to_response('set_reminder.html', {'method':method,'today':today,'after_hour':after_hour},RequestContext(request))
+    return render_to_response(languages[lang]+'set_reminder.html', {'method':method,'today':today,'after_hour':after_hour},RequestContext(request))
 
 @login_required    
 def register(request):
+    lang=select_language(request)
     if request.method == 'POST':
         form = UserCreationFormMY(request.POST)
         if form.is_valid():
@@ -306,15 +313,17 @@ def register(request):
             new_person.save()
             return HttpResponseRedirect("/tasks/")
     else:
-        form = UserCreationFormMY()
-    return render_to_response("registration/register.html",{'form':form},RequestContext(request))
+        form = l_forms[lang]['UserCreationFormMY']()
+    return render_to_response(languages[lang]+"registration/register.html",{'form':form},RequestContext(request))
 @login_required    
 def profile(request):
+    lang=select_language(request)
     user = request.user.username
     set_last_activity(user,request.path)
     return HttpResponseRedirect("/tasks/")
 @login_required
 def tasks(request):
+    lang=select_language(request)
     def tasks_separation(tasks):
         class group():
             def __init__(self,person,tasks):
@@ -461,12 +470,12 @@ def tasks(request):
                 tasks_to_confirm = ''# если задач нет - вывести это в шаблон
                 my_error.append('Нет неподтверждённых заявок')
             set_last_activity(user,request.path)
-            return render_to_response('tasks.html',{'my_error':my_error,'user':user,'worker':worker,'tasks_overdue':tasks_overdue,'tasks_for_today':tasks_for_today,'tasks_future':tasks_future,'my_tasks':my_tasks,'tasks_to_confirm':tasks_to_confirm,'all_tasks':all_tasks,'alert':alert,'admin':admin,'regular_tasks':regular_tasks},RequestContext(request))
+            return render_to_response(languages[lang]+'tasks.html',{'my_error':my_error,'user':user,'worker':worker,'tasks_overdue':tasks_overdue,'tasks_for_today':tasks_for_today,'tasks_future':tasks_future,'my_tasks':my_tasks,'tasks_to_confirm':tasks_to_confirm,'all_tasks':all_tasks,'alert':alert,'admin':admin,'regular_tasks':regular_tasks},RequestContext(request))
     set_last_activity(user,request.path)
-    return render_to_response('tasks.html',{'my_error':my_error,'user':user,'worker':worker,'tasks_overdue':tasks_overdue,'tasks_for_today':tasks_for_today,'tasks_future':tasks_future,'my_tasks':my_tasks,'alert':alert,'regular_tasks':regular_tasks},RequestContext(request))
+    return render_to_response(languages[lang]+'tasks.html',{'my_error':my_error,'user':user,'worker':worker,'tasks_overdue':tasks_overdue,'tasks_for_today':tasks_for_today,'tasks_future':tasks_future,'my_tasks':my_tasks,'alert':alert,'regular_tasks':regular_tasks},RequestContext(request))
 @login_required
 def task(request,task_type,task_id):
-
+    lang=select_language(request)
     if not acl(request,task_type,task_id):
         request.session['my_error'] = u'Нет права доступа к этой задаче!'
         return HttpResponseRedirect("/tasks/")
@@ -573,7 +582,7 @@ def task(request,task_type,task_id):
                         if note.id != int(note_to_edit_id):
                             note.note = htmlize(note.note)
                     set_last_activity(user,request.path)
-                    return render_to_response('task.html',{'user':user,'fio':fio,'task':task_full,'notes':notes, 'form':form,'note_to_edit_id':int(note_to_edit_id),'task_type':task_type},RequestContext(request))
+                    return render_to_response(languages[lang]+'task.html',{'user':user,'fio':fio,'task':task_full,'notes':notes, 'form':form,'note_to_edit_id':int(note_to_edit_id),'task_type':task_type},RequestContext(request))
                 elif request.POST.get('save_edited_comment'):
                     note_to_edit_id = request.POST.get('num')
                     note_to_edit = Note.objects.get(id=note_to_edit_id)
@@ -585,11 +594,11 @@ def task(request,task_type,task_id):
                     return HttpResponseRedirect(request.get_full_path())
 
         else:
-            form = NoteToTicketAddForm(defaults = (task_full.worker.fio, task_full.client.fio),exclude = (fio,))
+            form = l_forms[lang]['NoteToTicketAddForm'](defaults = (task_full.worker.fio, task_full.client.fio),exclude = (fio,))
             for note in notes:
                 note.note = htmlize(note.note)
             set_last_activity(user,request.path)
-            return render_to_response('task.html',{'user':user,'fio':fio,'task':task_full,'notes':notes, 'form':form,'task_type':task_type,'admin':admin},RequestContext(request))
+            return render_to_response(languages[lang]+'task.html',{'user':user,'fio':fio,'task':task_full,'notes':notes, 'form':form,'task_type':task_type,'admin':admin},RequestContext(request))
     # если задачи нет - возвращаем к списку с ошибкой
     except Task.DoesNotExist:
         # print 'here'
@@ -601,6 +610,7 @@ def task(request,task_type,task_id):
 
 @login_required
 def close_task(request,task_to_close_id):
+    lang=select_language(request)
     if not acl(request,'one_time',task_to_close_id):
         request.session['my_error'] = u'Нет права доступа к этой задаче!'
         return HttpResponseRedirect("/tasks/")
@@ -641,15 +651,16 @@ def close_task(request,task_to_close_id):
             not_closed_children_tasks = ''
         if not_closed_children_tasks:
             set_last_activity(user,request.path)
-            return render_to_response('not_closed_children.html', {'user':user,'fio':fio,'task_to_close':task_to_close,'not_closed_children_tasks':not_closed_children_tasks},RequestContext(request))
-        form = TicketClosingForm({'done_date' : datetime.datetime.now(),})
+            return render_to_response(languages[lang]+'not_closed_children.html', {'user':user,'fio':fio,'task_to_close':task_to_close,'not_closed_children_tasks':not_closed_children_tasks},RequestContext(request))
+        form = l_forms[lang]['TicketClosingForm']({'done_date' : datetime.datetime.now(),})
     task_to_close.description = htmlize(task_to_close.description)
     for note in notes:
         note.note = htmlize(note.note)
     set_last_activity(user,request.path)
-    return render_to_response('close_ticket.html', {'user':user,'fio':fio,'form':form, 'task':task_to_close,'notes':notes},RequestContext(request))
+    return render_to_response(languages[lang]+'close_ticket.html', {'user':user,'fio':fio,'form':form, 'task':task_to_close,'notes':notes},RequestContext(request))
 @login_required
 def unclose_task(request,task_to_unclose_id):
+    lang=select_language(request)
     if not acl(request,'one_time',task_to_unclose_id):
         request.session['my_error'] = u'Нет права доступа к этой задаче!'
         return HttpResponseRedirect("/tasks/")
@@ -671,6 +682,7 @@ def unclose_task(request,task_to_unclose_id):
     return HttpResponseRedirect('/tasks/')
 @login_required
 def to(request, to_who):
+    lang=select_language(request)
     user = request.user.username
     method = request.method
     if request.session.get('my_error'):
@@ -702,9 +714,10 @@ def to(request, to_who):
         for note in notes[note_to_id]:
             note.note = htmlize(note.note)
     set_last_activity(user,request.path)
-    return render_to_response('tasks_to.html', {'tasks':tasks_to,'notes':notes,'to_who':to_who, 'method':method},RequestContext(request))
+    return render_to_response(languages[lang]+'tasks_to.html', {'tasks':tasks_to,'notes':notes,'to_who':to_who, 'method':method},RequestContext(request))
 @login_required
 def confirm_task(request,task_to_confirm_id):
+    lang=select_language(request)
     user = request.user.username
     if user not in admins:
         request.session['my_error'] = u'Нет права подтвердить закрытие задачи!'
@@ -739,14 +752,15 @@ def confirm_task(request,task_to_confirm_id):
             notes = Note.objects.filter(for_task=task_to_confirm).order_by('-timestamp')
         except Note.DoesNotExist:
             notes = ('Нет подходящих заметок',)
-        form = TicketConfirmingForm({'confirmed':True, 'confirmed_date':datetime.datetime.now()})
+        form = l_forms[lang]['TicketConfirmingForm']({'confirmed':True, 'confirmed_date':datetime.datetime.now()})
         for note in notes:
             note.note = htmlize(note.note)
     task_to_confirm.description = htmlize(task_to_confirm.description)
     set_last_activity(user,request.path)
-    return render_to_response('confirm_ticket.html', {'form':form,'task':task_to_confirm,'notes':notes,'method':method,'fio':fio},RequestContext(request))    
+    return render_to_response(languages[lang]+'confirm_ticket.html', {'form':form,'task':task_to_confirm,'notes':notes,'method':method,'fio':fio},RequestContext(request))    
 @login_required
 def edit_task(request,task_to_edit_id):
+    lang=select_language(request)
     if not acl(request,'one_time',task_to_edit_id):
         request.session['my_error'] = u'Нет права доступа к этой задаче!'
         return HttpResponseRedirect("/tasks/")
@@ -837,7 +851,7 @@ def edit_task(request,task_to_edit_id):
             set_last_activity(user,request.path)
             return HttpResponseRedirect('/tasks/')
     else:
-        form = TicketEditForm({'name' : task_to_edit.name,
+        form = l_forms[lang]['TicketEditForm']({'name' : task_to_edit.name,
             'pbus' : task_to_edit.pbu,
             'description' : task_to_edit.description,
             'clients' : task_to_edit.client,
@@ -850,9 +864,10 @@ def edit_task(request,task_to_edit_id):
             'percentage' : task_to_edit.percentage
         })
     set_last_activity(user,request.path)
-    return render_to_response('new_ticket.html', {'form':form, 'method':method},RequestContext(request))
+    return render_to_response(languages[lang]+'new_ticket.html', {'form':form, 'method':method},RequestContext(request))
 @login_required
 def delete_task(request,task_type,task_to_delete_id):
+    lang=select_language(request)
     user = request.user.username
     task_to_delete = task_types[task_type].objects.get(id=task_to_delete_id)
     task_to_delete.deleted = True
@@ -861,6 +876,7 @@ def delete_task(request,task_type,task_to_delete_id):
     return HttpResponseRedirect('/tasks/')
 @login_required
 def undelete_task(request,task_type,task_id):
+    lang=select_language(request)
     task = task_types[task_type].objects.get(id=task_id)
     task.deleted = False
     task.save()
@@ -868,6 +884,7 @@ def undelete_task(request,task_type,task_id):
     return HttpResponseRedirect('/tasks/')    
 @login_required
 def completle_delete_task(request,task_type,task_to_delete_id):
+    lang=select_language(request)
     user = request.user.username
     if user not in admins:
         return HttpResponseRedirect("/tasks/")      
@@ -889,6 +906,7 @@ def completle_delete_task(request,task_type,task_to_delete_id):
     set_last_activity(user,request.path)
     return HttpResponseRedirect('/deleted_tasks/')
 def completle_delete_all(request):
+    lang=select_language(request)
     user = request.user.username
     if user not in admins:
         return HttpResponseRedirect("/tasks/")
@@ -917,6 +935,7 @@ def completle_delete_all(request):
     return HttpResponseRedirect('/tasks/')  
 @login_required
 def deleted_tasks(request):
+    lang=select_language(request)
     user = request.user.username
     if user not in admins:
         return HttpResponseRedirect("/tasks/")
@@ -930,10 +949,11 @@ def deleted_tasks(request):
     except:
         task = ('Нет таких задач',)
     set_last_activity(user,request.path)
-    return render_to_response('deleted_tasks.html', {'tasks':tasks,},RequestContext(request))
+    return render_to_response(languages[lang]+'deleted_tasks.html', {'tasks':tasks,},RequestContext(request))
 
 @login_required
 def all_tasks(request):
+    lang=select_language(request)
     def find_parent_task(note,task_type):
         """
         Поиск родительской заявки для примечания
@@ -974,9 +994,9 @@ def all_tasks(request):
                 print 'exception'
                 not_finded = True
             set_last_activity(user,request.path)
-            return render_to_response('all_tasks.html', {'not_finded':not_finded,'finded_tasks':finded_tasks,'form':form, 'method':method},RequestContext(request))
+            return render_to_response(languages[lang]+'all_tasks.html', {'not_finded':not_finded,'finded_tasks':finded_tasks,'form':form, 'method':method},RequestContext(request))
     else:
-        form = TicketSearchForm()
+        form = l_forms[lang]['TicketSearchForm']()
         if request.session.get('my_error'):
             my_error = [request.session.get('my_error'),]
         else:
@@ -1004,9 +1024,10 @@ def all_tasks(request):
         except:
             confirmed_tasks = ''# если задач нет - вывести это в шаблон
     set_last_activity(user,request.path)
-    return render_to_response('all_tasks.html', {'my_error':my_error,'tasks':tasks,'closed_tasks':closed_tasks,'confirmed_tasks':confirmed_tasks,'regular_tasks':regular_tasks,'form':form, 'method':method},RequestContext(request))
+    return render_to_response(languages[lang]+'all_tasks.html', {'my_error':my_error,'tasks':tasks,'closed_tasks':closed_tasks,'confirmed_tasks':confirmed_tasks,'regular_tasks':regular_tasks,'form':form, 'method':method},RequestContext(request))
 @login_required
 def add_children_task(request,parent_task_type,parent_task_id):
+    lang=select_language(request)
     method = request.method
     user = request.user.username
     try:
@@ -1045,11 +1066,12 @@ def add_children_task(request,parent_task_type,parent_task_id):
             set_last_activity(user,request.path)
             return HttpResponseRedirect('/tasks/')
     else:
-        form = NewTicketForm({'percentage':0,'start_date':datetime.datetime.now(),'due_date':datetime.datetime.now(),'priority':parent_task.priority,'category':parent_task.category})
+        form = l_forms[lang]['NewTicketForm'] ({'percentage':0,'start_date':datetime.datetime.now(),'due_date':datetime.datetime.now(),'priority':parent_task.priority,'category':parent_task.category})
     set_last_activity(user,request.path)
-    return render_to_response('new_ticket.html', {'form':form, 'method':method},RequestContext(request))
+    return render_to_response(languages[lang]+'new_ticket.html', {'form':form, 'method':method},RequestContext(request))
 @login_required
 def regular_task_done(request,task_id):
+    lang=select_language(request)
     user = request.user.username
     method = request.method
     try:
@@ -1067,7 +1089,8 @@ def regular_task_done(request,task_id):
 
 @login_required
 def get_all_logged_in_users(request):
+    lang=select_language(request)
     user = request.user.username
     if user in admins:
         last_activities=get_last_activities()
-        return render_to_response('logged_in_user_list.html', {'last_activities':last_activities,},RequestContext(request))
+        return render_to_response(languages[lang]+'logged_in_user_list.html', {'last_activities':last_activities,},RequestContext(request))

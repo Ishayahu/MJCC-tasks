@@ -8,7 +8,8 @@ from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.shortcuts import render_to_response
 from assets.models import Asset, Payment, Cash, Cashless, Contractor, Garanty, Asset_type, Status, Budget, Repair, Place_Asset, Place, Cartridge, Cartridge_Model_General_Model, Cartridge_General_Model_Printer_Model, Cartridge_Printer, ROM, Cooler, Storage, Acoustics, Telephone, Battery, Optical_Drive, Printer, Power_suply, Motherboard, CPU, Case
 from todoes.models import  Person #, Task, ProblemByWorker, ProblemByUser, Categories, RegularTask, Activity, Note, Resource, File,
-from assets.forms import NewAssetForm
+from assets.forms_rus import NewAssetForm_RUS, NewCashBillForm_RUS
+from assets.forms_eng import NewAssetForm_ENG, NewCashBillForm_ENG
 from django.contrib.auth.decorators import login_required
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
@@ -34,12 +35,14 @@ except ImportError:
 
 from djlib.error_utils import FioError
 
+import assets.api
+
 # Делаем переводы
 from djlib.multilanguage_utils import select_language
 languages={'ru':'RUS/',
             'eng':'ENG/'}
-forms_RUS = {'NewClientForm':NewClientForm, 'EditClientForm':EditClientForm, 'ClientSearchForm':ClientSearchForm, 'NoteToClientAddForm':NoteToClientAddForm, 'UserCreationFormMY':UserCreationFormMY}
-forms_ENG = {'NewClientForm':NewClientForm_ENG, 'EditClientForm':EditClientForm_ENG, 'ClientSearchForm':ClientSearchForm_ENG, 'NoteToClientAddForm':NoteToClientAddForm_ENG, 'UserCreationFormMY':UserCreationFormMY_ENG}
+forms_RUS = {'NewAssetForm':NewAssetForm_RUS,'NewCashBillForm':NewCashBillForm_RUS}
+forms_ENG = {'NewAssetForm':NewAssetForm_ENG,'NewCashBillForm':NewCashBillForm_ENG}
 l_forms = {'ru':forms_RUS,
            'eng':forms_ENG,
     }
@@ -52,8 +55,10 @@ l_forms = {'ru':forms_RUS,
     #else:
         #form = l_forms[lang]['NewClientForm']()
     #return render_to_response(languages[lang]+'new_ticket.html', {'form':form, 'met......
+
 @login_required
-def asset_add(request,asset_category):
+def bill_add(request):
+    lang=select_language(request)
     user = request.user.username
     try:
         fio = Person.objects.get(login=user)
@@ -61,7 +66,7 @@ def asset_add(request,asset_category):
         fio = FioError()
     method = request.method
     if request.method == 'POST':
-        form = NewAssetForm(request.POST)
+        form = l_forms[lang]['NewAssetForm'](request.POST)
         if form.is_valid():
             data = form.cleaned_data
             try:
@@ -101,6 +106,6 @@ def asset_add(request,asset_category):
     note = models.TextField()"""
             a.save()
             return HttpResponseRedirect('/tasks/')
-    else:
-        form = NewAssetForm({})
-    return render_to_response('new_asset.html', {'form':form, 'method':method},RequestContext(request))    
+    form = l_forms[lang]['NewCashBillForm']({})
+    contractors_list = assets.api.get_contractors_list(request,internal=True)
+    return render_to_response(languages[lang]+'new_bill.html', {'form':form,'contractors_list':contractors_list, 'method':method},RequestContext(request))    
