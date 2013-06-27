@@ -32,12 +32,12 @@ inp_f=( '%d-%m-%Y %H:%M:%S',     # '2006-10-25 14:30:59'
         
 class NewAssetForm_RUS(forms.Form):
     model = forms.CharField(max_length=140, label='Модель')
-    asset_type = forms.ModelChoiceField(queryset  = Asset_type.objects.all(), label='Тип актива')
-    payment = forms.ModelChoiceField(queryset  = Payment.objects.all(), label='Оплата')    
-    garanty = forms.ModelChoiceField(queryset  = Garanty.objects.all(), label='Номер гарантии')
+    # asset_type = forms.ModelChoiceField(queryset  = Asset_type.objects.all(), label='Тип актива')
+    #payment = forms.ModelChoiceField(queryset  = Payment.objects.all(), label='Оплата')    
+    # garanty = forms.ModelChoiceField(queryset  = Garanty.objects.all(), label='Номер гарантии')
     current_place = forms.ModelChoiceField(queryset  = Place_Asset.objects.all(), label='Место расположения')
     status = forms.ModelChoiceField(queryset  = Status.objects.all(), label='Статус')
-    claim = forms.ModelChoiceField(queryset  = Claim.objects.all(), label='Заявка',required=False)
+    # claim = forms.ModelChoiceField(queryset  = Claim.objects.all(), label='Заявка',required=False)
     guarantee_period = forms.DecimalField(min_value=0, max_value=9999, label='Срок гарантии, месяцев')    
     note = forms.CharField(widget=forms.Textarea, label='Примечания',required=False)
     def __init__(self,*args,**kwargs):
@@ -50,6 +50,7 @@ class NewAssetForm_RUS(forms.Form):
     
 class NewCashBillForm_RUS(forms.Form):
     date = forms.DateField(initial=datetime.date.today, label="Дата чека/покупки/внесения")
+    garanty = forms.IntegerField(min_value=0, label='Номер гарантии')
     
 class NewContractorForm_RUS(forms.Form):   
     name = forms.CharField(max_length=140, label='Название фирмы')

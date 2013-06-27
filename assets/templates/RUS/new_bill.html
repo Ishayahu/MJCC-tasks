@@ -5,7 +5,10 @@
 {% block style %}
     <script>
     </script>
+    {# нужно для выбора поставщика по вводу и добавления нового #}
     <script type="text/javascript" src="/media/js/bill_contractor.js"></script>
+    {# нужно для работы с активами #}
+    <script type="text/javascript" src="/media/js/bill_assets.js"></script>    
     <style>
     </style>
 {% endblock %}
@@ -31,8 +34,13 @@
                     </td>
                 </tr>
             </table>
-            
-            <input type="submit">
+            {# сюда мы будем бросать кости - активы в чеке/счёте #}
+            <div id="bill_assets">
+            </div>
+            {# Список формируется через api get_asset_type_list с id=asset_type_id #}
+            {{asset_types_list|safe}}
+            <input type="button" value="+" onclick="add_asset($('#asset_type_id option:selected').val())" />
+            <input type="submit" />
         </form>
     </div>
     <div id="additional_content">

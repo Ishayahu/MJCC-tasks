@@ -1,0 +1,12 @@
+{% if items %}
+    <select id="{{input_id_name}}">
+        {% for item in items %}
+            {% ifequal item.id selected_item_id %}
+                <option value="{{item.id}}" selected="selected">{{item.name}}</option>
+            {% endifequal %}
+            {% ifnotequal item.id selected_item_id %}
+                <option value="{{item.id}}">{{item.name}}</option>
+            {% endifnotequal %}
+        {% endfor %}
+    </select>
+{% endif %}

@@ -54,7 +54,7 @@ l_forms = {'ru':forms_RUS,
         #form = l_forms[lang]['NewClientForm']()
     #return render_to_response(languages[lang]+'new_ticket.html', {'form':form, 'met......
 @login_required
-def get_asset_add_form(request,asset_category):
+def get_asset_add_form(request,asset_category,form_number=''):
     lang=select_language(request)
     user = request.user.username
     try:
@@ -66,8 +66,8 @@ def get_asset_add_form(request,asset_category):
         asset_type = Asset_type.objects.get(id=asset_category)
     except Asset_type.DoesNotExist:
         return ErrorMessage('Неверно указан код категории актива: '+str(asset_category))
-    form = l_forms[lang]['NewAssetForm'](number=3)
-    return render_to_response(languages[lang]+'get_asset_add_form.html', {'form':form, 'method':method},RequestContext(request))    
+    form = l_forms[lang]['NewAssetForm'](number=form_number)
+    return render_to_response(languages[lang]+'get_asset_add_form.html', {'number':form_number,'asset_type':asset_type,'form':form, 'method':method},RequestContext(request))    
 @login_required
 def get_contractors_list(request,name_to_select='',internal=False):
     lang=select_language(request)
@@ -117,5 +117,29 @@ def save_new_contractor(request):
                         tel_of_support = data['tel_of_support'],
                         contact_name = data['contact_name'],)
             c.save()
-            return render_to_response(languages[lang]+'OK.html', {'c':c},RequestContext(request))
-    return "Произошла какая-то ошибка"
+            html='<input type="hidden" id="c_id" value="%s" /><input type="hidden" id="c_name" value="%s" />' % (c.id, c.name)
+            return render_to_response(languages[lang]+'OK.html', {'c':c,'html':html},RequestContext(request))
+    return "Произошла какая-то ошибка, но не могу представить какая. Надо выяснить и записать для диагностики"
+@login_required
+def get_asset_type_list(request,id=-1,internal=False):
+    lang=select_language(request)
+    user = request.user.username
+    try:
+        fio = Person.objects.get(login=user)
+    except Person.DoesNotExist:
+        fio = FioError()
+    type_names = Asset_type.objects.all()
+    for item in type_names:
+        item.name=item.asset_type
+    method = request.method
+    # если для встраивания
+    if internal:
+        t = loader.get_template(languages[lang]+'get_list.html')
+        if id!=-1:
+            c = Context({'items':type_names,'input_id_name':'asset_type_id','selected_item_id':id})
+            return t.render(c)
+        c = Context({'items':type_names,'input_id_name':'asset_type_id'})
+        return t.render(c)
+    if id!=-1:
+        return render_to_response(languages[lang]+'get_list.html', {'items':type_names,'input_id_name':'asset_type_id','selected_item_id':id},RequestContext(request))
+    return render_to_response(languages[lang]+'get_list.html', {'items':type_names,'input_id_name':'asset_type_id'},RequestContext(request))

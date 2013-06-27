@@ -21,11 +21,15 @@ function send(url,form_id,result_div) {
 function send_and_show() {
     //показываем форму ввода счёта
     $("#content_to_hide").show();
+    var c_id = $("#c_id").val()
+    var c_name = $("#c_name").val()
+    $("#contractor").val(c_name)
+    $("#contractor_id").val(c_id)
     // удаляем старый список поставщиков
     $("#contractors_list").empty();
     // перезагружаем новый, со значением по умолчанию
-    // TODO: получать значение через $("#"+result_div)
-    var contractor_name = $("#id_name").val()
+    // замена нужна для русского языка, может быть только под Windows7
+    var contractor_name = $("#id_name").val().replace(/ /g,"%20")
     $("#contractors_list").load("/api/get_contractors_list/"+contractor_name+"/");
     // удаляем форму ввода поставщика
     $("#additional_content").empty();

@@ -72,14 +72,17 @@ urlpatterns = patterns('',
     # Добавление чека, где указывается плата + сколько там чего
     url(r'^bill/add/$', assets.views.bill_add),
 # API для работы с активами
-    # Выдача формы добавления актива, в качестве параметра - категория актива
-    url(r'^api/get_asset_add_form/(\d+)/$', assets.api.get_asset_add_form),
+    # Выдача формы добавления актива, в качестве параметра - категория актива, префикс к имени полей формы (число)
+    url(r'^api/get_asset_add_form/(\d+)/(\d*)/$', assets.api.get_asset_add_form),
     # Выдача списка поставщиков, в качестве параметра - тот поставщик, который должен быть указан, name
     url(r'^api/get_contractors_list/([^/]*)/$', assets.api.get_contractors_list),
     # Выдача формы добавления поставщика, в качестве параметра - название
     url(r'^api/get_new_contractor_add_form/([^/]*)/$', assets.api.get_new_contractor_add_form),
     # Сохраняем нового поставщика
     url(r'^api/save_new_contractor/$', assets.api.save_new_contractor),    
+    # Получаем список типов активов, в качестве парамета - id выбранного
+    url(r'^api/get_asset_type_list/(\d*)/$', assets.api.get_asset_type_list),    
+
 )
 if settings.DEBUG:
     urlpatterns += patterns('',

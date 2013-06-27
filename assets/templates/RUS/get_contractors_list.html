@@ -57,7 +57,9 @@ function check_contractor() {
             // скрываем поле счёта
             $("#content_to_hide").hide();
             // загружаем форму добавления новго поставщика
-            $("#additional_content").load("/api/get_new_contractor_add_form/"+b.value+"/");
+            // замена нужна для русского языка, может быть только под Windows7
+            var contractor_name=b.value.replace(/ /g,"%20")
+            $("#additional_content").load("/api/get_new_contractor_add_form/"+contractor_name+"/");
         }
     }      
 }
