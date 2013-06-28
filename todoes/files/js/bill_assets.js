@@ -8,6 +8,7 @@ function add_asset(asset_type_id) {
     $("#"+form_name).load(url,function(result){
         // кнопка удаления формы    
         $("#"+form_name).append('<input type="number" value="1" name="count_of_asset'+asset_form_number+'" /><input type="button" value="X" onclick="delete_asset_form('+asset_form_number+')" />');
+        $("#max_asset_form_number").val(asset_form_number);
     });
 }
 function delete_asset_form(id) {

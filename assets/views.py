@@ -66,46 +66,60 @@ def bill_add(request):
         fio = FioError()
     method = request.method
     if request.method == 'POST':
-        form = l_forms[lang]['NewAssetForm'](request.POST)
-        if form.is_valid():
-            data = form.cleaned_data
-            try:
-                asset_type = Asset_type.objects.get(id=asset_category)
-            except Asset_type.DoesNotExist:
-                request.session['my_error'] = u'Неправильно указан тип категории в адресной строке!'+str(asset_category)
-                return HttpResponseRedirect('/tasks/')
-            a=Asset(asset_type = Asset_type.objects.get(id=asset_category),
-                    payment = data['payment'],
-                    garanty = data['garanty'],
-                    current_place = data['current_place'],
-                    model = data['model'],
-                    status = data['status'],
-                    claim = data['claim'],
-                    guarantee_period = data['guarantee_period'],
-                    note = data['note'])
-                
-                # model = forms.CharField(max_length=140, label='Модель')
-    # asset_type = forms.ModelChoiceField(queryset  = Asset_type.objects.all(), label='Тип актива')
-    # payment = forms.ModelChoiceField(queryset  = Payment.objects.all(), label='Оплата')    
-    # garanty = forms.ModelChoiceField(queryset  = Garanty.objects.all(), label='Номер гарантии')
-    # current_place = forms.ModelChoiceField(queryset  = Place_Asset.objects.all(), label='Место расположения')
-    # status = forms.ModelChoiceField(queryset  = Status.objects.all(), label='Статус')
-    # claim = forms.ModelChoiceField(queryset  = Claim.objects.all(), label='Заявка',required=False)
-    # guarantee_period = forms.DecimalField(min_value=0, max_value=9999, label='Срок гарантии, месяцев')    
-    # note = forms.CharField(widget=forms.Textarea, label='Примечания')    
-    
-    # asset_type = models.ForeignKey('Asset_type')
-    # payment = models.ForeignKey('Payment')
-    # date_of_write_off = models.DateTimeField()
-    # garanty = models.ForeignKey('Garanty')
-    # current_place = models.ForeignKey('Place_Asset')
-    # model = models.CharField(max_length=140)
-    # status = models.ForeignKey('Status')
-    # claim = models.ForeignKey('Claim')
-    # guarantee_period = models.IntegerField()
-    # note = models.TextField()
-            a.save()
-            return HttpResponseRedirect('/tasks/')
+        # Порядок действия таков:
+        # 1) Создаём Cash
+        # 2) Создаём Payment с этим Cash
+        # 3) Создаём Garanty
+        # 4) Итерируем по элементам в форме от 1 до макс добавляя активы в список активов
+        # 5) Если всё прошло хорошо - активы из списка сохраняем
+        bill_date = request.POST.get('date')
+        # raise TypeError
+        if not bill_date:
+            bill_date = datetime.datetime.now()
+        cash = Cash(date = bill_date,
+               contractor = Contractor.objects.get(id=request.POST.get('contractor_id'))
+               )
+        cash.save()
+        payment = Payment(cash = cash,
+                )
+        payment.save()
+        garanty = Garanty(number = request.POST.get('garanty'))
+        garanty.save()
+        # assets_list=[]
+        # print list(range(1,int(request.POST.get('max_asset_form_number'))+1))
+        for item_number in range(1,int(request.POST.get('max_asset_form_number'))+1):
+            sitem_number = str(item_number)
+            # print sitem_number+'_model',(sitem_number+'_model' in request.POST)
+            if sitem_number+'_model' in request.POST:
+                # guarantee_period = request.POST.get(sitem_number+'_guarantee_period')
+                # if not request.POST.get(sitem_number+'_guarantee_period'):
+                    # guarantee_period=0
+                for count in range(0,int(request.POST.get('count_of_asset'+sitem_number))):
+                    a=Asset(asset_type = Asset_type.objects.get(id=request.POST.get(sitem_number+'_asset_type')),
+                        payment = payment,
+                        garanty = garanty,
+                        # current_place = request.POST.get(sitem_number+'_current_place'],
+                        model = request.POST.get(sitem_number+'_model'),
+                        status = Status.objects.get(id=request.POST.get(sitem_number+'_status')),
+                        # claim = request.POST.get('claim'], - Не тут
+                        guarantee_period = request.POST.get(sitem_number+'_guarantee_period'),
+                        note = request.POST.get(sitem_number+'_note'),
+                        price = request.POST.get(sitem_number+'_price'),
+                        )
+                    a.save()
+                    cur_place=Place_Asset(installation_date = bill_date,
+                        # drawdown_date = models.DateTimeField()
+                        asset = a,
+                        place = Place.objects.get(id=request.POST.get(sitem_number+'_current_place')),
+                        # reason_of_drawdown = models.TextField()
+                        )
+                    cur_place.save()
+                    # assets_list.append(a)
+                    # assets_list.append(cur_place)
+        # for a in assets_list:
+            # a.save()
+        # raise TypeError
+        return HttpResponseRedirect('/tasks/')
     form = l_forms[lang]['NewCashBillForm']({})
     contractors_list = assets.api.get_contractors_list(request,internal=True)
     asset_types_list = assets.api.get_asset_type_list(request,internal=True)

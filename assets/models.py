@@ -10,19 +10,32 @@ class Asset(models.Model):
     payment = models.ForeignKey('Payment')
     date_of_write_off = models.DateTimeField(blank=True, null=True)
     garanty = models.ForeignKey('Garanty')
-    current_place = models.ForeignKey('Place_Asset',related_name='for_asset')
+    # current_place = models.ForeignKey('Place_Asset',related_name='for_asset')
     model = models.CharField(max_length=140)
     status = models.ForeignKey('Status')
-    claim = models.ForeignKey('Claim')
+    claim = models.ForeignKey('Claim',blank=True, null=True)
     guarantee_period = models.IntegerField()
     note = models.TextField(blank=True, null=True)
     price = models.DecimalField(decimal_places=2, max_digits=8)
+    def __unicode__(self):
+        return u';'.join((str(self.id),self.asset_type.asset_type,self.model,self.status.status))
+# Оплата - либо нал, либо безнал, либо то и то
 class Payment(models.Model):
-    cash = models.ForeignKey('Cash')
-    cashless = models.ForeignKey('Cashless')
+    cash = models.ForeignKey('Cash',blank=True, null=True)
+    cashless = models.ForeignKey('Cashless',blank=True, null=True)
+    def __unicode__(self):
+        if not self.cash:
+            return u';'.join((str(self.id),u"CASHLESS:"+self.cashless.__unicode__()))
+        if not self.cashless:
+            return u';'.join((str(self.id),u"CASH:"+self.cash.__unicode__()))
+        return u';'.join((str(self.id),u"CASH:"+self.cash.__unicode__(),u"CASHLESS:"+self.cashless.__unicode__()))
+        
+# Чек/Остатки - то, что за нал
 class Cash(models.Model):
     date = models.DateTimeField()
     contractor = models.ForeignKey('Contractor')
+    def __unicode__(self):
+        return u';'.join((str(self.id),str(self.date),self.contractor.name))
 # Счёт по безналу
 class Cashless(models.Model):
     date_of_invoice = models.DateTimeField()
@@ -31,6 +44,8 @@ class Cashless(models.Model):
     date_of_assets = models.DateTimeField()
     date_of_documents = models.DateTimeField()
     contractor = models.ForeignKey('Contractor')
+    def __unicode__(self):
+        return u';'.join((str(self.id),self.contractor.name,self.dates,self.stages))
 # Заявка
 class Claim(models.Model):
     date_of_invoice = models.DateTimeField()
@@ -51,6 +66,8 @@ class Contractor(models.Model):
         return u';'.join((str(self.id),self.name,self.contact_name))
 class Garanty(models.Model):
     number = models.IntegerField() 
+    def __unicode__(self):
+        return u';'.join((str(self.id),str(self.number)))
 class Asset_type(models.Model):
     asset_type = models.CharField(max_length=200)
     catalogue_name = models.CharField(max_length=30)
@@ -76,12 +93,14 @@ class Repair(models.Model):
     asset = models.ForeignKey('Asset')
 class Place_Asset(models.Model):
     installation_date = models.DateTimeField()
-    drawdown_date = models.DateTimeField()
+    drawdown_date = models.DateTimeField(blank = True, null = True)
     asset = models.ForeignKey('Asset')
     place = models.ForeignKey('Place')
-    reason_of_drawdown = models.TextField()
+    reason_of_drawdown = models.TextField(blank = True, null = True)
 class Place(models.Model):
     place = models.CharField(max_length=140)
+    def __unicode__(self):
+        return str(self.id)+';'+self.place    
 class Cartridge(models.Model):
     model = models.CharField(max_length=140)
     payment = models.ForeignKey('Payment')

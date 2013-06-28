@@ -5,7 +5,7 @@
 {% block style %}
     <script>
     </script>
-    {# нужно для выбора поставщика по вводу и добавления нового #}
+    {# нужно для добавления нового поставщика. Проверка изменения значения поля и обработка ввода нового поставщика проводится в скрипте в get_contractor_list.html #}
     <script type="text/javascript" src="/media/js/bill_contractor.js"></script>
     {# нужно для работы с активами #}
     <script type="text/javascript" src="/media/js/bill_assets.js"></script>    
@@ -21,6 +21,7 @@
         {% endif %}
         <form action="" method="post">
             {% csrf_token %}
+            <input type="hidden" id="max_asset_form_number" name="max_asset_form_number" value=0 />
             <table border=1>
                 {{ form.as_table }}
                 <tr>
@@ -28,6 +29,9 @@
                         <label for="contractor">Поставщик:</label>
                     </th>
                     <td>
+                        <ul class="errorlist" id="contractor_error">
+                            <li>Обязательное поле.</li>
+                        </ul>
                         <div id="contractors_list">
                             {{contractors_list|safe}}
                         </div>
@@ -40,6 +44,7 @@
             {# Список формируется через api get_asset_type_list с id=asset_type_id #}
             {{asset_types_list|safe}}
             <input type="button" value="+" onclick="add_asset($('#asset_type_id option:selected').val())" />
+            # TODO: Надо проверять валидность посылаемых данных
             <input type="submit" />
         </form>
     </div>

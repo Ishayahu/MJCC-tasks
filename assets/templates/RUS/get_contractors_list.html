@@ -51,6 +51,12 @@ function check_contractor() {
             {% endfor %}
             ];
     var b = document.getElementById('contractor');
+    // Если значение не пустое - удаляем сообщение об ошибке. Если пустое - добавляем
+    if (b.value) {
+        $("#contractor_error").empty()
+    } else {
+        $("#contractor_error").html("<li>Обязательное поле.</li>")
+    }
     // Если ввели нового поставщика
     if (c_list.indexOf(b.value)==-1) {
         if (confirm ("Хотите добавить нового поставщика?")) {
@@ -73,7 +79,7 @@ function check_contractor() {
     </tr>
     <tr>
         <td>
-            <input type="hidden" id="contractor_id" value="{{contractor}}" />
+            <input type="hidden" name="contractor_id" id="contractor_id" value="{{contractor}}" />
         </td>
     </tr>
     <tr>

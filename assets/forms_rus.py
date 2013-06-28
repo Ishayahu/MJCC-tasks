@@ -32,14 +32,16 @@ inp_f=( '%d-%m-%Y %H:%M:%S',     # '2006-10-25 14:30:59'
         
 class NewAssetForm_RUS(forms.Form):
     model = forms.CharField(max_length=140, label='Модель')
+    price = forms.DecimalField(min_value=0, decimal_places=2, max_digits=8, initial=0, label='Цена')
     # asset_type = forms.ModelChoiceField(queryset  = Asset_type.objects.all(), label='Тип актива')
     #payment = forms.ModelChoiceField(queryset  = Payment.objects.all(), label='Оплата')    
     # garanty = forms.ModelChoiceField(queryset  = Garanty.objects.all(), label='Номер гарантии')
-    current_place = forms.ModelChoiceField(queryset  = Place_Asset.objects.all(), label='Место расположения')
+    current_place = forms.ModelChoiceField(queryset  = Place.objects.all(), label='Место расположения')
     status = forms.ModelChoiceField(queryset  = Status.objects.all(), label='Статус')
     # claim = forms.ModelChoiceField(queryset  = Claim.objects.all(), label='Заявка',required=False)
-    guarantee_period = forms.DecimalField(min_value=0, max_value=9999, label='Срок гарантии, месяцев')    
+    guarantee_period = forms.DecimalField(min_value=0, max_value=9999, initial=0,label='Срок гарантии, месяцев')    
     note = forms.CharField(widget=forms.Textarea, label='Примечания',required=False)
+        
     def __init__(self,*args,**kwargs):
         self.number = kwargs.pop('number','')
         super(NewAssetForm_RUS, self).__init__(*args, **kwargs)
@@ -49,7 +51,7 @@ class NewAssetForm_RUS(forms.Form):
         return super(NewAssetForm_RUS, self).add_prefix(field_name)
     
 class NewCashBillForm_RUS(forms.Form):
-    date = forms.DateField(initial=datetime.date.today, label="Дата чека/покупки/внесения")
+    date = forms.DateField(initial=datetime.date.today, label="Дата чека/покупки/внесения",help_text='Пустое значение означает текущую дату',required=False)
     garanty = forms.IntegerField(min_value=0, label='Номер гарантии')
     
 class NewContractorForm_RUS(forms.Form):   
