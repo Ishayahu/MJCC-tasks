@@ -30,7 +30,7 @@ inp_f=( '%d-%m-%Y %H:%M:%S',     # '2006-10-25 14:30:59'
         '%d/%m/%y %H:%M',        # '10/25/06 14:30'
         '%d/%m/%y',       )
         
-class NewAssetForm_RUS(forms.Form):
+class NewAssetForm(forms.Form):
     model = forms.CharField(max_length=140, label='Модель')
     price = forms.DecimalField(min_value=0, decimal_places=2, max_digits=8, initial=0, label='Цена')
     # asset_type = forms.ModelChoiceField(queryset  = Asset_type.objects.all(), label='Тип актива')
@@ -44,17 +44,17 @@ class NewAssetForm_RUS(forms.Form):
         
     def __init__(self,*args,**kwargs):
         self.number = kwargs.pop('number','')
-        super(NewAssetForm_RUS, self).__init__(*args, **kwargs)
+        super(NewAssetForm, self).__init__(*args, **kwargs)
     def add_prefix(self, field_name):
         # look up field name; return original if not found
         field_name = str(self.number)+"_"+field_name
-        return super(NewAssetForm_RUS, self).add_prefix(field_name)
+        return super(NewAssetForm, self).add_prefix(field_name)
     
-class NewCashBillForm_RUS(forms.Form):
+class NewCashBillForm(forms.Form):
     date = forms.DateField(initial=datetime.date.today, label="Дата чека/покупки/внесения",help_text='Пустое значение означает текущую дату',required=False)
     garanty = forms.IntegerField(min_value=0, label='Номер гарантии')
     
-class NewContractorForm_RUS(forms.Form):   
+class NewContractorForm(forms.Form):   
     name = forms.CharField(max_length=140, label='Название фирмы')
     email = forms.EmailField(label = 'Мыло',required=False)
     tel = forms.CharField(label='Телефон', max_length=10, min_length=10,required=False)

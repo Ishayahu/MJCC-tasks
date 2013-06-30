@@ -8,8 +8,8 @@ from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.shortcuts import render_to_response
 from assets.models import Asset, Payment, Cash, Cashless, Contractor, Garanty, Asset_type, Status, Budget, Repair, Place_Asset, Place, Cartridge, Cartridge_Model_General_Model, Cartridge_General_Model_Printer_Model, Cartridge_Printer, ROM, Cooler, Storage, Acoustics, Telephone, Battery, Optical_Drive, Printer, Power_suply, Motherboard, CPU, Case
 from todoes.models import  Person #, Task, ProblemByWorker, ProblemByUser, Categories, RegularTask, Activity, Note, Resource, File,
-from assets.forms_rus import NewAssetForm_RUS, NewContractorForm_RUS
-from assets.forms_eng import NewAssetForm_ENG, NewContractorForm_ENG
+# from assets.forms_rus import NewAssetForm_RUS, NewContractorForm_RUS
+# from assets.forms_eng import NewAssetForm_ENG, NewContractorForm_ENG
 from django.contrib.auth.decorators import login_required
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
@@ -36,14 +36,18 @@ except ImportError:
 
 
 # Делаем переводы
-from djlib.multilanguage_utils import select_language
-languages={'ru':'RUS/',
-            'eng':'ENG/'}
-forms_RUS = {'NewAssetForm':NewAssetForm_RUS, 'NewContractorForm':NewContractorForm_RUS}
-forms_ENG = {'NewAssetForm':NewAssetForm_ENG, 'NewContractorForm':NewContractorForm_ENG}
-l_forms = {'ru':forms_RUS,
-           'eng':forms_ENG,
-    }
+from djlib.multilanguage_utils import select_language,multilanguage,register_lang, get_localized_name, get_localized_form#,register_app
+
+register_lang('ru','RUS')
+register_lang('eng','ENG')
+app='assets'
+# languages={'ru':'RUS/',
+            # 'eng':'ENG/'}
+# forms_RUS = {'NewAssetForm':NewAssetForm_RUS, 'NewContractorForm':NewContractorForm_RUS}
+# forms_ENG = {'NewAssetForm':NewAssetForm_ENG, 'NewContractorForm':NewContractorForm_ENG}
+# l_forms = {'ru':forms_RUS,
+           # 'eng':forms_ENG,
+    # }
     
     #lang=select_language(request)
     #..........
@@ -54,6 +58,7 @@ l_forms = {'ru':forms_RUS,
         #form = l_forms[lang]['NewClientForm']()
     #return render_to_response(languages[lang]+'new_ticket.html', {'form':form, 'met......
 @login_required
+@multilanguage
 def get_asset_add_form(request,asset_category,form_number=''):
     lang=select_language(request)
     user = request.user.username
@@ -66,9 +71,11 @@ def get_asset_add_form(request,asset_category,form_number=''):
         asset_type = Asset_type.objects.get(id=asset_category)
     except Asset_type.DoesNotExist:
         return ErrorMessage('Неверно указан код категории актива: '+str(asset_category))
-    form = l_forms[lang]['NewAssetForm'](number=form_number)
-    return render_to_response(languages[lang]+'get_asset_add_form.html', {'number':form_number,'asset_type':asset_type,'form':form, 'method':method},RequestContext(request))    
+    # form = l_forms[lang]['NewAssetForm'](number=form_number)
+    # return render_to_response(languages[lang]+'get_asset_add_form.html', {'number':form_number,'asset_type':asset_type,'form':form, 'method':method},RequestContext(request))
+    return (True,('get_asset_add_form.html', {'NewAssetForm':{'number':form_number}},{'number':form_number,'asset_type':asset_type, 'method':method},request,app))
 @login_required
+@multilanguage
 def get_contractors_list(request,name_to_select='',internal=False):
     lang=select_language(request)
     user = request.user.username
@@ -83,11 +90,13 @@ def get_contractors_list(request,name_to_select='',internal=False):
     method = request.method
     contractors = Contractor.objects.all()
     if internal:
-        t = loader.get_template(languages[lang]+'get_contractors_list.html')
+        t = loader.get_template(get_localized_name('get_contractors_list.html',request))
         c = Context({'contractors':contractors})
         return t.render(c)
-    return render_to_response(languages[lang]+'get_contractors_list.html', {'contractors':contractors,'contractor':contractor,'name_to_select':name_to_select},RequestContext(request))
+    return (True,('get_contractors_list.html', {},{'contractors':contractors,'contractor':contractor,'name_to_select':name_to_select},request,app))
+    # return render_to_response(languages[lang]+'get_contractors_list.html', {'contractors':contractors,'contractor':contractor,'name_to_select':name_to_select},RequestContext(request))
 @login_required
+@multilanguage
 def get_new_contractor_add_form(request, contractor_name):
     lang=select_language(request)
     user = request.user.username
@@ -96,9 +105,11 @@ def get_new_contractor_add_form(request, contractor_name):
     except Person.DoesNotExist:
         fio = FioError()
     method = request.method
-    form = l_forms[lang]['NewContractorForm']({'name':contractor_name})
-    return render_to_response(languages[lang]+'get_new_contractor_add_form.html', {'form':form, 'method':method},RequestContext(request)) 
+    # form = l_forms[lang]['NewContractorForm']({'name':contractor_name})
+    return (True,('get_new_contractor_add_form.html', {'NewContractorForm':{'name':contractor_name}},{'method':method},request,app))
+    # return render_to_response(languages[lang]+'get_new_contractor_add_form.html', {'form':form, 'method':method},RequestContext(request)) 
 @login_required
+@multilanguage
 def save_new_contractor(request):
     lang=select_language(request)
     user = request.user.username
@@ -108,7 +119,7 @@ def save_new_contractor(request):
         fio = FioError()
     method = request.method
     if request.method == 'POST':
-        form = l_forms[lang]['NewContractorForm'](request.POST)
+        form = get_localized_form('NewContractorForm',app,request)(request.POST)
         if form.is_valid():
             data = form.cleaned_data
             c=Contractor(name = data['name'],
@@ -118,9 +129,11 @@ def save_new_contractor(request):
                         contact_name = data['contact_name'],)
             c.save()
             html='<input type="hidden" id="c_id" value="%s" /><input type="hidden" id="c_name" value="%s" />' % (c.id, c.name)
-            return render_to_response(languages[lang]+'OK.html', {'c':c,'html':html},RequestContext(request))
+            return (True,('OK.html', {'NewContractorForm':{'name':contractor_name}},{'method':method},request,app))
+            # return render_to_response(languages[lang]+'OK.html', {'c':c,'html':html},RequestContext(request))
     return "Произошла какая-то ошибка, но не могу представить какая. Надо выяснить и записать для диагностики"
 @login_required
+@multilanguage
 def get_asset_type_list(request,id=-1,internal=False):
     lang=select_language(request)
     user = request.user.username
@@ -134,7 +147,7 @@ def get_asset_type_list(request,id=-1,internal=False):
     method = request.method
     # если для встраивания
     if internal:
-        t = loader.get_template(languages[lang]+'get_list.html')
+        t = loader.get_template(get_localized_name('get_list.html',request))
         if id!=-1:
             c = Context({'items':type_names,'input_id_name':'asset_type_id','selected_item_id':id})
             return t.render(c)
@@ -142,4 +155,5 @@ def get_asset_type_list(request,id=-1,internal=False):
         return t.render(c)
     if id!=-1:
         return render_to_response(languages[lang]+'get_list.html', {'items':type_names,'input_id_name':'asset_type_id','selected_item_id':id},RequestContext(request))
-    return render_to_response(languages[lang]+'get_list.html', {'items':type_names,'input_id_name':'asset_type_id'},RequestContext(request))
+    return (True,('get_list.html', {},{'items':type_names,'input_id_name':'asset_type_id'},request,app))
+    # return render_to_response(languages[lang]+'get_list.html', {'items':type_names,'input_id_name':'asset_type_id'},RequestContext(request))

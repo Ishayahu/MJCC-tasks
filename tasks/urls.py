@@ -71,6 +71,10 @@ urlpatterns = patterns('',
 # Работа с активами
     # Добавление чека, где указывается плата + сколько там чего
     url(r'^bill/add/$', assets.views.bill_add),
+    # Просмотр списка счетов, как по налу так и по безналу с фильтрами
+    url(r'^all_bills/$', assets.views.all_bills),
+    # Просмотр конкретного чека/счёта
+    url(r'^bill/show/([^/]+)/(\d*)/$', assets.views.show_bill),
 # API для работы с активами
     # Выдача формы добавления актива, в качестве параметра - категория актива, префикс к имени полей формы (число)
     url(r'^api/get_asset_add_form/(\d+)/(\d*)/$', assets.api.get_asset_add_form),

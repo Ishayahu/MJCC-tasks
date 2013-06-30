@@ -1,0 +1,22 @@
+{% extends "RUS/base.html" %}
+{% block title %}
+    Список счетов и чеков
+{% endblock %}
+{% block style %}
+
+{% endblock %}
+
+{% block content %}
+    <h1>Чеки</h1>
+    <ol>
+        {% for item in cashs %}
+            <li><a href="/bill/show/cash/{{item.id}}/">id={{item.id}}; №{{item.bill_number}} от {{item.date}} от {{item.contractor}}</a></li>
+        {% endfor %}
+    </ol>
+    <h1>Счета</h1>
+    <ol>
+        {% for item in cashlesss %}
+            <li><a href="/bill/show/cashless/{{item.id}}/">id={{item.id}}; №{{item.bill_number}} от {{item.date_of_invoice}} от {{item.contractor}}</a></li>
+        {% endfor %}
+    </ol>
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends "RUS/base.html" %}
+{% block title %}
+    Просмотр чека №{{item.bill_number}} от {{item.date}} от {{item.contractor}} (id={{item.id}})
+{% endblock %}
+{% block style %}
+
+{% endblock %}
+
+{% block content %}
+    {% if assets %}
+        <table border=1>
+            <tr>
+                <th>ID</th>
+                <th>Модель</th>
+                <th>Цена</th>
+                <th>Статус</th>
+                <th>Номер гарантии</th>
+                <th>Место</th>
+            </tr>
+            {% for item in assets %}
+                <tr>
+                    <th>{{item.id}}</th>
+                    <th>{{item.model}}</th>
+                    <th>{{item.price}}</th>
+                    <th>{{item.status.status}}</th>
+                    <th>{{item.garanty.number}}</th>
+                    <th>{{item.place}}</th>
+                </tr>
+            {% endfor %}
+    {% endif %}
+{% endblock %}

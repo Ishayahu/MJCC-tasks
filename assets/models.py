@@ -34,8 +34,9 @@ class Payment(models.Model):
 class Cash(models.Model):
     date = models.DateTimeField()
     contractor = models.ForeignKey('Contractor')
+    bill_number =  models.CharField(max_length=40)
     def __unicode__(self):
-        return u';'.join((str(self.id),str(self.date),self.contractor.name))
+        return u';'.join((str(self.id),self.bill_number,str(self.date),self.contractor.name))
 # Счёт по безналу
 class Cashless(models.Model):
     date_of_invoice = models.DateTimeField()
@@ -44,8 +45,9 @@ class Cashless(models.Model):
     date_of_assets = models.DateTimeField()
     date_of_documents = models.DateTimeField()
     contractor = models.ForeignKey('Contractor')
+    bill_number =  models.CharField(max_length=40)
     def __unicode__(self):
-        return u';'.join((str(self.id),self.contractor.name,self.dates,self.stages))
+        return u';'.join((str(self.id),self.bill_number,self.contractor.name,self.dates,self.stages))
 # Заявка
 class Claim(models.Model):
     date_of_invoice = models.DateTimeField()
