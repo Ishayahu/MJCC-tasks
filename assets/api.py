@@ -22,6 +22,7 @@ from djlib.user_tracking import set_last_activity_model, get_last_activities
 from djlib.mail_utils import send_email_alternative
 from djlib.error_utils import FioError, ErrorMessage, add_error, shows_errors
 from djlib.auxiliary import get_info
+from djlib.logging_utils import log, confirm_log, make_request_with_logging
 
 from user_settings.settings import server_ip, admins, admins_mail
 try:
@@ -203,11 +204,15 @@ def assets_by_type(request,type_id):
 @admins_only
 # @for_admins
 def asset_delete(request,id,type_id):
+    lang,user,fio,method = get_info(request)
     try:
         a = Asset.objects.get(id=id)
     except Asset.DoesNotExist:
         add_error(u"Актив с номером %s не найден!" % id,request)
         return (False,(HttpResponseRedirect("/assets_by_type/"+type_id+"/")))
-    a.delete()
+    # log()
+    # a.delete()
+    make_request_with_logging(user,u"Удаляем актив №%s" % id,a.delete,{})
+    # confirm_log
     html='Актив %s удалён' % id
     return (True,('OK.html', {},{},request,app))

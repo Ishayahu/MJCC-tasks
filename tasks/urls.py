@@ -5,6 +5,7 @@ from django.conf.urls.defaults import patterns, include, url
 import todoes.views 
 import assets.views
 import assets.api
+import logs.views
 import djlib
 from django.contrib import admin
 from django.contrib.auth.views import login, logout
@@ -100,6 +101,9 @@ urlpatterns = patterns('',
     url(r'^api/assets_by_type/(\d+)/$', assets.api.assets_by_type),
     # Получение списка активов по категориям - id актива, id категории к которой вернуться при ошибки
     url(r'^api/asset/delete/(\d+)/(\d+)/$', assets.api.asset_delete),
+    
+# Логирование и т.п.
+    url(r'^api/asset/delete/(\d*)/$', logs.views.show_last_logs),
 )
 if settings.DEBUG:
     urlpatterns += patterns('',

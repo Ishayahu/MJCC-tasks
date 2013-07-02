@@ -1,0 +1,14 @@
+# -*- coding:utf-8 -*-
+# coding=<utf8>
+
+from django.db import models
+
+# Модели для логирования действий пользователей с активами
+class Logging(models.Model):
+    user = models.CharField(max_length=140)
+    request = models.TextField(blank = True, null = True)
+    goal = models.TextField(blank = True, null = True)
+    done = models.BooleanField(default=False)
+    datetime = models.
+    def __unicode__(self):
+        return str(self.id)+';'+self.user  

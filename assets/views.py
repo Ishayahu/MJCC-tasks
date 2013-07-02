@@ -22,6 +22,7 @@ from djlib.acl_utils import acl, for_admins, admins_only
 from djlib.user_tracking import set_last_activity_model, get_last_activities
 from djlib.mail_utils import send_email_alternative
 from djlib.auxiliary import get_info
+from djlib.logging_utils import log, confirm_log, make_request_with_logging
 
 from user_settings.settings import server_ip, admins, admins_mail
 try:

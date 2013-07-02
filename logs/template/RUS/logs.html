@@ -1,0 +1,28 @@
+{% extends "RUS/base_assets.html" %}
+{% block title %}
+    Список активов по типу {{type_name}}
+{% endblock %}
+{% block style %}
+    
+{% endblock %}
+
+{% block content %}
+    <table border=1>
+        <tr>
+            <th>№№</th>
+            <th>Пользователь</th>
+            <th>Цель</th>
+            <th>Запрос</th>
+            <th>Выполнен</th>
+        </tr>
+        {% for item in logs %}
+            <tr>
+                <th>№№</th>
+                <th>Пользователь</th>
+                <th>Цель</th>
+                <th>Запрос</th>
+                <th>Выполнен</th>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}
