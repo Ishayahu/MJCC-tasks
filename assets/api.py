@@ -20,7 +20,7 @@ from djlib.text_utils import htmlize
 from djlib.acl_utils import acl
 from djlib.user_tracking import set_last_activity_model, get_last_activities
 from djlib.mail_utils import send_email_alternative
-from djlib.error_utils import FioError, ErrorMessage
+from djlib.error_utils import FioError, ErrorMessage, add_error, shows_errors
 
 from user_settings.settings import server_ip, admins, admins_mail
 try:
@@ -134,6 +134,7 @@ def save_new_contractor(request):
     return "Произошла какая-то ошибка, но не могу представить какая. Надо выяснить и записать для диагностики"
 @login_required
 @multilanguage
+@shows_errors
 def get_asset_type_list(request,id=-1,internal=False):
     lang=select_language(request)
     user = request.user.username
@@ -157,3 +158,31 @@ def get_asset_type_list(request,id=-1,internal=False):
         return render_to_response(languages[lang]+'get_list.html', {'items':type_names,'input_id_name':'asset_type_id','selected_item_id':id},RequestContext(request))
     return (True,('get_list.html', {},{'items':type_names,'input_id_name':'asset_type_id'},request,app))
     # return render_to_response(languages[lang]+'get_list.html', {'items':type_names,'input_id_name':'asset_type_id'},RequestContext(request))
+@login_required
+@multilanguage
+def mark_as_deleted_bill(request,b_type,id):
+    bill_types={'cash':Cash,'cashless':Cashless}
+    bill=bill_types[b_type].objects.get(id=id)
+    payment=bill.payment_set.get()
+    payment.deleted=True
+    payment.save()
+    return (False,(HttpResponseRedirect('/all_bills/')))
+@login_required
+@multilanguage
+@shows_errors
+def full_delete_bill(request,b_type,id):
+    # print "in full_delete_bill"
+    bill_types={'cash':Cash,'cashless':Cashless}
+    bill=bill_types[b_type].objects.get(id=id)
+    payment=bill.payment_set.get()
+    if not payment.deleted:
+        add_error(u"Этот чек/счёт ещё не удалён! id=%s тип %s" % (id,b_type),request)
+        # print "added error: "+str(request.session['my_error'])
+        request.session.modified = True
+        return (False,(HttpResponseRedirect('/all_bills/')))
+    assets=payment.asset_set.all()
+    for asset in assets:
+        asset.delete()
+    payment.delete()
+    bill.delete()
+    return (False,(HttpResponseRedirect('/all_bills/')))

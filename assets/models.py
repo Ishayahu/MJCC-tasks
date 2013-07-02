@@ -23,6 +23,7 @@ class Asset(models.Model):
 class Payment(models.Model):
     cash = models.ForeignKey('Cash',blank=True, null=True)
     cashless = models.ForeignKey('Cashless',blank=True, null=True)
+    deleted = models.BooleanField(default=False)
     def __unicode__(self):
         if not self.cash:
             return u';'.join((str(self.id),u"CASHLESS:"+self.cashless.__unicode__()))

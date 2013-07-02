@@ -8,6 +8,12 @@
 <!--Меню выбора языка-->
 <div class ="rightstr"><p><a href="/language/ru">ru</a>|<a href="/language/eng">eng</a></p></div>
 <div style="clear:left"></div>
-{% block content %}{% endblock %}
+{% block content %}
+    {% if my_error %}
+        {% for error in my_error %}
+            <h2>{{error}}</h2><br />
+        {% endfor %}
+    {% endif %}
+{% endblock %}
 </body>
 </html>

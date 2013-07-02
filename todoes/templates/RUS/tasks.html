@@ -88,11 +88,7 @@
     {% if alert %}
         <script>alert("Появились новые задачи!")</script>
     {% endif %}
-    {% if my_error %}
-        {% for error in my_error %}
-            <h2>{{error}}</h2><br />
-        {% endfor %}
-    {% endif %}
+
     {% if regular_tasks %}
         <p>Повторяющиеся задачи</p>
         <ol>

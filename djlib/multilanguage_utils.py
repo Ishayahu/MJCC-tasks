@@ -40,10 +40,18 @@ def multilanguage(fn):
      return (decorate_or_not,('all_bills.html',{'form_name':(form_param1,form_param2),},{'cashs':cashs, 'cashlesss':cashlesss},request,app))
     """
     def wrapped(*args,**kwargs):
+        # print "in multilanguage for "+str(args[0].path)+" calling function, my_error:"+str(args[0].session['my_error'])
         decorate_or_not, result = fn(*args,**kwargs)
         if not decorate_or_not:
             return result
         template,forms_dict,dict,request,app=result
+        # print "after calling for "+str(args[0].path)+" in multilanguage: "+str(request.session['my_error'])
+        # dict.update(request.session.get('to_dict'))
+        # request.session.get('to_dict')=''
+        # dict['my_error'] = request.session.get('my_error')
+        # dict['admin'] = request.session.get('admin')
+        # request.session.get('admin')=False
+        # request.session.get('my_error')=[]
         lang=select_language(request)
         l_template=languages[lang]+'/'+template
         forms={}
@@ -60,5 +68,8 @@ def multilanguage(fn):
             forms[form]=(a(forms_dict[form]))
         dict.update(forms)
         # raise ImportError
+        # print l_template
+        # print dict
+        # print "in multilanguage for "+str(args[0].path)+" before return dict="+str(dict)
         return render_to_response(l_template, dict,RequestContext(request)) 
     return wrapped

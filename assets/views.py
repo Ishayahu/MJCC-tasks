@@ -18,7 +18,7 @@ from django.template import RequestContext
 
 from djlib.cron_utils import decronize, crontab_to_russian, generate_next_reminder
 from djlib.text_utils import htmlize
-from djlib.acl_utils import acl
+from djlib.acl_utils import acl, for_admins, admins_only
 from djlib.user_tracking import set_last_activity_model, get_last_activities
 from djlib.mail_utils import send_email_alternative
 from djlib.auxiliary import get_info
@@ -34,7 +34,7 @@ except ImportError:
     url_one_record=('',)
 
 
-from djlib.error_utils import FioError
+from djlib.error_utils import FioError, ErrorMessage, add_error, shows_errors
 
 import assets.api
 
@@ -135,15 +135,14 @@ def bill_add(request):
     
 @login_required
 @multilanguage
+@shows_errors
+@for_admins
 def all_bills(request):
+    # print "in all_bills: "+str(request.session['my_error'])
     lang,user,fio,method = get_info(request)
-    
-    
-    cashs = Cash.objects.all()
-    cashlesss = Cashless.objects.all()
-    return (True,('all_bills.html',{},{'cashs':cashs, 'cashlesss':cashlesss},request,app))
-    # return (decorate_or_not,('all_bills.html',{'form_name':(form_param1,form_param2),},{'cashs':cashs, 'cashlesss':cashlesss},request,app))
-    # return ('all_bills.html',{'cashs':cashs, 'cashlesss':cashlesss},request)
+    cashs =  Cash.objects.filter(payment__in=Payment.objects.filter(deleted=False))
+    cashlesss = Cashless.objects.filter(payment__in=Payment.objects.filter(deleted=False))
+    return (True,('all_bills.html',{},{'title':'Список всех счетов и чеков','cashs':cashs, 'cashlesss':cashlesss},request,app))
 @login_required
 @multilanguage
 def show_bill(request,type,id):
@@ -154,3 +153,13 @@ def show_bill(request,type,id):
     for asset in assets:
         asset.place=asset.place_asset_set.latest('installation_date').place.place
     return (True,('show_bill.html',{},{'bill':bill,'assets':assets},request,app))
+@login_required
+@multilanguage
+@admins_only
+def all_deleted_bills(request):
+    lang,user,fio,method = get_info(request)
+    cashs =  Cash.objects.filter(payment__in=Payment.objects.filter(deleted=True))
+    cashlesss = Cashless.objects.filter(payment__in=Payment.objects.filter(deleted=True))
+    return (True,('all_deleted_bills.html',{},{'title':'Список всех удалённых счетов и чеков','cashs':cashs, 'cashlesss':cashlesss},request,app))
+
+    

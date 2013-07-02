@@ -73,8 +73,10 @@ urlpatterns = patterns('',
     url(r'^bill/add/$', assets.views.bill_add),
     # Просмотр списка счетов, как по налу так и по безналу с фильтрами
     url(r'^all_bills/$', assets.views.all_bills),
-    # Просмотр конкретного чека/счёта
+    # Просмотр конкретного чека/счёта - тип,id
     url(r'^bill/show/([^/]+)/(\d*)/$', assets.views.show_bill),
+    # Список всех удалённых чеков/счётов
+    url(r'^all_deleted_bills/$', assets.views.all_deleted_bills),
 # API для работы с активами
     # Выдача формы добавления актива, в качестве параметра - категория актива, префикс к имени полей формы (число)
     url(r'^api/get_asset_add_form/(\d+)/(\d*)/$', assets.api.get_asset_add_form),
@@ -86,7 +88,12 @@ urlpatterns = patterns('',
     url(r'^api/save_new_contractor/$', assets.api.save_new_contractor),    
     # Получаем список типов активов, в качестве парамета - id выбранного
     url(r'^api/get_asset_type_list/(\d*)/$', assets.api.get_asset_type_list),    
-
+    # Пометить конкретный чек/счёт к удалению - тип,id
+    url(r'^api/bill/delete/([^/]+)/(\d*)/$', assets.api.mark_as_deleted_bill),
+    url(r'^bill/delete/([^/]+)/(\d*)/$', assets.api.mark_as_deleted_bill),
+    # Пометить конкретный чек/счёт к удалению - тип,id
+    url(r'^api/bill/full_delete/([^/]+)/(\d*)/$', assets.api.full_delete_bill),
+    url(r'^bill/full_delete/([^/]+)/(\d*)/$', assets.api.full_delete_bill),
 )
 if settings.DEBUG:
     urlpatterns += patterns('',
