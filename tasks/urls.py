@@ -77,6 +77,8 @@ urlpatterns = patterns('',
     url(r'^bill/show/([^/]+)/(\d*)/$', assets.views.show_bill),
     # Список всех удалённых чеков/счётов
     url(r'^all_deleted_bills/$', assets.views.all_deleted_bills),
+    # Просмотр активов по категориям
+    url(r'^assets_by_type/(\d*)/$', assets.views.assets_by_type),
 # API для работы с активами
     # Выдача формы добавления актива, в качестве параметра - категория актива, префикс к имени полей формы (число)
     url(r'^api/get_asset_add_form/(\d+)/(\d*)/$', assets.api.get_asset_add_form),
@@ -94,6 +96,10 @@ urlpatterns = patterns('',
     # Пометить конкретный чек/счёт к удалению - тип,id
     url(r'^api/bill/full_delete/([^/]+)/(\d*)/$', assets.api.full_delete_bill),
     url(r'^bill/full_delete/([^/]+)/(\d*)/$', assets.api.full_delete_bill),
+    # Получение списка активов по категориям
+    url(r'^api/assets_by_type/(\d+)/$', assets.api.assets_by_type),
+    # Получение списка активов по категориям - id актива, id категории к которой вернуться при ошибки
+    url(r'^api/asset/delete/(\d+)/(\d+)/$', assets.api.asset_delete),
 )
 if settings.DEBUG:
     urlpatterns += patterns('',

@@ -17,10 +17,11 @@ from django.template import RequestContext, loader, Context
 
 from djlib.cron_utils import decronize, crontab_to_russian, generate_next_reminder
 from djlib.text_utils import htmlize
-from djlib.acl_utils import acl
+from djlib.acl_utils import acl, for_admins, admins_only
 from djlib.user_tracking import set_last_activity_model, get_last_activities
 from djlib.mail_utils import send_email_alternative
 from djlib.error_utils import FioError, ErrorMessage, add_error, shows_errors
+from djlib.auxiliary import get_info
 
 from user_settings.settings import server_ip, admins, admins_mail
 try:
@@ -186,3 +187,27 @@ def full_delete_bill(request,b_type,id):
     payment.delete()
     bill.delete()
     return (False,(HttpResponseRedirect('/all_bills/')))
+@login_required
+@multilanguage
+@shows_errors
+@for_admins
+def assets_by_type(request,type_id):
+    lang,user,fio,method = get_info(request)
+    assets = Asset.objects.filter(asset_type=type_id)
+    asset_types = Asset_type.objects.all()
+    for asset in assets:
+        asset.place=asset.place_asset_set.latest('installation_date').place.place
+    return (True,('assets_by_type_table.html',{},{'assets':assets},request,app))
+@login_required
+@multilanguage
+@admins_only
+# @for_admins
+def asset_delete(request,id,type_id):
+    try:
+        a = Asset.objects.get(id=id)
+    except Asset.DoesNotExist:
+        add_error(u"Актив с номером %s не найден!" % id,request)
+        return (False,(HttpResponseRedirect("/assets_by_type/"+type_id+"/")))
+    a.delete()
+    html='Актив %s удалён' % id
+    return (True,('OK.html', {},{},request,app))

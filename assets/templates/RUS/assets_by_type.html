@@ -1,0 +1,35 @@
+{% extends "RUS/base_assets.html" %}
+{% block title %}
+    Список активов по типу {{type_name}}
+{% endblock %}
+{% block style %}
+    
+{% endblock %}
+
+{% block content %}
+    {% if admin %}
+        
+    {% endif %}
+    <div id="message">
+    </div>
+    <select id="asset_type">
+        {% for item in asset_types %}
+            {% ifequal item.id type_id %}
+                <option value="{{item.id}}" selected="selected">{{item.asset_type}}</option>
+            {% endifequal %}
+            {% ifnotequal item.id type_id %}
+                <option value="{{item.id}}">{{item.asset_type}}</option>
+            {% endifnotequal %}
+        {% endfor %}
+    </select>
+    <div id="asset_table">
+    {# Сюда грузится таблица с активами #}
+    </div>
+    <script>
+        $("#asset_type").change(function () {
+            var str = $('#asset_type option:selected').val();
+            $("#asset_table").load("/api/assets_by_type/"+str+"/");
+        });
+        $('#asset_type').change();
+    </script>
+{% endblock %}

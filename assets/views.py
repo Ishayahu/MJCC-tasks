@@ -44,22 +44,6 @@ from djlib.multilanguage_utils import select_language,multilanguage,register_lan
 register_lang('ru','RUS')
 register_lang('eng','ENG')
 app='assets'
-# languages={'ru':'RUS/',
-            # 'eng':'ENG/'}
-# forms_RUS = {'NewAssetForm':NewAssetForm_RUS,'NewCashBillForm':NewCashBillForm_RUS}
-# forms_ENG = {'NewAssetForm':NewAssetForm_ENG,'NewCashBillForm':NewCashBillForm_ENG}
-# l_forms = {'ru':forms_RUS,
-           # 'eng':forms_ENG,
-    # }
-    
-    #lang=select_language(request)
-    #..........
-    #if request.method == 'POST':
-        #form = NewClientForm(request.POST)
-    #.....................
-    #else:
-        #form = l_forms[lang]['NewClientForm']()
-    #return render_to_response(languages[lang]+'new_ticket.html', {'form':form, 'met......
 
 @login_required
 @multilanguage
@@ -80,7 +64,6 @@ def bill_add(request):
         # 4) Итерируем по элементам в форме от 1 до макс добавляя активы в список активов
         # 5) Если всё прошло хорошо - активы из списка сохраняем
         bill_date = request.POST.get('date')
-        # raise TypeError
         if not bill_date:
             bill_date = datetime.datetime.now()
         cash = Cash(date = bill_date,
@@ -92,45 +75,28 @@ def bill_add(request):
         payment.save()
         garanty = Garanty(number = request.POST.get('garanty'))
         garanty.save()
-        # assets_list=[]
-        # print list(range(1,int(request.POST.get('max_asset_form_number'))+1))
         for item_number in range(1,int(request.POST.get('max_asset_form_number'))+1):
             sitem_number = str(item_number)
-            # print sitem_number+'_model',(sitem_number+'_model' in request.POST)
             if sitem_number+'_model' in request.POST:
-                # guarantee_period = request.POST.get(sitem_number+'_guarantee_period')
-                # if not request.POST.get(sitem_number+'_guarantee_period'):
-                    # guarantee_period=0
                 for count in range(0,int(request.POST.get('count_of_asset'+sitem_number))):
                     a=Asset(asset_type = Asset_type.objects.get(id=request.POST.get(sitem_number+'_asset_type')),
                         payment = payment,
                         garanty = garanty,
-                        # current_place = request.POST.get(sitem_number+'_current_place'],
                         model = request.POST.get(sitem_number+'_model'),
                         status = Status.objects.get(id=request.POST.get(sitem_number+'_status')),
-                        # claim = request.POST.get('claim'], - Не тут
                         guarantee_period = request.POST.get(sitem_number+'_guarantee_period'),
                         note = request.POST.get(sitem_number+'_note'),
                         price = request.POST.get(sitem_number+'_price'),
                         )
                     a.save()
                     cur_place=Place_Asset(installation_date = bill_date,
-                        # drawdown_date = models.DateTimeField()
                         asset = a,
                         place = Place.objects.get(id=request.POST.get(sitem_number+'_current_place')),
-                        # reason_of_drawdown = models.TextField()
                         )
                     cur_place.save()
-                    # assets_list.append(a)
-                    # assets_list.append(cur_place)
-        # for a in assets_list:
-            # a.save()
-        # raise TypeError
         return (False,HttpResponseRedirect('/tasks/'))
-    # form = l_forms[lang]['NewCashBillForm']({})
     contractors_list = assets.api.get_contractors_list(request,internal=True)
     asset_types_list = assets.api.get_asset_type_list(request,internal=True)
-    # return render_to_response(languages[lang]+'new_bill.html', {'form':form,'contractors_list':contractors_list,'asset_types_list':asset_types_list, 'method':method},RequestContext(request))
     return (True,('new_bill.html', {'NewCashBillForm':{}},{'contractors_list':contractors_list,'asset_types_list':asset_types_list, 'method':method},request,app))
     
 @login_required
@@ -138,7 +104,6 @@ def bill_add(request):
 @shows_errors
 @for_admins
 def all_bills(request):
-    # print "in all_bills: "+str(request.session['my_error'])
     lang,user,fio,method = get_info(request)
     cashs =  Cash.objects.filter(payment__in=Payment.objects.filter(deleted=False))
     cashlesss = Cashless.objects.filter(payment__in=Payment.objects.filter(deleted=False))
@@ -161,5 +126,15 @@ def all_deleted_bills(request):
     cashs =  Cash.objects.filter(payment__in=Payment.objects.filter(deleted=True))
     cashlesss = Cashless.objects.filter(payment__in=Payment.objects.filter(deleted=True))
     return (True,('all_deleted_bills.html',{},{'title':'Список всех удалённых счетов и чеков','cashs':cashs, 'cashlesss':cashlesss},request,app))
-
-    
+@login_required
+@multilanguage
+@shows_errors
+def assets_by_type(request,type_id):
+    if not type_id:
+        type_id=0
+    else:
+        type_id=int(type_id)
+    lang,user,fio,method = get_info(request)
+    type_name = Asset_type.objects.get(id=type_id)
+    asset_types = Asset_type.objects.all()
+    return (True,('assets_by_type.html',{},{'type_name':type_name.asset_type,'asset_types':asset_types,'type_id':type_id},request,app))
