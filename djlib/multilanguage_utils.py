@@ -65,7 +65,7 @@ def multilanguage(fn):
         # forms_module=getattr(app_module,'forms_'+languages[lang].lower())
         for form in forms_dict:
             a=getattr(forms_module,form)            
-            forms[form]=(a(forms_dict[form]))
+            forms[form]=(a(**forms_dict[form]))
         dict.update(forms)
         # raise ImportError
         # print l_template

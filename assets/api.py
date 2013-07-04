@@ -1,4 +1,4 @@
-# -*- coding:utf-8 -*-
+﻿# -*- coding:utf-8 -*-
 # coding=<utf8>
 
 import datetime
@@ -61,7 +61,9 @@ app='assets'
     #return render_to_response(languages[lang]+'new_ticket.html', {'form':form, 'met......
 @login_required
 @multilanguage
-def get_asset_add_form(request,asset_category,form_number=''):
+def get_asset_add_form(request,asset_category,form_number):
+    # if not form_number:
+        # form_number=1
     lang=select_language(request)
     user = request.user.username
     try:
@@ -75,6 +77,7 @@ def get_asset_add_form(request,asset_category,form_number=''):
         return ErrorMessage('Неверно указан код категории актива: '+str(asset_category))
     # form = l_forms[lang]['NewAssetForm'](number=form_number)
     # return render_to_response(languages[lang]+'get_asset_add_form.html', {'number':form_number,'asset_type':asset_type,'form':form, 'method':method},RequestContext(request))
+    # raise TypeError
     return (True,('get_asset_add_form.html', {'NewAssetForm':{'number':form_number}},{'number':form_number,'asset_type':asset_type, 'method':method},request,app))
 @login_required
 @multilanguage
@@ -94,7 +97,7 @@ def get_contractors_list(request,name_to_select='',internal=False):
     if internal:
         t = loader.get_template(get_localized_name('get_contractors_list.html',request))
         c = Context({'contractors':contractors})
-        return t.render(c)
+        return (False,(t.render(c)))
     return (True,('get_contractors_list.html', {},{'contractors':contractors,'contractor':contractor,'name_to_select':name_to_select},request,app))
     # return render_to_response(languages[lang]+'get_contractors_list.html', {'contractors':contractors,'contractor':contractor,'name_to_select':name_to_select},RequestContext(request))
 @login_required
@@ -153,9 +156,9 @@ def get_asset_type_list(request,id=-1,internal=False):
         t = loader.get_template(get_localized_name('get_list.html',request))
         if id!=-1:
             c = Context({'items':type_names,'input_id_name':'asset_type_id','selected_item_id':id})
-            return t.render(c)
+            return (False,(t.render(c)))
         c = Context({'items':type_names,'input_id_name':'asset_type_id'})
-        return t.render(c)
+        return (False,(t.render(c)))
     if id!=-1:
         return render_to_response(languages[lang]+'get_list.html', {'items':type_names,'input_id_name':'asset_type_id','selected_item_id':id},RequestContext(request))
     return (True,('get_list.html', {},{'items':type_names,'input_id_name':'asset_type_id'},request,app))
@@ -209,10 +212,14 @@ def asset_delete(request,id,type_id):
         a = Asset.objects.get(id=id)
     except Asset.DoesNotExist:
         add_error(u"Актив с номером %s не найден!" % id,request)
+        print "not found"
         return (False,(HttpResponseRedirect("/assets_by_type/"+type_id+"/")))
     # log()
     # a.delete()
-    make_request_with_logging(user,u"Удаляем актив №%s" % id,a.delete,{})
+    print "before call "+str(id)
+    a=make_request_with_logging(user,"Удаляем актив №%s" % str(id),a.delete,{})
+    print "after call"
+    print str(a)  
     # confirm_log
     html='Актив %s удалён' % id
     return (True,('OK.html', {},{},request,app))

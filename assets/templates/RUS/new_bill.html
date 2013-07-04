@@ -23,7 +23,7 @@
             {% csrf_token %}
             <input type="hidden" id="max_asset_form_number" name="max_asset_form_number" value=0 />
             <table border=1>
-                {{ form.as_table }}
+                {{ NewCashBillForm.as_table }}
                 <tr>
                     <th>
                         <label for="contractor">Поставщик:</label>

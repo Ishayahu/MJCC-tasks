@@ -33,6 +33,9 @@ def shows_errors(fn):
     """
     def wrapped(*args,**kwargs):
         # print "in shows_errors "+str(args[0].path)+" before calling function"
+        # a=fn(*args,**kwargs)
+        # print a
+        # raise TabError
         decorate_or_not, result = fn(*args,**kwargs)
         # raise TypeError
         if not decorate_or_not:

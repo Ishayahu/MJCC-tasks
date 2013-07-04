@@ -1,4 +1,4 @@
-# -*- coding:utf-8 -*-
+﻿# -*- coding:utf-8 -*-
 # coding=<utf8>
 
 import datetime
@@ -18,8 +18,13 @@ def confirm_log(id):
     log.save()
     return True
 def make_request_with_logging(user,message,sql_request,sql_request_params):
+    print "user="+user
+    print message
+    print "sql_request="+str(sql_request)
+    print "sql_params="+str(sql_request_params)
     log = Logging(  user = user,
-                    goal = message)
+                    goal = message,
+                    datetime = datetime.datetime.now())
     log.save()
     result = sql_request(**sql_request_params)
     log.request = str(result.query)

@@ -56,6 +56,7 @@ def bill_add(request):
     # except Person.DoesNotExist:
         # fio = FioError()
     # method = request.method
+    # raise TypeError
     lang,user,fio,method = get_info(request)
     if request.method == 'POST':
         # Порядок действия таков:
@@ -64,9 +65,36 @@ def bill_add(request):
         # 3) Создаём Garanty
         # 4) Итерируем по элементам в форме от 1 до макс добавляя активы в список активов
         # 5) Если всё прошло хорошо - активы из списка сохраняем
-        bill_date = request.POST.get('date')
+        
+        # Внести данные через форму
+        # from django import forms
+        # inp_f=( '%d-%m-%Y %H:%M:%S',     # '2006-10-25 14:30:59'
+        # '%d-%m-%Y %H:%M',        # '2006-10-25 14:30'
+        # '%Y-%m-%d %H:%M:%S',     # '2006-10-25 14:30'
+        # '%d-%m-%Y',              # '2006-10-25'
+        # '%d/%m/%Y %H:%M:%S',     # '10/25/2006 14:30:59'
+        # '%d/%m/%Y %H:%M',        # '10/25/2006 14:30'
+        # '%d/%m/%Y',              # '10/25/2006'
+        # '%d.%m.%Y %H:%M:%S',     # '10/25/2006 14:30:59'
+        # '%Y.%m.%d %H:%M:%S',     # '2010/01/26 14:30:59'
+        # '%d/%m/%y %H:%M:%S',     # '10/25/06 14:30:59'
+        # '%d/%m/%y %H:%M',        # '10/25/06 14:30'
+        # '%d/%m/%y',       )
+        # class NewCashBillForm(forms.Form):
+            # date = forms.DateField(initial=datetime.date.today, label="Дата чека/покупки/внесения",help_text='Пустое значение означает текущую дату',required=False,input_formats=inp_f)
+            # garanty = forms.IntegerField(min_value=0, label='Номер гарантии')
+        # form = NewCashBillForm(request.POST)
+        # if form.is_valid():
+            # data = form.cleaned_data
+
+        bill_date = request.POST.get('date','')
         if not bill_date:
             bill_date = datetime.datetime.now()
+        a=[int(a) for a in bill_date.split('.')]
+        a.reverse()
+        bill_date=datetime.datetime(*a)
+        print bill_date
+        # raise ImportError
         cash = Cash(date = bill_date,
                contractor = Contractor.objects.get(id=request.POST.get('contractor_id'))
                )
@@ -96,6 +124,8 @@ def bill_add(request):
                         )
                     cur_place.save()
         return (False,HttpResponseRedirect('/tasks/'))
+        # else:
+            # print "FOrm is not valid??"
     contractors_list = assets.api.get_contractors_list(request,internal=True)
     asset_types_list = assets.api.get_asset_type_list(request,internal=True)
     return (True,('new_bill.html', {'NewCashBillForm':{}},{'contractors_list':contractors_list,'asset_types_list':asset_types_list, 'method':method},request,app))

@@ -28,7 +28,7 @@
         function del_asset(id){
             if (confirm('Уверены?')) {
                 $("#asset_id_"+id).load("/api/asset/delete/"+id+"/"+$('#asset_type option:selected').val()+"/",function(result){
-                    console.log(result);
+                    //console.log(result);
                     $("#message").html("Актив id="+id+"успешно удалён из базы!");
                     $("#asset_id_"+id).remove();
                     }

@@ -43,15 +43,19 @@ class NewAssetForm(forms.Form):
     note = forms.CharField(widget=forms.Textarea, label='Примечания',required=False)
         
     def __init__(self,*args,**kwargs):
+        # print str(args)
+        # print str(kwargs)
         self.number = kwargs.pop('number','')
+        # print self.number
         super(NewAssetForm, self).__init__(*args, **kwargs)
     def add_prefix(self, field_name):
         # look up field name; return original if not found
         field_name = str(self.number)+"_"+field_name
+        # print field_name
         return super(NewAssetForm, self).add_prefix(field_name)
     
 class NewCashBillForm(forms.Form):
-    date = forms.DateField(initial=datetime.date.today, label="Дата чека/покупки/внесения",help_text='Пустое значение означает текущую дату',required=False)
+    date = forms.DateField(initial=datetime.date.today, label="Дата чека/покупки/внесения",help_text='Пустое значение означает текущую дату',required=False,input_formats=inp_f)
     garanty = forms.IntegerField(min_value=0, label='Номер гарантии')
     
 class NewContractorForm(forms.Form):   

@@ -9,6 +9,6 @@ class Logging(models.Model):
     request = models.TextField(blank = True, null = True)
     goal = models.TextField(blank = True, null = True)
     done = models.BooleanField(default=False)
-    datetime = models.
+    datetime = models.DateTimeField()
     def __unicode__(self):
-        return str(self.id)+';'+self.user  
+        return str(self.id)+';'.join((str(self.datetime),self.user,self.goal,str(self.done)))  
