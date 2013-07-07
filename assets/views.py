@@ -136,7 +136,8 @@ def bill_add(request):
 @for_admins
 def all_bills(request):
     lang,user,fio,method = get_info(request)
-    cashs =  Cash.objects.filter(payment__in=Payment.objects.filter(deleted=False))
+    cashs = make_request_with_logging(user,"Запрашиваем все чеки",Cash.objects.filter,{'payment__in':Payment.objects.filter(deleted=False)})
+    # cashs =  Cash.objects.filter(payment__in=Payment.objects.filter(deleted=False))
     cashlesss = Cashless.objects.filter(payment__in=Payment.objects.filter(deleted=False))
     return (True,('all_bills.html',{},{'title':'Список всех счетов и чеков','cashs':cashs, 'cashlesss':cashlesss},request,app))
 @login_required

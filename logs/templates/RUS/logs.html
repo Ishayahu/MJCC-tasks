@@ -1,6 +1,6 @@
 {% extends "RUS/base_assets.html" %}
 {% block title %}
-    Список активов по типу {{type_name}}
+    Последние {{log_number}} логов
 {% endblock %}
 {% block style %}
     
@@ -10,6 +10,7 @@
     <table border=1>
         <tr>
             <th>№№</th>
+            <th>Дата</th>
             <th>Пользователь</th>
             <th>Цель</th>
             <th>Запрос</th>
@@ -17,11 +18,12 @@
         </tr>
         {% for item in logs %}
             <tr>
-                <th>№№</th>
-                <th>Пользователь</th>
-                <th>Цель</th>
-                <th>Запрос</th>
-                <th>Выполнен</th>
+                <th>{{item.id}}</th>
+                <th>{{item.datetime}}</th>
+                <th>{{item.user}}</th>
+                <th>{{item.goal}}</th>
+                <th>{{item.request}}</th>
+                <th>{{item.done}}</th>
             </tr>
         {% endfor %}
     </table>

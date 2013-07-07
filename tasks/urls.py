@@ -103,7 +103,7 @@ urlpatterns = patterns('',
     url(r'^api/asset/delete/(\d+)/(\d+)/$', assets.api.asset_delete),
     
 # Логирование и т.п.
-    url(r'^api/asset/delete/(\d*)/$', logs.views.show_last_logs),
+    url(r'^show_last_logs/(\d*)/$', logs.views.show_last_logs),
 )
 if settings.DEBUG:
     urlpatterns += patterns('',

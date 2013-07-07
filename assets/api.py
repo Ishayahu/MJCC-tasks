@@ -34,9 +34,6 @@ try:
 except ImportError:
     url_one_record=('',)
 
-
-
-
 # Делаем переводы
 from djlib.multilanguage_utils import select_language,multilanguage,register_lang, get_localized_name, get_localized_form#,register_app
 
@@ -212,14 +209,10 @@ def asset_delete(request,id,type_id):
         a = Asset.objects.get(id=id)
     except Asset.DoesNotExist:
         add_error(u"Актив с номером %s не найден!" % id,request)
-        print "not found"
         return (False,(HttpResponseRedirect("/assets_by_type/"+type_id+"/")))
     # log()
     # a.delete()
-    print "before call "+str(id)
     a=make_request_with_logging(user,"Удаляем актив №%s" % str(id),a.delete,{})
-    print "after call"
-    print str(a)  
     # confirm_log
-    html='Актив %s удалён' % id
+    html=u'Актив %s удалён' % str(id)
     return (True,('OK.html', {},{},request,app))

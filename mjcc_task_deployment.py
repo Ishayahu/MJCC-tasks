@@ -243,11 +243,21 @@ INSTALLED_APPS = (
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
+    # 'filters': {
+        # 'require_debug_false': {
+            # '()': 'django.utils.log.RequireDebugFalse'
+        # }
+    # },
     'handlers': {
         'mail_admins': {
             'level': 'ERROR',
             'class': 'django.utils.log.AdminEmailHandler'
-        }
+        },
+        # 'console':{
+            # 'level':'DEBUG',
+            # 'filters': ['require_debug_false'],
+            # 'class':'logging.StreamHandler',
+        # },
     },
     'loggers': {
         'django.request': {
@@ -255,9 +265,13 @@ LOGGING = {
             'level': 'ERROR',
             'propagate': True,
         },
+        # 'django.db.backends' : {
+            # 'handlers': ['console'],
+            # 'level': 'DEBUG',
+            # 'propagate': True,
+        # }
     }
 }
-
 # For e-mails
 # EMAIL_USE_TLS = True
 # EMAIL_HOST = 'smtp.mail.ru'

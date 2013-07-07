@@ -21,7 +21,6 @@ from djlib.user_tracking import set_last_activity_model, get_last_activities
 from djlib.mail_utils import send_email_alternative
 from djlib.auxiliary import get_info
 from djlib.logging_utils import log, confirm_log, make_request_with_logging
-from djlib.multilanguage_utils import multilanguage
 
 from user_settings.settings import server_ip, admins, admins_mail
 try:
@@ -36,6 +35,13 @@ except ImportError:
 
 from djlib.error_utils import FioError, ErrorMessage, add_error, shows_errors
 
+# Делаем переводы
+from djlib.multilanguage_utils import select_language,multilanguage,register_lang#,register_app
+
+register_lang('ru','RUS')
+register_lang('eng','ENG')
+app='logs'
+
 @login_required
 @multilanguage
 @shows_errors
@@ -44,4 +50,4 @@ def show_last_logs(request,number_to_select):
     if not number_to_select:
         number_to_select = 50
     logs = Logging.objects.all()[:number_to_select]
-    return (True,('logs.html',{},{'logs':logs},request,app))
+    return (True,('logs.html',{},{'logs':logs,'log_number':number_to_select},request,app))
