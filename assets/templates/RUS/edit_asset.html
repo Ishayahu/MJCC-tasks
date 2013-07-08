@@ -1,12 +1,36 @@
-            <td>{{item.id}}</td>
-            <td>{{item.model}}</td>
-            <td>{{item.price}}</td>
-            <td>{{item.status.status}}</td>
-            <td>{{item.garanty.number}}</td>
-            <td>{{item.place}}</td>
-            <td>
-                <input type="submit" value="✎" title="Редактировать актив" name="edit_asset" onclick="edit_asset('{{item.id}}')" />
-                {% if admin %}
-                    <input type="submit" value="✕" title="Удалить актив" name="del_asset" onclick="del_asset('{{item.id}}')" />
-                {% endif %}
-            </td>
+{# 'models':asset_type_models,'statuses':statuses,'garantys':garantys,'places':places,'asset_id':id,'item':a #}
+<form method="post" action="javascript:send('/api/asset/save_edited/','asset_edition_form',{{asset_id}},'message');" id="asset_edition_form">
+    <td>{{item.id}}</td>
+    <td>
+        <select name="model">
+            {% for model in models %}
+                <option value="{{model.id}}">{{model.model_name}}</option>
+            {% endfor %}
+        </select>
+    </td>
+    <td><input type="text" name="model" value="{{item.price}}" /></td>
+    <td>
+        <select name="status">
+            {% for status in statuses %}
+                <option value="{{status.id}}">{{status.status}}</option>
+            {% endfor %}
+        </select>
+    </td>
+    <td>
+        <select name="status">
+            {% for garanty in garantys %}
+                <option value="{{garanty.id}}">{{garanty.number}}</option>
+            {% endfor %}
+        </select>    
+    </td>
+    <td>
+        <select name="status">
+            {% for place in places %}
+                <option value="{{place.id}}">{{place.place}}</option>
+            {% endfor %}
+        </select>
+    </td>
+    <td>
+    <input type="button" value="Сохранить" onClick="send('/api/asset/save_edited/','asset_edition_form',{{asset_id}},'message');" />
+    </td>
+</form>

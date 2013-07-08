@@ -62,30 +62,9 @@ def bill_add(request):
         # Порядок действия таков:
         # 1) Создаём Cash
         # 2) Создаём Payment с этим Cash
-        # 3) Создаём Garanty
+        # 3) Создаём Garanty - если её ещё нет. Если есть - добавляем к имеющейся
         # 4) Итерируем по элементам в форме от 1 до макс добавляя активы в список активов
         # 5) Если всё прошло хорошо - активы из списка сохраняем
-        
-        # Внести данные через форму
-        # from django import forms
-        # inp_f=( '%d-%m-%Y %H:%M:%S',     # '2006-10-25 14:30:59'
-        # '%d-%m-%Y %H:%M',        # '2006-10-25 14:30'
-        # '%Y-%m-%d %H:%M:%S',     # '2006-10-25 14:30'
-        # '%d-%m-%Y',              # '2006-10-25'
-        # '%d/%m/%Y %H:%M:%S',     # '10/25/2006 14:30:59'
-        # '%d/%m/%Y %H:%M',        # '10/25/2006 14:30'
-        # '%d/%m/%Y',              # '10/25/2006'
-        # '%d.%m.%Y %H:%M:%S',     # '10/25/2006 14:30:59'
-        # '%Y.%m.%d %H:%M:%S',     # '2010/01/26 14:30:59'
-        # '%d/%m/%y %H:%M:%S',     # '10/25/06 14:30:59'
-        # '%d/%m/%y %H:%M',        # '10/25/06 14:30'
-        # '%d/%m/%y',       )
-        # class NewCashBillForm(forms.Form):
-            # date = forms.DateField(initial=datetime.date.today, label="Дата чека/покупки/внесения",help_text='Пустое значение означает текущую дату',required=False,input_formats=inp_f)
-            # garanty = forms.IntegerField(min_value=0, label='Номер гарантии')
-        # form = NewCashBillForm(request.POST)
-        # if form.is_valid():
-            # data = form.cleaned_data
 
         bill_date = request.POST.get('date','')
         if not bill_date:
@@ -102,8 +81,11 @@ def bill_add(request):
         payment = Payment(cash = cash,
                 )
         payment.save()
-        garanty = Garanty(number = request.POST.get('garanty'))
-        garanty.save()
+        try:
+            garanty = Garanty.objects.get(number = request.POST.get('garanty'))
+        except Garanty.DoesNotExist:
+            garanty = Garanty(number = request.POST.get('garanty'))
+            garanty.save()
         for item_number in range(1,int(request.POST.get('max_asset_form_number'))+1):
             sitem_number = str(item_number)
             if sitem_number+'_model' in request.POST:
@@ -136,8 +118,8 @@ def bill_add(request):
 @for_admins
 def all_bills(request):
     lang,user,fio,method = get_info(request)
-    cashs = make_request_with_logging(user,"Запрашиваем все чеки",Cash.objects.filter,{'payment__in':Payment.objects.filter(deleted=False)})
-    # cashs =  Cash.objects.filter(payment__in=Payment.objects.filter(deleted=False))
+    # cashs = make_request_with_logging(user,"Запрашиваем все чеки",Cash.objects.filter,{'payment__in':Payment.objects.filter(deleted=False)})
+    cashs =  Cash.objects.filter(payment__in=Payment.objects.filter(deleted=False))
     cashlesss = Cashless.objects.filter(payment__in=Payment.objects.filter(deleted=False))
     return (True,('all_bills.html',{},{'title':'Список всех счетов и чеков','cashs':cashs, 'cashlesss':cashlesss},request,app))
 @login_required

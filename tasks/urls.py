@@ -99,8 +99,10 @@ urlpatterns = patterns('',
     url(r'^bill/full_delete/([^/]+)/(\d*)/$', assets.api.full_delete_bill),
     # Получение списка активов по категориям
     url(r'^api/assets_by_type/(\d+)/$', assets.api.assets_by_type),
-    # Получение списка активов по категориям - id актива, id категории к которой вернуться при ошибки
+    # Удаление актива - id актива, id категории к которой вернуться при ошибки
     url(r'^api/asset/delete/(\d+)/(\d+)/$', assets.api.asset_delete),
+    # Редактирование актива - id актива
+    url(r'^api/asset/edit/(\d+)/$', assets.api.asset_edit),
     
 # Логирование и т.п.
     url(r'^show_last_logs/(\d*)/$', logs.views.show_last_logs),

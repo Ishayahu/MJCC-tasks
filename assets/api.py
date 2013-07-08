@@ -210,9 +210,40 @@ def asset_delete(request,id,type_id):
     except Asset.DoesNotExist:
         add_error(u"Актив с номером %s не найден!" % id,request)
         return (False,(HttpResponseRedirect("/assets_by_type/"+type_id+"/")))
-    # log()
-    # a.delete()
     a=make_request_with_logging(user,"Удаляем актив №%s" % str(id),a.delete,{})
-    # confirm_log
     html=u'Актив %s удалён' % str(id)
     return (True,('OK.html', {},{},request,app))
+@login_required
+@multilanguage
+@admins_only
+# @for_admins
+def asset_edit(request,id):
+    lang,user,fio,method = get_info(request)
+    try:
+        a = Asset.objects.get(id=id)
+    except Asset.DoesNotExist:
+        add_error(u"Актив с номером %s не найден!" % id,request)
+        return (False,(HttpResponseRedirect("/assets_by_type/"+type_id+"/")))
+    #<td><input type="text" name="model" value="{{item.model}}" /></td>
+    # asset_types = Asset_type.objects.all()
+    asset_type = a.asset_type.catalogue_name
+    app_module_name = 'assets.models'
+    app_module = __import__(app_module_name)
+    models_module = getattr(app_module,'models')
+    asset_type_catalogue = getattr(models_module, a.asset_type.catalogue_name)
+    asset_type_models = asset_type_catalogue.objects.all()
+
+
+    #<td>{{item.status.status}}</td>
+    statuses = Status.objects.all()
+    #<td>{{item.garanty.number}}</td>
+    garantys = Garanty.objects.all()
+    #<td>{{item.place}}</td>
+    places = Place.objects.all()
+    # t = loader.get_template(get_localized_name('edit_asset.html',request))
+    # c = Context({'asset_types':asset_types,'statuses':statuses,'garantys':garantys,'places':places,'asset_id':id,'item':a})
+    # return (False,(t.render(c)))
+    return (True,('edit_asset.html', {},{'models':asset_type_models,'statuses':statuses,'garantys':garantys,'places':places,'asset_id':id,'item':a},request,app))
+    
+    
+    

@@ -1,4 +1,4 @@
-function send(url,form_id,result_div) {
+function send(url,form_id,asset_id,result_div) {
     // Отсылаем паметры
     $.ajax({
             type: "POST",
@@ -10,9 +10,9 @@ function send(url,form_id,result_div) {
                     $("#"+result_div).empty();
                     $("#"+result_div).append(html);
                     // скрываем форму поставщика, открываем заказа и т.п.
-                    send_and_show();
+                    //send_and_show();
                     // Для удаления ошибки при загрузке поля со значением
-                    check_contractor();
+                    //check_contractor();
             },
             error: function()
             {

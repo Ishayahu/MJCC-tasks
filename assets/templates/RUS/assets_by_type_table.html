@@ -37,4 +37,11 @@
                 return false
             };
         }
+        function edit_asset(id){
+           $("#asset_id_"+id).load("/api/asset/edit/"+id+"/",function(result){
+                    //console.log(result);
+                    $("#message").html("Актив id="+id+"успешно отредактирован!");
+                    }
+                )
+        }
     </script>

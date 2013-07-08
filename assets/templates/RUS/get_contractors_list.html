@@ -69,12 +69,27 @@ function check_contractor() {
         }
     }      
 }
+function list_on_change(e) {
+    var e = e||window.event;
+    if (e.keyCode == 9 || e.keyCode == 13) {
+        check_contractor()
+    } else {
+        var inputed = $("#contractor").val()
+        for (x=0;x<$("#dropdown").find('li').length;x++) {
+            if ($("#dropdown").find('li')[x].innerHTML.toLowerCase().indexOf(inputed.toLowerCase())==-1) {
+                $("#dropdown").find('li')[x].hidden=true
+            } else {
+                $("#dropdown").find('li')[x].hidden=false
+            }
+        }
+    }
+}
 </script>
 {# конец нужно... #}
 <table>
     <tr>
         <td>
-            <input name="contractor" type="text" id="contractor" size="20" maxlength="50" onclick="list_down()" onChange="check_contractor()" value="{{name_to_select}}" />
+            <input name="contractor" type="text" id="contractor" size="20" maxlength="50" onclick="list_down()" onkeyup="list_on_change()" value="{{name_to_select}}" />
         </td>
     </tr>
     <tr>
