@@ -1,0 +1,17 @@
+#dropdown{
+list-style: none;
+/*position:absolute; */
+background:#ffffaa; 
+cursor: default; 
+/*margin: -20px 0px 0px 229px; */
+padding: 2px 0px 2px 0px;
+/* width:155px */
+}
+#dropdown li{
+padding: 3px 3px 3px 3px;
+}
+#dropdown li:hover{
+color:#fff;
+padding: 3px 3px 3px 3px;
+background:#0000FF; 
+}

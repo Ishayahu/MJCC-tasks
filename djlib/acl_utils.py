@@ -26,7 +26,7 @@ def for_admins(fn):
         if user in admins:
             # print "adding error to dict"
             dict['admin']=True
-        print "for path "+args[0].path+" dict['admin']="+str(dict['admin'])
+        # print "for path "+args[0].path+" dict['admin']="+str(dict['admin'])
         return decorate_or_not, (template,forms_dict,dict,request,app)
     return wrapped
 def admins_only(fn):

@@ -3,8 +3,9 @@
     Новый счёт
 {% endblock %}
 {% block style %}
-    <script>
-    </script>
+    {# Для выпадающего списка с возможность ввода #}
+    <script type="text/javascript" src="/media/js/dropdown.js"></script>
+    <link rel="stylesheet" type="text/css" href="/media/css/dropdown.css" />
     {# нужно для добавления нового поставщика. Проверка изменения значения поля и обработка ввода нового поставщика проводится в скрипте в get_contractor_list.html #}
     <script type="text/javascript" src="/media/js/bill_contractor.js"></script>
     {# нужно для работы с активами #}

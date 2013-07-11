@@ -209,7 +209,8 @@ def asset_delete(request,id,type_id):
         a = Asset.objects.get(id=id)
     except Asset.DoesNotExist:
         add_error(u"Актив с номером %s не найден!" % id,request)
-        return (False,(HttpResponseRedirect("/assets_by_type/"+type_id+"/")))
+        # return (False,(HttpResponseRedirect("/assets_by_type/"+type_id+"/")))
+        return (False,(HttpResponseRedirect("/")))
     a=make_request_with_logging(user,"Удаляем актив №%s" % str(id),a.delete,{})
     html=u'Актив %s удалён' % str(id)
     return (True,('OK.html', {},{},request,app))
@@ -223,7 +224,8 @@ def asset_edit(request,id):
         a = Asset.objects.get(id=id)
     except Asset.DoesNotExist:
         add_error(u"Актив с номером %s не найден!" % id,request)
-        return (False,(HttpResponseRedirect("/assets_by_type/"+type_id+"/")))
+        # return (False,(HttpResponseRedirect("/assets_by_type/"+type_id+"/")))
+        return (False,(HttpResponseRedirect("/")))
     #<td><input type="text" name="model" value="{{item.model}}" /></td>
     # asset_types = Asset_type.objects.all()
     asset_type = a.asset_type.catalogue_name
@@ -244,6 +246,15 @@ def asset_edit(request,id):
     # c = Context({'asset_types':asset_types,'statuses':statuses,'garantys':garantys,'places':places,'asset_id':id,'item':a})
     # return (False,(t.render(c)))
     return (True,('edit_asset.html', {},{'models':asset_type_models,'statuses':statuses,'garantys':garantys,'places':places,'asset_id':id,'item':a},request,app))
-    
-    
-    
+@login_required
+@multilanguage
+@shows_errors
+def asset_save_edited(request,asset_id):
+    asset = Asset.objects.get(id=asset_id)
+    asset.model = request.POST.get('model_'+asset_id)
+    asset.price = request.POST.get('price_'+asset_id)
+    asset.status = Status.objects.get(id=request.POST.get('status_'+asset_id))
+    asset.garanty = Garanty.objects.get(id=request.POST.get('garanty_'+asset_id))
+    asset.place = Place.objects.get(id=request.POST.get('place_'+asset_id))
+    asset.save()
+    return (True,('edited_asset.html',{},{'item':asset,},request,app))

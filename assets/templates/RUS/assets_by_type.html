@@ -3,7 +3,44 @@
     Список активов по типу {{type_name}}
 {% endblock %}
 {% block style %}
-    
+    <script type="text/javascript" src="/media/js/dropdown.js"></script>
+    <link rel="stylesheet" type="text/css" href="/media/css/dropdown.css" />
+    <script>
+    function f_del_asset(id){
+        if (confirm('Уверены?')) {
+            $("#asset_id_"+id).load("/api/asset/delete/"+id+"/"+$('#asset_type option:selected').val()+"/",function(result){
+                //console.log(result);
+                $("#message").html("Актив id="+id+"успешно удалён из базы!");
+                $("#asset_id_"+id).remove();
+                }
+            )
+        } else {
+            return false
+        };
+    }
+    function f_edit_asset(id){
+       $("#asset_id_"+id).load("/api/asset/edit/"+id+"/")
+    }
+    function send(url,form_id,tr_id,result_div) {
+        // Отсылаем паметры
+        $.ajax({
+                type: "POST",
+                url:  url,
+                data: $("#"+form_id).serialize(),
+                // Выводим то что вернул PHP
+                success: function(html)
+                {
+                        $("#"+tr_id).empty();
+                        $("#"+tr_id).append(html);
+                },
+                error: function()
+                {
+                    $("#"+result_div).empty();
+                    $("#"+result_div).append("Ошибка!");
+                }
+                }); 
+    }
+    </script>
 {% endblock %}
 
 {% block content %}
@@ -25,11 +62,12 @@
     <div id="asset_table">
     {# Сюда грузится таблица с активами #}
     </div>
-    <script>
+        <script>
         $("#asset_type").change(function () {
             var str = $('#asset_type option:selected').val();
             $("#asset_table").load("/api/assets_by_type/"+str+"/");
         });
         $('#asset_type').change();
     </script>
+
 {% endblock %}

@@ -1,89 +1,10 @@
 {# нужно для работы списка с возможностью ввода своих данных #}
-<style>
-#dropdown{
-list-style: none;
-/*position:absolute; */
-background:#ffffaa; 
-cursor: default; 
-/*margin: -20px 0px 0px 229px; */
-padding: 2px 0px 2px 0px;
-/* width:155px */
-}
-#dropdown li{
-padding: 3px 3px 3px 3px;
-}
-#dropdown li:hover{
-color:#fff;
-padding: 3px 3px 3px 3px;
-background:#0000FF; 
-}
-</style>
 <script>
-function list_down()
-{
-  var a = document.getElementById('dropdown');
-  if ( a.style.display == 'none' )
-    a.style.display = 'block'
-  else
-    if ( a.style.display == 'block' )
-    a.style.display = 'none';
-};
-function select_contractor(id,val_date){
-        var c_list = [
-            {% for c in contractors %}
-                "{{c.name}}",
-            {% endfor %}
-            ];
-        var b = document.getElementById('contractor');
-        var c = document.getElementById('contractor_id');
-        b.value=val_date;
-        c.value=id;
-        list_down();
-        check_contractor();
-}
-function check_contractor() {
-    var a = document.getElementById('dropdown');
-    if ( a.style.display == 'block' )
-        a.style.display = 'none';
     var c_list = [
-            {% for c in contractors %}
-                "{{c.name}}",
-            {% endfor %}
-            ];
-    var b = document.getElementById('contractor');
-    // Если значение не пустое - удаляем сообщение об ошибке. Если пустое - добавляем
-    if (b.value) {
-        $("#contractor_error").empty()
-    } else {
-        $("#contractor_error").html("<li>Обязательное поле.</li>")
-    }
-    // Если ввели нового поставщика
-    if (c_list.indexOf(b.value)==-1) {
-        if (confirm ("Хотите добавить нового поставщика?")) {
-            // скрываем поле счёта
-            $("#content_to_hide").hide();
-            // загружаем форму добавления новго поставщика
-            // замена нужна для русского языка, может быть только под Windows7
-            var contractor_name=b.value.replace(/ /g,"%20")
-            $("#additional_content").load("/api/get_new_contractor_add_form/"+contractor_name+"/");
-        }
-    }      
-}
-function list_on_change(e) {
-    var e = e||window.event;
-    if (e.keyCode == 9 || e.keyCode == 13) {
-        check_contractor()
-    } else {
-        var inputed = $("#contractor").val()
-        for (x=0;x<$("#dropdown").find('li').length;x++) {
-            if ($("#dropdown").find('li')[x].innerHTML.toLowerCase().indexOf(inputed.toLowerCase())==-1) {
-                $("#dropdown").find('li')[x].hidden=true
-            } else {
-                $("#dropdown").find('li')[x].hidden=false
-            }
-        }
-    }
-}
+        {% for c in contractors %}
+            "{{c.name}}",
+        {% endfor %}
+        ];
 </script>
 {# конец нужно... #}
 <table>
@@ -100,8 +21,8 @@ function list_on_change(e) {
     <tr>
         <td>
             <ul id="dropdown" style="display:none;">
-                {% for c in contractors %}
-                    <li onclick="select_contractor({{c.id}},'{{c.name}}')">{{c.name}}</li>
+                {% for c in contractors %}   select_element(id,value,input_filed_id,id_field_id)
+                    <li onclick="select_element('{{c.id}}', '{{c.name}}', 'contractor', 'contractor_id')">{{c.name}}</li>
                 {% endfor %}
             </ul>
         </td>

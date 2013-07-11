@@ -209,10 +209,14 @@ class Network_equipment(models.Model):
     Serial = models.BooleanField(default=False)
 class Printer(models.Model):
     model_name = models.CharField(max_length=50)
-    network = models.BooleanField(default=False)
+    wifi = models.BooleanField(default=False)
+    ethernet = models.BooleanField(default=False)
     firm = models.CharField(max_length=20, choices = catalogue.Printer_firm)    
     color = models.BooleanField(default=False)
-    v_print = models.IntegerField()
+    v_mono_print = models.IntegerField()
+    v_color_print = models.IntegerField(blank = True, null = True)
+    def __unicode__(self):
+        return str(self.id)+';'+self.firm+" "+self.model_name+";color="+str(self.color)+";ethernet="+str(self.ethernet)+";wifi="+str(self.wifi)+";v="+str(self.v_mono_print)+";vc="+str(self.v_color_print)
 class Power_suply(models.Model):
     model_name = models.CharField(max_length=50)
     firm = models.CharField(max_length=20, choices = catalogue.Power_suply_firm) 

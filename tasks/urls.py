@@ -103,6 +103,8 @@ urlpatterns = patterns('',
     url(r'^api/asset/delete/(\d+)/(\d+)/$', assets.api.asset_delete),
     # Редактирование актива - id актива
     url(r'^api/asset/edit/(\d+)/$', assets.api.asset_edit),
+    # Редактирование актива - id актива
+    url(r'^api/asset/save_edited/(\d+)/$', assets.api.asset_save_edited),
     
 # Логирование и т.п.
     url(r'^show_last_logs/(\d*)/$', logs.views.show_last_logs),

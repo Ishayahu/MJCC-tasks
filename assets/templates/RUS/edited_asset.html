@@ -1,0 +1,12 @@
+                <td>{{item.id}}</td>
+                <td>{{item.model}}</td>
+                <td>{{item.price}}</td>
+                <td>{{item.status.status}}</td>
+                <td>{{item.garanty.number}}</td>
+                <td>{{item.place}}</td>
+                <td>
+                    <input type="submit" value="✎" title="Редактировать актив" name="edit_asset" onclick="edit_asset('{{item.id}}')" />
+                    {% if admin %}
+                        <input type="submit" value="✕" title="Удалить актив" name="del_asset" onclick="del_asset('{{item.id}}')" />
+                    {% endif %}
+                </td>

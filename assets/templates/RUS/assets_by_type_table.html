@@ -1,47 +1,29 @@
-<table border=1>
-    <tr>
-        <th>ID</th>
-        <th>Модель</th>
-        <th>Цена</th>
-        <th>Статус</th>
-        <th>Номер гарантии</th>
-        <th>Место</th>
-    </tr>
-    {% for item in assets %}
-        <tr id="asset_id_{{item.id}}">
-            <td>{{item.id}}</td>
-            <td>{{item.model}}</td>
-            <td>{{item.price}}</td>
-            <td>{{item.status.status}}</td>
-            <td>{{item.garanty.number}}</td>
-            <td>{{item.place}}</td>
-            <td>
-                <input type="submit" value="✎" title="Редактировать актив" name="edit_asset" onclick="edit_asset('{{item.id}}')" />
-                {% if admin %}
-                    <input type="submit" value="✕" title="Удалить актив" name="del_asset" onclick="del_asset('{{item.id}}')" />
-                {% endif %}
-            </td>
+<form method="post" id="asset_edition_form">
+    {% csrf_token %}
+    <table border=1>
+        <tr>
+            <th>ID</th>
+            <th>Модель</th>
+            <th>Цена</th>
+            <th>Статус</th>
+            <th>Номер гарантии</th>
+            <th>Место</th>
         </tr>
-    {% endfor %}
-</table>
-    <script>
-        function del_asset(id){
-            if (confirm('Уверены?')) {
-                $("#asset_id_"+id).load("/api/asset/delete/"+id+"/"+$('#asset_type option:selected').val()+"/",function(result){
-                    //console.log(result);
-                    $("#message").html("Актив id="+id+"успешно удалён из базы!");
-                    $("#asset_id_"+id).remove();
-                    }
-                )
-            } else {
-                return false
-            };
-        }
-        function edit_asset(id){
-           $("#asset_id_"+id).load("/api/asset/edit/"+id+"/",function(result){
-                    //console.log(result);
-                    $("#message").html("Актив id="+id+"успешно отредактирован!");
-                    }
-                )
-        }
-    </script>
+        {% for item in assets %}
+            <tr id="asset_id_{{item.id}}">
+                <td>{{item.id}}</td>
+                <td>{{item.model}}</td>
+                <td>{{item.price}}</td>
+                <td>{{item.status.status}}</td>
+                <td>{{item.garanty.number}}</td>
+                <td>{{item.place}}</td>
+                <td>
+                    <input type="button" value="✎" title="Редактировать актив" name="edit_asset" onclick="f_edit_asset('{{item.id}}')" />
+                    {% if admin %}
+                        <input type="button" value="✕" title="Удалить актив" name="del_asset" onclick="f_del_asset('{{item.id}}')" />
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+</form>
