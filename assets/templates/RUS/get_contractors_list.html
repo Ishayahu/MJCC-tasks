@@ -5,12 +5,14 @@
             "{{c.name}}",
         {% endfor %}
         ];
+   // autohelper=list_on_change(c_list,'contractor','contractor_error','Хотите добавить нового поставщика?','content_to_hide','additional_content',
+    //        '/api/get_new_contractor_add_form/'+document.getElementById('contractor').value.replace(/ /g,'%20')+'/')
 </script>
 {# конец нужно... #}
 <table>
     <tr>
         <td>
-            <input name="contractor" type="text" id="contractor" size="20" maxlength="50" onclick="list_down()" onkeyup="list_on_change()" value="{{name_to_select}}" />
+            <input name="contractor" type="text" id="contractor" size="20" maxlength="50" onclick="list_down()" onkeyup="autohelper()" value="{{name_to_select}}" />
         </td>
     </tr>
     <tr>
@@ -21,11 +23,15 @@
     <tr>
         <td>
             <ul id="dropdown" style="display:none;">
-                {% for c in contractors %}   select_element(id,value,input_filed_id,id_field_id)
-                    <li onclick="select_element('{{c.id}}', '{{c.name}}', 'contractor', 'contractor_id')">{{c.name}}</li>
+                {% for c in contractors %}
+                    <li onclick="select_element('{{c.id}}', '{{c.name}}', 'contractor', 'contractor_id','contractor_error')">{{c.name}}</li>
                 {% endfor %}
             </ul>
         </td>
     </tr>
 </table>
+<script>
+    autohelper=list_on_change(c_list,'contractor','contractor_error','Хотите добавить нового поставщика?','content_to_hide','additional_content',
+            '/api/get_new_contractor_add_form/'+document.getElementById('contractor').value.replace(/ /g,'%20')+'/')
+</script>
 
