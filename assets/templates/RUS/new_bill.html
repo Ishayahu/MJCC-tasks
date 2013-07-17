@@ -20,7 +20,7 @@
         {% if form.errors %}
         {#    {{form.errors}} #}
         {% endif %}
-        <form action="" method="post">
+        <form action="" method="post" id="bill_form">
             {% csrf_token %}
             <input type="hidden" id="max_asset_form_number" name="max_asset_form_number" value=0 />
             <table border=1>
@@ -51,4 +51,10 @@
     </div>
     <div id="additional_content">
     </div>
+    <script>
+        $('#bill_form').submit(function(e){
+            e.preventDefault();
+            //твой код
+        })
+    </script>
     {% endblock %}

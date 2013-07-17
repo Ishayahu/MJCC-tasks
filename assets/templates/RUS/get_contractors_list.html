@@ -32,6 +32,6 @@
 </table>
 <script>
     autohelper=list_on_change(c_list,'contractor','contractor_error','Хотите добавить нового поставщика?','content_to_hide','additional_content',
-            '/api/get_new_contractor_add_form/'+document.getElementById('contractor').value.replace(/ /g,'%20')+'/')
+            '/api/get_new_contractor_add_form/',document.getElementById('contractor').value.replace(/ /g,'%20'),'/')
 </script>
 

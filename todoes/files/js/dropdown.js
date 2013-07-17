@@ -7,8 +7,9 @@ function list_down() {
         if ( a.style.display == 'block' )
         a.style.display = 'none';
 };
-function list_on_change(item_list,input_filed_id,error_field_id,confirm_message,field_to_hide_id,filed_to_load_id,url_to_load) {
+function list_on_change(item_list,input_filed_id,error_field_id,confirm_message,field_to_hide_id,filed_to_load_id,url_to_load_prefix,url_to_load_element_id,url_to_load_postfix) {
     function wrapped(e) {
+        url_to_load = url_to_load_prefix + document.getElementById('contractor').value.replace(/ /g,'%20') + url_to_load_postfix
         // Изменение списка возможных вариантов в соответствии с введёнными в input_filed_id символами
         var e = e||window.event;
         if (e.keyCode == 9 || e.keyCode == 13) {

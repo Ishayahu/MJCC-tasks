@@ -31,7 +31,7 @@ def get_localized_form(name,app,request):
     forms_module_name = 'forms_'+languages[lang].lower()
     app_module = __import__(app_module_name)
     forms_module = getattr(app_module,forms_module_name)
-    return getattr(forms_module,form)
+    return getattr(forms_module,name)
 def multilanguage(fn):
     """
      Декоратор для того, чтобы сделать функцию многоязычной. Определяет язык сессии, заменяет соответстующие формы и шаблоны на локализованные аналоги
@@ -65,7 +65,8 @@ def multilanguage(fn):
         # forms_module=getattr(app_module,'forms_'+languages[lang].lower())
         for form in forms_dict:
             a=getattr(forms_module,form)            
-            forms[form]=(a(**forms_dict[form]))
+            # forms[form]=(a(**forms_dict[form]))
+            forms[form]=(a(forms_dict[form]))
         dict.update(forms)
         # raise ImportError
         # print l_template

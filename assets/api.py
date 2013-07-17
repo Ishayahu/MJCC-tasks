@@ -131,8 +131,9 @@ def save_new_contractor(request):
                         contact_name = data['contact_name'],)
             c.save()
             html='<input type="hidden" id="c_id" value="%s" /><input type="hidden" id="c_name" value="%s" />' % (c.id, c.name)
-            return (True,('OK.html', {'NewContractorForm':{'name':contractor_name}},{'method':method},request,app))
+            return (True,('OK.html', {},{},request,app))
             # return render_to_response(languages[lang]+'OK.html', {'c':c,'html':html},RequestContext(request))
+    raise IOError
     return "Произошла какая-то ошибка, но не могу представить какая. Надо выяснить и записать для диагностики"
 @login_required
 @multilanguage
