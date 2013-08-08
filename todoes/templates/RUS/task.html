@@ -82,6 +82,9 @@
                     <td>Периодичность задачи</td><td><a title="В crontab стиле" href='http://www.opennet.ru/man.shtml?topic=crontab&category=5&russian=0'>{{task.period}}</a><br />{{task.russian_period}}</td></tr>
                 {% endifequal %}
             </table>
+            {% for file in files %}
+                <img src="{{file.file.url}}" />
+            {% endfor %}
                 {% ifequal task_type 'one_time' %}
                     <p><a href="/edit/{{task.id}}">Редактировать описание задачи</a></p>
                 {% endifequal %}

@@ -1,0 +1,42 @@
+Для выпадающего списка с возможностью ввода своих данных и автоматическими подсказками нужно подключить
+    <script type="text/javascript" src="/media/js/dropdown.js"></script>
+    <link rel="stylesheet" type="text/css" href="/media/css/dropdown.css" />
+Для самого списка нам нужно:
+1) Переменная, которая содержит массив со списоком имён для автоподстановки
+    <script>
+        var c_list = [
+            {% for c in contractors %}
+                "{{c.name}}",
+            {% endfor %}
+            ];
+    </script>
+2) Поле для вывода сообщений об ошибок (может быть любым тегом)
+    <ul class="errorlist" id="contractor_error"></ul>
+3) Само поле ввода, куда пользователь вводит данные. К нему прикручено два обработчика: onclick="list_down()" чтобы показать выпадающий список (list_down отвечает за его отображение/скрытие) и onkeyup="autohelper()" для автоматической подсказки варианта, содержащего введённые буквы
+    <input name="contractor" type="text" id="contractor" size="20" maxlength="50" onclick="list_down()" onkeyup="autohelper()" value="{{name_to_select}}" />
+Функция autohelper - это замыкание, которое получило уже все нужные аргументы и само по себе требует только лишь событие нажатия на клавишу. Его надо создать, причём создать можно где угодно, но тестировал я только создание после формы. Конструктор называется list_on_change и принимает следующие аргументы:
+    list_on_change( item_list, input_filed_id, error_field_id, confirm_message, field_to_hide_id, filed_to_load_id, url_to_load_prefix, url_to_load_element_id, url_to_load_postfix )
+Пример:
+    <script>
+        autohelper=list_on_change(c_list,'contractor','contractor_error','Хотите добавить нового поставщика?','content_to_hide','additional_content', '/api/get_new_contractor_add_form/','contractor','/')
+    </script>
+    item_list - массив, содержащий имена для автоподстановки
+    input_filed_id - id поля, куда пользователь вводит информацию. В нашем примере - 'contractor'
+    error_field_id - id поля, куда выводится сообщение об ошибке. В нашем примере - 'contractor_error'
+    confirm_message - сообщение, которое выводится пользователю, если он ввёл новое значение, которого нет в списке, и нажал enter или tab. В нашем примере "Хотите добавить нового поставщика?"
+    field_to_hide_id - id поля, которое должно быть скрыто если пользователь утвердительно ответил на confirm_message. В нашем примере - 'content_to_hide'
+    filed_to_load_id - id поля, в которое будет загружена дополнительная информация если пользователь утвердительно ответил на confirm_message. В нашем примере - 'additional_content'
+    url_to_load_prefix, url_to_load_element_id, url_to_load_postfix - то, из чего формируется url, информация из которго будет загружена в filed_to_load_id. url будет иметь следующую форму:
+        url_to_load = url_to_load_prefix + document.getElementById(url_to_load_element_id).value.replace(/ /g,'%20') + url_to_load_postfix
+4) Скрытое поле, куда будет сохранено выбранное значение из "выпадающего списка"    
+    <input type="hidden" name="contractor_id" id="contractor_id" value="{{contractor}}" />
+5) Сам выпадающий список, расположенный ПОД полем вводаю id и style важны
+    <ul id="dropdown" style="display:none;">
+        {% for c in contractors %}
+            <li onclick="select_element('{{c.id}}', '{{c.name}}', 'contractor', 'contractor_id','contractor_error')">{{c.name}}</li>
+        {% endfor %}
+    </ul>
+    В качестве обработчика события onclick вешается функция select_element(id,value,input_filed_id,id_field_id,error_field_id)
+    id - значение, которое будет помещено в id_field_id
+    value - значение, которое будет помещено в поле ввода, input_filed_id
+    error_field_id - id поля для вывода ошибок

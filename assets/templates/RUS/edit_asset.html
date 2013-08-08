@@ -1,4 +1,9 @@
 {# 'models':asset_type_models,'statuses':statuses,'garantys':garantys,'places':places,'asset_id':id,'item':a #}
+{% comment %}
+<script>
+var m_list="adfadfaf"
+</script>
+{% endcomment %}
     <td>{{item.id}}</td>
     <td>
         <input type="text" name="model_{{item.id}}" value="{{model.model_name}}" />
@@ -40,4 +45,3 @@
     <td>
     <input type="button" value="Сохранить" onClick="send('/api/asset/save_edited/{{asset_id}}/','asset_edition_form','asset_id_{{asset_id}}','message');" />
     </td>
-</form>

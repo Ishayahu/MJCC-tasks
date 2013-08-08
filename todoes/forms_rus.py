@@ -40,6 +40,7 @@ class NewTicketForm_RUS(forms.Form):
     due_date = forms.DateTimeField(label='Предполагаемая дата завершения',input_formats=inp_f)
     workers = forms.ModelChoiceField(queryset  = Person.objects.all(), label='Исполнитель')
     percentage = forms.DecimalField(min_value=0, max_value=100, label='Процент выполнения')
+    file  = forms.FileField(label="Прикрепить файл", required=False)
     
 class TicketEditForm_RUS(forms.Form):
     name = forms.CharField(max_length=140, label='Название заявки')
@@ -53,6 +54,7 @@ class TicketEditForm_RUS(forms.Form):
     due_date = forms.DateTimeField(label='Предполагаемая дата завершения',input_formats=inp_f)
     workers = forms.ModelChoiceField(queryset  = Person.objects.all(), label='Исполнитель')
     percentage = forms.DecimalField(min_value=0, max_value=100, label='Процент выполнения')
+    file  = forms.FileField(label="Прикрепить файл", required=False)
 class NewRegularTicketForm_RUS(forms.Form):
     name = forms.CharField(max_length=140, label='Название заявки')
     description = forms.CharField(widget=forms.Textarea, label='Описание',required=False)
@@ -97,7 +99,7 @@ class NoteToTicketAddForm_RUS(forms.Form):
     def __init__(self, *args, **kwargs):
         self.defaults = kwargs.pop('defaults','')
         self.exclude = kwargs.pop('exclude','')
-        super(NoteToTicketAddForm, self).__init__(*args, **kwargs)
+        super(NoteToTicketAddForm_RUS, self).__init__(*args, **kwargs)
         self.fields['workers'].queryset = Person.objects.exclude(fio__in = [person.fio for person in self.exclude ])
         self.fields['workers'].initial = Person.objects.filter(fio__in = self.defaults)
 
@@ -107,7 +109,7 @@ class File_and_NoteToTicketAddForm_RUS(forms.Form):
     def __init__(self, *args, **kwargs):
         self.defaults = kwargs.pop('defaults','')
         self.exclude = kwargs.pop('exclude','')
-        super(File_and_NoteToTicketAddForm, self).__init__(*args, **kwargs)
+        super(File_and_NoteToTicketAddForm_RUS, self).__init__(*args, **kwargs)
         self.fields['workers'].queryset = Person.objects.exclude(fio__in = [person.fio for person in self.exclude ])
         self.fields['workers'].initial = Person.objects.filter(fio__in = self.defaults)
 

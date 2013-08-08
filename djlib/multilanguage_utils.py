@@ -66,7 +66,8 @@ def multilanguage(fn):
         for form in forms_dict:
             a=getattr(forms_module,form)            
             # forms[form]=(a(**forms_dict[form]))
-            forms[form]=(a(forms_dict[form]))
+            # print form, forms_dict[form]
+            forms[form]=(a(**forms_dict[form]))
         dict.update(forms)
         # raise ImportError
         # print l_template

@@ -103,9 +103,17 @@ urlpatterns = patterns('',
     url(r'^api/asset/delete/(\d+)/(\d+)/$', assets.api.asset_delete),
     # Редактирование актива - id актива
     url(r'^api/asset/edit/(\d+)/$', assets.api.asset_edit),
+    # получение json списка моделей для типа активов- тип актива
+    url(r'^api/asset_types/models/get/(\d+)/$', assets.api.get_models_list_json),
+    # Получение формы для добавления нового типа актива
+    url(r'^api/asset_types/type/add/$', assets.api.get_new_asset_type_add_form),
+    # Сохраняем новый тип актива
+    url(r'^api/asset_types/type/save/$', assets.api.get_new_asset_type_save),
     # Редактирование актива - id актива
     url(r'^api/asset/save_edited/(\d+)/$', assets.api.asset_save_edited),
-    
+# API для выдачи JSON
+    # Список моделей актива для типа актива - id типа актива
+    url(r'^api/json/get/models/(\d+)/$', assets.api.json_models),    
 # Логирование и т.п.
     url(r'^show_last_logs/(\d*)/$', logs.views.show_last_logs),
 )

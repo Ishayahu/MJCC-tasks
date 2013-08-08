@@ -51,7 +51,7 @@ class File(models.Model):
         return str(self.id)+" "+self.file_name
     @models.permalink
     def get_absolute_url(self):
-        return ('todoes.views.test_task',('one_time',self.id),{})
+        return ('todoes.views.task',('one_time',self.id),{})
         # return ('food.views.restaurant_details', (), {'restaurant_id': [str(self.id)]})
         # return ('food.views.restaurant_details', (str(self.id),), {})
 
@@ -69,21 +69,17 @@ class Person(models.Model):
 class Task(models.Model):
     name = models.CharField(max_length=140)
     description = models.TextField()
-    # client = models.ForeignKey(Client)
     priority = models.PositiveSmallIntegerField()
     category = models.ForeignKey(Categories)
     start_date = models.DateTimeField()
     due_date = models.DateTimeField()
     done_date = models.DateTimeField(blank = True, null = True)
     when_to_reminder = models.DateTimeField()
-    # worker = models.ForeignKey(Worker)
-    #worker = models.ForeignKey(Person, related_name = "worker_for_task",blank = True, null = True)
-    #client = models.ForeignKey(Person, related_name = "client_for_task",blank = True, null = True)
     worker = models.ForeignKey(Person, related_name = "worker_for_task")
     client = models.ForeignKey(Person, related_name = "client_for_task")
     resource = models.ForeignKey(Resource, blank = True, null = True)
     note = models.ManyToManyField(Note, related_name = "for_task",blank = True, null = True)
-    file = models.ForeignKey(File, related_name = "for_task", blank = True, null = True)
+    files = models.ManyToManyField(File, related_name = "for_task", blank = True, null = True)
     percentage = models.PositiveSmallIntegerField()
     pbu = models.ForeignKey(ProblemByUser)
     pbw = models.ForeignKey(ProblemByWorker,blank = True, null = True)

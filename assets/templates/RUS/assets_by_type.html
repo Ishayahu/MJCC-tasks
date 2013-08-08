@@ -21,7 +21,7 @@
     function f_edit_asset(id){
        $("#asset_id_"+id).load("/api/asset/edit/"+id+"/")
     }
-    function send(url,form_id,tr_id,result_div) {
+    function send(url,form_id,result_div,error_div) {
         // Отсылаем паметры
         $.ajax({
                 type: "POST",
@@ -30,13 +30,13 @@
                 // Выводим то что вернул PHP
                 success: function(html)
                 {
-                        $("#"+tr_id).empty();
-                        $("#"+tr_id).append(html);
+                        $("#"+result_div).empty();
+                        $("#"+result_div).append(html);
                 },
                 error: function()
                 {
-                    $("#"+result_div).empty();
-                    $("#"+result_div).append("Ошибка!");
+                    $("#"+error_div).empty();
+                    $("#"+error_div).append("Ошибка!");
                 }
                 }); 
     }
@@ -59,6 +59,7 @@
             {% endifnotequal %}
         {% endfor %}
     </select>
+    <input type="button" onclick="add_asset_type()" value="+" text="Добавить тип актива" />
     <div id="asset_table">
     {# Сюда грузится таблица с активами #}
     </div>
@@ -68,6 +69,9 @@
             $("#asset_table").load("/api/assets_by_type/"+str+"/");
         });
         $('#asset_type').change();
+        function add_asset_type(){
+            $("#asset_table").load("/api/asset_types/type/add/");
+        }
     </script>
 
 {% endblock %}

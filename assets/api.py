@@ -59,8 +59,6 @@ app='assets'
 @login_required
 @multilanguage
 def get_asset_add_form(request,asset_category,form_number):
-    # if not form_number:
-        # form_number=1
     lang=select_language(request)
     user = request.user.username
     try:
@@ -72,9 +70,7 @@ def get_asset_add_form(request,asset_category,form_number):
         asset_type = Asset_type.objects.get(id=asset_category)
     except Asset_type.DoesNotExist:
         return ErrorMessage('Неверно указан код категории актива: '+str(asset_category))
-    # form = l_forms[lang]['NewAssetForm'](number=form_number)
-    # return render_to_response(languages[lang]+'get_asset_add_form.html', {'number':form_number,'asset_type':asset_type,'form':form, 'method':method},RequestContext(request))
-    # raise TypeError
+    # print form_number
     return (True,('get_asset_add_form.html', {'NewAssetForm':{'number':form_number}},{'number':form_number,'asset_type':asset_type, 'method':method},request,app))
 @login_required
 @multilanguage
@@ -107,9 +103,7 @@ def get_new_contractor_add_form(request, contractor_name):
     except Person.DoesNotExist:
         fio = FioError()
     method = request.method
-    # form = l_forms[lang]['NewContractorForm']({'name':contractor_name})
     return (True,('get_new_contractor_add_form.html', {'NewContractorForm':{'name':contractor_name}},{'method':method},request,app))
-    # return render_to_response(languages[lang]+'get_new_contractor_add_form.html', {'form':form, 'method':method},RequestContext(request)) 
 @login_required
 @multilanguage
 def save_new_contractor(request):
@@ -218,35 +212,68 @@ def asset_delete(request,id,type_id):
 @login_required
 @multilanguage
 @admins_only
-# @for_admins
 def asset_edit(request,id):
     lang,user,fio,method = get_info(request)
     try:
         a = Asset.objects.get(id=id)
     except Asset.DoesNotExist:
         add_error(u"Актив с номером %s не найден!" % id,request)
-        # return (False,(HttpResponseRedirect("/assets_by_type/"+type_id+"/")))
         return (False,(HttpResponseRedirect("/")))
-    #<td><input type="text" name="model" value="{{item.model}}" /></td>
-    # asset_types = Asset_type.objects.all()
     asset_type = a.asset_type.catalogue_name
     app_module_name = 'assets.models'
     app_module = __import__(app_module_name)
     models_module = getattr(app_module,'models')
     asset_type_catalogue = getattr(models_module, a.asset_type.catalogue_name)
     asset_type_models = asset_type_catalogue.objects.all()
-
-
-    #<td>{{item.status.status}}</td>
     statuses = Status.objects.all()
-    #<td>{{item.garanty.number}}</td>
     garantys = Garanty.objects.all()
-    #<td>{{item.place}}</td>
     places = Place.objects.all()
-    # t = loader.get_template(get_localized_name('edit_asset.html',request))
-    # c = Context({'asset_types':asset_types,'statuses':statuses,'garantys':garantys,'places':places,'asset_id':id,'item':a})
-    # return (False,(t.render(c)))
     return (True,('edit_asset.html', {},{'models':asset_type_models,'statuses':statuses,'garantys':garantys,'places':places,'asset_id':id,'item':a},request,app))
+@login_required
+@multilanguage
+@admins_only
+def get_models_list_json(request,asset_type_id):
+    at = Asset_type.objects.get(id=catalogue_name)
+    at_name = at.catalogue_name
+    response_data['result'] = 'failed'
+    response_data['message'] = 'You messed up'
+    return HttpResponse(json.dumps(response_data), mimetype="application/json")
+@login_required
+@multilanguage
+@shows_errors
+def get_new_asset_type_add_form(request):
+    lang=select_language(request)
+    user = request.user.username
+    try:
+        fio = Person.objects.get(login=user)
+    except Person.DoesNotExist:
+        fio = FioError()
+    method = request.method
+    return (True,('get_new_asset_type_add_form.html', {'NewAssetTypeForm':{}},{'method':method},request,app))
+@login_required
+@multilanguage
+@shows_errors
+def get_new_asset_type_save(request):
+    lang=select_language(request)
+    user = request.user.username
+    try:
+        fio = Person.objects.get(login=user)
+    except Person.DoesNotExist:
+        fio = FioError()
+    method = request.method
+    if request.method == 'POST':
+        form = get_localized_form('NewAssetTypeForm',app,request)(request.POST)
+        if form.is_valid():
+            data = form.cleaned_data
+            at=Asset_type(asset_type = data['asset_type'],
+                        catalogue_name = data['catalogue_name'],
+                        )
+            at.save()
+            # html='<input type="hidden" id="c_id" value="%s" /><input type="hidden" id="c_name" value="%s" />' % (c.id, c.name)
+            # return (True,('OK.html', {},{},request,app))
+            # return render_to_response(languages[lang]+'OK.html', {'c':c,'html':html},RequestContext(request))
+            return (False,(HttpResponseRedirect("/assets_by_type/"+str(at.id)+"/")))
+    raise IOError("Произошла какая-то ошибка, но не могу представить какая. Надо выяснить и записать для диагностики")
 @login_required
 @multilanguage
 @shows_errors
@@ -259,3 +286,11 @@ def asset_save_edited(request,asset_id):
     asset.place = Place.objects.get(id=request.POST.get('place_'+asset_id))
     asset.save()
     return (True,('edited_asset.html',{},{'item':asset,},request,app))
+@login_required
+@multilanguage
+@shows_errors
+def json_models(request,asset_type_id):
+    import json
+    asset_type = Asset_type.objects.get(id=asset_type_id)
+    models = Asset.objects.filter(asset_type=asset_type).values('model')
+    return (False,HttpResponse(json.dumps(models), mimetype="application/json"))

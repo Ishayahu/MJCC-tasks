@@ -24,7 +24,7 @@ fab -f mjcc_task_deployment.py south_migrate:app=todoes,project=tasks
 
 fab -f mjcc_task_deployment.py deploy_server:directory=tasks,project=tasks,type_of_server=test
 
-fab -f mjcc_task_deployment.py start_deploy_server:branch=,directory=tasks,project=tasks,type_of_server=test,github=https://github.com/Ishayahu/MJCC-tasks.git,e_mail='',e_pss=''
+fab -f mjcc_task_deployment.py start_deploy_server:branch=,directory=tasks,project=tasks,type_of_server=test,github=https://github.com/Ishayahu/MJCC-tasks.git,e_mail='',e_psswd=''
 
 fab -f mjcc_task_deployment.py change_source_test_to_master:branch=bug2
 """
@@ -32,22 +32,25 @@ fab -f mjcc_task_deployment.py change_source_test_to_master:branch=bug2
 from __future__ import with_statement
 from fabric.api import *
 from fabric.contrib.console import confirm
+import sys
 # Словарь паролей
-env.passwords={'ishayahu@192.168.1.25':'aA111111','ishayahu@192.168.1.183':'aA111111'}
+env.passwords={'ishayahu@192.168.1.25':'aA111111','ishayahu@192.168.56.100':'aA111111'}
 env.shell='/bin/csh -c'
 # папка с fab файлом
-deployment_folder = '/usr/home/ishayahu/docsrv/scripts/MJCC-tasks/'
+# deployment_folder = '/usr/home/ishayahu/docsrv/scripts/MJCC-tasks/'
+deployment_folder = "C:\\Dropbox\\Dropbox\\scripts\\MJCC-tasks\\"
 # папка с исходниками в локальном git репозитории
-source_folder = '/usr/home/ishayahu/docsrv/scripts/MJCC-tasks/'
+# source_folder = '/usr/home/ishayahu/docsrv/scripts/MJCC-tasks/'
+source_folder = r'C:\\Dropbox\\Dropbox\\scripts\\MJCC-tasks\\'
 # Сервера для выполнения задачи
-servers= {'test':['ishayahu@192.168.1.183',],
+servers= {'test':['ishayahu@192.168.56.100',],
           'deploy' : ['ishayahu@192.168.1.25',]
           }
 
-servers_ip= {'test':'192.168.1.183',
+servers_ip= {'test':'192.168.56.100',
           'deploy' : '192.168.1.25'
           }
-bds_ip= {'test':'192.168.1.136',
+bds_ip= {'test':'192.168.56.103',
           'deploy' : '192.168.1.24'
           }
 
@@ -283,7 +286,7 @@ EMAIL_USE_TLS = True
 EMAIL_HOST = "%s"
 EMAIL_PORT = %s
 EMAIL_HOST_USER = "%s"
-EMAIL_HOST_PASSWORD = '%s'
+EMAIL_HOST_PASSWORD = "%s"
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
@@ -292,15 +295,21 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = True
     open('settings.py','w').write(template)
     # Переходим в папку, где лежит созданный файл (там, где запускается скрипт)
     with lcd(deployment_folder):
-	# Проверяем локальную и удалённую папку
-	local('pwd')
-	run('pwd')
-	run('cd '+where_to_place)
-	run('pwd')
-	# Выгружаем файл с настройками
-	put('settings.py',where_to_place)
-	# Удаляем локальный файл, ибо нафига
-	local('rm settings.py')
+    # Проверяем локальную и удалённую папку
+        if sys.platform[:3] != "win":
+            local('pwd')
+        else:
+            local('echo %cd%')
+        run('pwd')
+        run('cd '+where_to_place)
+        run('pwd')
+        # Выгружаем файл с настройками
+        put('settings.py',where_to_place)
+        # Удаляем локальный файл, ибо нафига
+        if sys.platform[:3] != "win":
+            local('rm settings.py')
+        else:
+            local('del settings.py')
 
 def start_deploy_server(branch='', directory='',github='', project='',type_of_server='',e_mail='',e_psswd=''):
     """
@@ -318,24 +327,24 @@ def start_deploy_server(branch='', directory='',github='', project='',type_of_se
         # Переходим в созданный каталог
         with cd(directory):
             # Инициализируем репозиторий
-	    run('git init')
-	    # Добавляем удалённый репозиторий github под имененм origin и настраиваем отслеживание на бранч branch
-	    run('git remote add -t %s origin %s' % (branch, github))
-	    # Получаем файлы
-	    run('git fetch')
-	    # Переключаемся с master на branch
-	    run('git checkout %s' % branch)
-	    # Переходим в каталог проекта и создаём там файл с настройками
-	    with cd(project):
-                srv_ip=servers_ip[type_of_server]
-                bd_ip=bds_ip[type_of_server]
-                if type_of_server=='deploy':
-                    make_and_send_settings(host=bd_ip,port='5432',email_host='smtp.gmail.com',email_port='25',email_user=e_mail,email_password=e_psswd,where_to_place='~/tasks/tasks/',srv_ip=srv_ip)
-                if type_of_server=='test':
-                    make_and_send_settings(host=bd_ip,port='5432',email_host='smtp.gmail.com',email_port='25',email_user=e_mail,email_password=e_psswd,where_to_place='~/tasks/tasks/',srv_ip=srv_ip)
-	    # Запускаем сервер для проверки
-	    #run('python manage.py runserver 0.0.0.0:8080')
-	
+            run('git init')
+            # Добавляем удалённый репозиторий github под имененм origin и настраиваем отслеживание на бранч branch
+            run('git remote add -t %s origin %s' % (branch, github))
+            # Получаем файлы
+            run('git fetch')
+            # Переключаемся с master на branch
+            run('git checkout %s' % branch)
+            # Переходим в каталог проекта и создаём там файл с настройками
+            with cd(project):
+                    srv_ip=servers_ip[type_of_server]
+                    bd_ip=bds_ip[type_of_server]
+                    if type_of_server=='deploy':
+                        make_and_send_settings(host=bd_ip,port='5432',email_host='smtp.gmail.com',email_port='25',email_user=e_mail,email_password=e_psswd,where_to_place='~/tasks/tasks/',srv_ip=srv_ip)
+                    if type_of_server=='test':
+                        make_and_send_settings(host=bd_ip,port='5432',email_host='smtp.gmail.com',email_port='25',email_user=e_mail,email_password=e_psswd,where_to_place='~/tasks/tasks/',srv_ip=srv_ip)
+        # Запускаем сервер для проверки
+        #run('python manage.py runserver 0.0.0.0:8080')
+    
 def deploy_server(directory='', project='',type_of_server='',e_mail='',e_psswd=''):
     """
     Обновляем код на тестовом сервере
@@ -346,16 +355,16 @@ def deploy_server(directory='', project='',type_of_server='',e_mail='',e_psswd='
     if ans == 'Д':
         print (directory, project)
         with cd(directory):
-	    # Получаем обновления кода для отслеживаемой ветки
-	    run('git pull')
-	    # Переходим в каталог проекта и создаём файл с настройками
-	    with cd(project):
-                srv_ip=servers_ip[type_of_server]
-                bd_ip=bds_ip[type_of_server]
-                if type_of_server=='deploy':
-                    make_and_send_settings(host=bd_ip,port='5432',email_host='smtp.gmail.com',email_port='25',email_user=e_mail,email_password=e_psswd,where_to_place='~/tasks/tasks/',srv_ip=srv_ip)
-                if type_of_server=='test':
-                    make_and_send_settings(host=bd_ip,port='5432',email_host='smtp.gmail.com',email_port='25',email_user=e_mail,email_password=e_psswd,where_to_place='~/tasks/tasks/',srv_ip=srv_ip)
+            # Получаем обновления кода для отслеживаемой ветки
+            run('git pull')
+            # Переходим в каталог проекта и создаём файл с настройками
+            with cd(project):
+                    srv_ip=servers_ip[type_of_server]
+                    bd_ip=bds_ip[type_of_server]
+                    if type_of_server=='deploy':
+                        make_and_send_settings(host=bd_ip,port='5432',email_host='smtp.gmail.com',email_port='25',email_user=e_mail,email_password=e_psswd,where_to_place='~/tasks/tasks/',srv_ip=srv_ip)
+                    if type_of_server=='test':
+                        make_and_send_settings(host=bd_ip,port='5432',email_host='smtp.gmail.com',email_port='25',email_user=e_mail,email_password=e_psswd,where_to_place='~/tasks/tasks/',srv_ip=srv_ip)
 
 def commit_branch(branch=''):
     """
@@ -363,49 +372,49 @@ def commit_branch(branch=''):
     """
     # Переходим в каталог с локальным исходным кодом
     with lcd(source_folder):
-	# Переключаемся на тестовый бранч
-	local('git checkout %s' % branch)
-	# Смотрим статус
-	local('git status')
-	# Продолжаем?
-	ans = prompt('Продолжить?', default='Д')
-	if ans == 'Д':
-	    # Добавляем все файлы в коммит
-	    local('git add .')
-	    # Получаем сообщение для коммита
-	    message = prompt('Введите сообщение для коммита')
-	    # Коммитим
-	    local("git commit -m '%s'" % message)
-	    # Выгружаем на сервер
-	    local("git push origin %s" % branch)
-	    
+        # Переключаемся на тестовый бранч
+        local('git checkout %s' % branch)
+        # Смотрим статус
+        local('git status')
+        # Продолжаем?
+        ans = prompt('Продолжить?', default='Д')
+        if ans == 'Д':
+            # Добавляем все файлы в коммит
+            local('git add .')
+            # Получаем сообщение для коммита
+            message = prompt('Введите сообщение для коммита')
+            # Коммитим
+            local("git commit -m '%s'" % message)
+            # Выгружаем на сервер
+            local("git push origin %s" % branch)
+        
 def push_commit(branch=''):
     """
     Выгружаем на удалённый сервер нужный бранч без коммита
     """
     # Переходим в локальный каталог с исходным кодом
     with lcd(source_folder):
-	# Переключаемся на нужный бранч
-	local('git checkout %s' % branch)
-	# Статус
-	local('git status')
-	# Всё ок?
-	ans = prompt('Продолжить?', default='Д')
-	if ans == 'Д':
-	    # Выгружаем код
-	    local("git push origin %s" % branch)
-	    
+        # Переключаемся на нужный бранч
+        local('git checkout %s' % branch)
+        # Статус
+        local('git status')
+        # Всё ок?
+        ans = prompt('Продолжить?', default='Д')
+        if ans == 'Д':
+            # Выгружаем код
+            local("git push origin %s" % branch)
+        
 def change_source_test_to_master(branch=''):
     """
     Сливаем тестовый бранч и мастер и выгружаем на сервер кода. То есть перемещаем метку мастер на тестовый код
     """
     # Переходим в каталог с локальным исходным кодом
     with lcd(source_folder):
-	# Переключаемся на мастера
-	local('git checkout master')
-	# Сливаем тестовый код с мастером
-	local('git merge %s' % branch)
-	# Выгружаем код
-	local('git push origin master')
+        # Переключаемся на мастера
+        local('git checkout master')
+        # Сливаем тестовый код с мастером
+        local('git merge %s' % branch)
+        # Выгружаем код
+        local('git push origin master')
 
-	
+    

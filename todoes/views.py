@@ -74,7 +74,7 @@ def new_ticket(request):
         fio = FioError
     method = request.method
     if request.method == 'POST':
-        form = NewTicketForm(request.POST)
+        form = l_forms[lang]['NewTicketForm'](request.POST)
         if form.is_valid():
             data = form.cleaned_data
             t=Task(name=data['name'], 
@@ -597,8 +597,10 @@ def task(request,task_type,task_id):
             form = l_forms[lang]['NoteToTicketAddForm'](defaults = (task_full.worker.fio, task_full.client.fio),exclude = (fio,))
             for note in notes:
                 note.note = htmlize(note.note)
+            files=task_full.files.all()
+            # files[0].file.url
             set_last_activity(user,request.path)
-            return render_to_response(languages[lang]+'task.html',{'user':user,'fio':fio,'task':task_full,'notes':notes, 'form':form,'task_type':task_type,'admin':admin},RequestContext(request))
+            return render_to_response(languages[lang]+'task.html',{'files':files,'user':user,'fio':fio,'task':task_full,'notes':notes, 'form':form,'task_type':task_type,'admin':admin},RequestContext(request))
     # если задачи нет - возвращаем к списку с ошибкой
     except Task.DoesNotExist:
         # print 'here'
@@ -773,9 +775,8 @@ def edit_task(request,task_to_edit_id):
         fio = Person.objects.get(login=user)
     except Person.DoesNotExist:
         fio = FioError()
-    
     if request.method == 'POST':
-        form = TicketEditForm(request.POST)
+        form = l_forms[lang]['TicketEditForm'](request.POST,request.FILES)
         # если меняется исполнитель - чтобы оповестить
         old_worker = task_to_edit.worker
         old_pbu = task_to_edit.pbu
@@ -784,7 +785,21 @@ def edit_task(request,task_to_edit_id):
         old_category = task_to_edit.category
         old_due_date = task_to_edit.due_date
         old_name = task_to_edit.name
+
+        # # старый варинат
         if form.is_valid():
+            # проверка - есть ли файл надо добавить
+            def save_file(files):
+                instanse = File(file=files['file'],
+                                timestamp=datetime.datetime.now(),
+                                file_name = 'file_name',
+                                description = 'TEST',)
+                instanse.save()
+                return instanse
+
+            task_to_edit.files.add(save_file(request.FILES))
+            task_to_edit.save()
+            # raise TabError
             data = form.cleaned_data
             task_to_edit.name=data['name']
             task_to_edit.pbu=data['pbus']
@@ -797,6 +812,7 @@ def edit_task(request,task_to_edit_id):
             task_to_edit.worker=data['workers']
             task_to_edit.percentage=data['percentage']
             task_to_edit.when_to_reminder=data['when_to_reminder']
+            # task_to_edit.file_id = file.id
             task_to_edit.save()
             if task_to_edit.name != old_name:
                 send_email_alternative(u"Изменёно название задачи: "+old_name,
@@ -861,8 +877,11 @@ def edit_task(request,task_to_edit_id):
             'when_to_reminder' : task_to_edit.when_to_reminder,
             'due_date' : task_to_edit.due_date,
             'workers' : task_to_edit.worker,
-            'percentage' : task_to_edit.percentage
+            'percentage' : task_to_edit.percentage,
+            # 'file':task_to_edit.file,
         })
+        # Creating a form to change an existing task.
+        # form = TaskEditForm(instance=task_to_edit)
     set_last_activity(user,request.path)
     return render_to_response(languages[lang]+'new_ticket.html', {'form':form, 'method':method},RequestContext(request))
 @login_required

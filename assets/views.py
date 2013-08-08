@@ -49,14 +49,6 @@ app='assets'
 @login_required
 @multilanguage
 def bill_add(request):
-    # lang=select_language(request)
-    # user = request.user.username
-    # try:
-        # fio = Person.objects.get(login=user)
-    # except Person.DoesNotExist:
-        # fio = FioError()
-    # method = request.method
-    # raise TypeError
     lang,user,fio,method = get_info(request)
     if request.method == 'POST':
         # Порядок действия таков:
@@ -67,15 +59,17 @@ def bill_add(request):
         # 5) Если всё прошло хорошо - активы из списка сохраняем
 
         bill_date = request.POST.get('date','')
-        if not bill_date:
+        if bill_date:
+            a=[int(a) for a in bill_date.split('.')]
+            a.reverse()
+            bill_date=datetime.datetime(*a)
+        else:
             bill_date = datetime.datetime.now()
-        a=[int(a) for a in bill_date.split('.')]
-        a.reverse()
-        bill_date=datetime.datetime(*a)
-        print bill_date
+        # print bill_date
         # raise ImportError
         cash = Cash(date = bill_date,
-               contractor = Contractor.objects.get(id=request.POST.get('contractor_id'))
+               contractor = Contractor.objects.get(id=request.POST.get('contractor_id')),
+               bill_number = request.POST.get('bill_number'),
                )
         cash.save()
         payment = Payment(cash = cash,
@@ -149,6 +143,11 @@ def assets_by_type(request,type_id):
     else:
         type_id=int(type_id)
     lang,user,fio,method = get_info(request)
-    type_name = Asset_type.objects.get(id=type_id)
-    asset_types = Asset_type.objects.all()
-    return (True,('assets_by_type.html',{},{'type_name':type_name.asset_type,'asset_types':asset_types,'type_id':type_id},request,app))
+    try:
+        type_name = Asset_type.objects.get(id=type_id)
+        asset_types = Asset_type.objects.all()
+        type_name_asset_type=type_name.asset_type
+    except Asset_type.DoesNotExist:
+        type_name_asset_type = u"Такого типа акивов нет"
+        asset_types=[]
+    return (True,('assets_by_type.html',{},{'type_name':type_name_asset_type,'asset_types':asset_types,'type_id':type_id},request,app))

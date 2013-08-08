@@ -3,6 +3,10 @@
 from user_settings.settings import admins
 from djlib.error_utils import FioError, ErrorMessage, add_error
 from django.http import HttpResponse, Http404, HttpResponseRedirect
+# временно, надо сделать независимым от приложения
+from todoes.models import Task, RegularTask
+task_types = {'one_time':Task,'regular':RegularTask}
+
 
 def acl(request,task_type,task_id):
     user = request.user.username
