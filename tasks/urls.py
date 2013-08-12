@@ -4,6 +4,7 @@
 from django.conf.urls.defaults import patterns, include, url
 import todoes.views 
 import assets.views
+import assets.test_view
 import assets.api
 import logs.views
 import djlib
@@ -118,6 +119,10 @@ urlpatterns = patterns('',
     url(r'^api/json/get/models/(\d+)/$', assets.api.json_models),    
 # Логирование и т.п.
     url(r'^show_last_logs/(\d*)/$', logs.views.show_last_logs),
+# Тестированание
+    url(r'^test/bill/add/$', assets.test_view.bill_add),
+    url(r'^test/simple/$', assets.test_view.simple),
+    (r'^i18n/', include('django.conf.urls.i18n')),
 )
 if settings.DEBUG:
     urlpatterns += patterns('',

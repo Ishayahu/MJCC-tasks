@@ -14,19 +14,37 @@
     </style>
 {% endblock %}
 {% block content %}
+
+
+{% load i18n %}
+
+{% get_current_language as LANGUAGE_CODE %}
+<!-- Current language: {{ LANGUAGE_CODE }} -->
+<p>{% trans "Welcome to our page" %}</p>
+
+{% language 'en' %}
+    {% get_current_language as LANGUAGE_CODE %}
+    <!-- Current language: {{ LANGUAGE_CODE }} -->
+    <p>{% trans "Welcome to our page" %}</p>
+{% endlanguage %}
+
+
+
+
     <div id="message">
         </div>
     <div id="content_to_hide">
         {% if form.errors %}
         {#    {{form.errors}} #}
         {% endif %}
+        {{message}}
         <form action="" method="post" id="bill_form">
             {% csrf_token %}
             <input type="hidden" id="max_asset_form_number" name="max_asset_form_number" value=0 />
             <table border=1>
                 <tr>
                     <th>
-                        <label for="contractor">Поставщик:</label>
+                        <label for="contractor">{% trans Поставщик %}:</label>
                     </th>
                     <td>
                         <ul class="errorlist" id="contractor_error">

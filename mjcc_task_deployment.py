@@ -131,8 +131,14 @@ TIME_ZONE = 'Europe/Moscow'
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'ru'
+# LANGUAGE_CODE = 'en-us'
+gettext = lambda s: s
 
+LANGUAGES = (
+    ('ru', gettext('Russian')),
+    ('en', gettext('English')),
+)
 SITE_ID = 1
 
 # If you set this to False, Django will make some optimizations so as not
