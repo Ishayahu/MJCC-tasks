@@ -1,4 +1,4 @@
-#dropdown{
+.dropdown_list{
 list-style: none;
 /*position:absolute; */
 background:#ffffaa; 
@@ -7,10 +7,10 @@ cursor: default;
 padding: 2px 0px 2px 0px;
 /* width:155px */
 }
-#dropdown li{
+.dropdown_list li{
 padding: 3px 3px 3px 3px;
 }
-#dropdown li:hover{
+.dropdown_list li:hover{
 color:#fff;
 padding: 3px 3px 3px 3px;
 background:#0000FF; 

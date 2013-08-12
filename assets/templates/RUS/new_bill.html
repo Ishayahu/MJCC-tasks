@@ -24,7 +24,6 @@
             {% csrf_token %}
             <input type="hidden" id="max_asset_form_number" name="max_asset_form_number" value=0 />
             <table border=1>
-                {{ NewCashBillForm.as_table }}
                 <tr>
                     <th>
                         <label for="contractor">Поставщик:</label>
@@ -38,6 +37,7 @@
                         </div>
                     </td>
                 </tr>
+                {{ NewCashBillForm.as_table }}
             </table>
             {# сюда мы будем бросать кости - активы в чеке/счёте #}
             <div id="bill_assets">

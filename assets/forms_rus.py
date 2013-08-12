@@ -2,6 +2,7 @@
 # coding=<utf8>
 
 from django import forms
+from django.forms import ModelForm
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.admin import widgets
 
@@ -44,18 +45,18 @@ inp_f=( '%d-%m-%Y %H:%M:%S',     # '2006-10-25 14:30:59'
         '%d/%m/%y',       )
         
 class NewAssetForm(forms.Form):
-    model = forms.CharField(max_length=140, label='Модель')
+    # model = forms.CharField(max_length=140, label='Модель')
     price = forms.DecimalField(min_value=0, decimal_places=2, max_digits=8, initial=0, label='Цена')
     current_place = forms.ModelChoiceField(queryset  = Place.objects.all(), label='Место расположения')
     status = forms.ModelChoiceField(queryset  = Status.objects.all(), label='Статус')
     guarantee_period = forms.DecimalField(min_value=0, max_value=9999, initial=0,label='Срок гарантии, месяцев')    
     note = forms.CharField(widget=forms.Textarea, label='Примечания',required=False)
         
-    def __init__(self,*args,**kwargs):
+    def __init__(self,arg_dict):
         # print str(kwargs)
-        self.number = kwargs.pop('number','')
+        self.number = arg_dict.pop('number','')
         # print self.number
-        super(NewAssetForm, self).__init__(*args, **kwargs)
+        super(NewAssetForm, self).__init__(arg_dict)
     def add_prefix(self, field_name):
         # print "doing prefix"
         field_name = str(self.number)+"_"+field_name
@@ -75,3 +76,10 @@ class NewContractorForm(forms.Form):
 class NewAssetTypeForm(forms.Form):
     asset_type = forms.CharField(max_length=200,label="Тип актива")
     catalogue_name = forms.ChoiceField(choices = ASSET_TYPES_CATALOGUE_NAME, label='Таблица в справочнике')
+    
+# Формы для добавления новых моделей
+class NewModel_Printer(ModelForm):
+    class Meta:
+        model = Printer
+        localized_fields = '__all__'
+    

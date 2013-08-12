@@ -111,6 +111,8 @@ urlpatterns = patterns('',
     url(r'^api/asset_types/type/save/$', assets.api.get_new_asset_type_save),
     # Редактирование актива - id актива
     url(r'^api/asset/save_edited/(\d+)/$', assets.api.asset_save_edited),
+    # Получаем форму для добавления актива - id типа актива, имя модели
+    url(r'^api/get_new_model_add_form/(\d+)/([^/]+)/$', assets.api.get_new_asset_model_add_form),
 # API для выдачи JSON
     # Список моделей актива для типа актива - id типа актива
     url(r'^api/json/get/models/(\d+)/$', assets.api.json_models),    

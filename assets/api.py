@@ -293,4 +293,19 @@ def json_models(request,asset_type_id):
     import json
     asset_type = Asset_type.objects.get(id=asset_type_id)
     models = Asset.objects.filter(asset_type=asset_type).values('model')
-    return (False,HttpResponse(json.dumps(models), mimetype="application/json"))
+    mj = list(set([i['model']for i in models]))
+    return (False,HttpResponse(json.dumps(mj), mimetype="application/json"))
+@login_required
+@multilanguage
+@shows_errors
+def get_new_asset_model_add_form(request,asset_type_id,asset_model_name):
+    lang=select_language(request)
+    user = request.user.username
+    try:
+        fio = Person.objects.get(login=user)
+    except Person.DoesNotExist:
+        fio = FioError()
+    method = request.method
+    asset_type = Asset_type.objects.get(id=asset_type_id)
+    form_name = 'NewModel_'+asset_type.catalogue_name
+    return (True,('get_new_asset_model_add_form.html', {form_name:{'model_name':asset_model_name}},{'method':method,'form_template_name':'NewModelForm'},request,app))

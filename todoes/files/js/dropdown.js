@@ -1,6 +1,11 @@
-function list_down() {
+function CheckTab(e){	
+    if(e.keyCode == '9'){
+        return false;		
+    }	
+}
+function list_down2(dropdown_id) {
     // скрыть/показать список возможных вариантов
-    var a = document.getElementById('dropdown');
+    var a = document.getElementById(dropdown_id);
         if ( a.style.display == 'none' )
         a.style.display = 'block'
     else
@@ -9,14 +14,13 @@ function list_down() {
 };
 function list_on_change(item_list,input_filed_id,error_field_id,confirm_message,field_to_hide_id,filed_to_load_id,url_to_load_prefix,url_to_load_element_id,url_to_load_postfix) {
     function wrapped(e) {
-        url_to_load = url_to_load_prefix + document.getElementById(url_to_load_element_id).value.replace(/ /g,'%20') + url_to_load_postfix
         // Изменение списка возможных вариантов в соответствии с введёнными в input_filed_id символами
         var e = e||window.event;
         if (e.keyCode == 9 || e.keyCode == 13) {
             // если энтер или таб - добавить нового поставщика
             // TODO: а если мышкой увели фокус?
             // TODO: при энтере отправляется форма
-            // TODO: таб не работает
+            url_to_load = url_to_load_prefix + document.getElementById(url_to_load_element_id).value.replace(/ /g,'%20') + url_to_load_postfix
             check_contractor(item_list,input_filed_id,error_field_id,confirm_message,field_to_hide_id,filed_to_load_id,url_to_load)
         } else {
             //var inputed = $("#contractor").val()
@@ -32,13 +36,13 @@ function list_on_change(item_list,input_filed_id,error_field_id,confirm_message,
     }
     return wrapped
 };
-function select_element(id,value,input_filed_id,id_field_id,error_field_id){
+function select_element(id,value,input_filed_id,id_field_id,error_field_id,dropdown_id){
     // Вводит в поле ввода выбранное из списка значение
     var b = document.getElementById(input_filed_id);
     var c = document.getElementById(id_field_id);
     b.value=value;
     c.value=id;
-    list_down();
+    list_down2(dropdown_id);
     //check_contractor(); // а зачем? ведь выбрано то и так из имеющихся!
     //Чтобы убрать ошибку "поле должно быть обязательным"
     var b = document.getElementById(input_filed_id);
