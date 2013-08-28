@@ -529,7 +529,7 @@ def task(request,task_type,task_id):
                             acl_list.append(person.login)
                     task_full.acl = ';'.join(acl_list)
                     task_full.save()
-                    send_email_alternative(u"Новый комментарий к задаче: "+task_full.name,u"*Комментарий*\<table cellpadding='5' border='1'\>\<tr\>\<td\>"+note.note+u"\</td\>\</tr\>\</table\>\n\n*Описание задачи*\<table cellpadding='5' border='1'\>\<tr\>\<td\>"+task_full.description+u"\</td\>\</tr\>\</table\>\n*Посмотреть задачу можно тут*:\nhttp://1"+server_ip+"/task/"+task_addr[task_type]+"/"+str(task_full.id),mails,fio)
+                    send_email_alternative(u"Новый комментарий к задаче: "+task_full.name,u"*Комментарий*\<table cellpadding='5' border='1'\>\<tr\>\<td\>"+note.note+u"\</td\>\</tr\>\</table\>\n\n*Описание задачи*\<table cellpadding='5' border='1'\>\<tr\>\<td\>"+task_full.description+u"\</td\>\</tr\>\</table\>\n*Посмотреть задачу можно тут*:\nhttp://"+server_ip+"/task/"+task_addr[task_type]+"/"+str(task_full.id),mails,fio)
                     set_last_activity(user,request.path)
                     return HttpResponseRedirect(request.get_full_path())
                 elif request.POST.get('answer_to_comment'):

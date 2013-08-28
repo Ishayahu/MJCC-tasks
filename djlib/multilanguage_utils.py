@@ -4,7 +4,7 @@ from django.template import RequestContext
 
 languages={'ru':'RUS/',
             }
-# l_forms = {'ru':forms_RUS,          
+# l_forms = {'ru':forms_RUS,
     # }
 def select_language(request):
     if request.session.get('language'):
@@ -12,7 +12,7 @@ def select_language(request):
     else:
         lang='ru'
     return lang
-@login_required    
+@login_required
 def change_language(request,lang):
     request.session['language']=lang
     return HttpResponseRedirect('/')
@@ -64,9 +64,10 @@ def multilanguage(fn):
         # a=dir(app_module)
         # forms_module=getattr(app_module,'forms_'+languages[lang].lower())
         for form in forms_dict:
-            a=getattr(forms_module,form)            
+            a=getattr(forms_module,form)
             # forms[form]=(a(**forms_dict[form]))
             # print form, forms_dict[form]
+            #form_template_name - имя формы в шаблоне
             if 'form_template_name' in dict:
                 forms[dict['form_template_name']]=(a(forms_dict[form]))
             else:
@@ -76,5 +77,5 @@ def multilanguage(fn):
         # print l_template
         # print dict
         # print "in multilanguage for "+str(args[0].path)+" before return dict="+str(dict)
-        return render_to_response(l_template, dict,RequestContext(request)) 
+        return render_to_response(l_template, dict,RequestContext(request))
     return wrapped

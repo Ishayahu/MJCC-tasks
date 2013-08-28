@@ -6,6 +6,9 @@ from django.forms import ModelForm
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.admin import widgets
 
+##from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext as _
+
 from assets.models import Asset, Payment, Cash, Cashless, Contractor, Garanty, Asset_type, Status, Budget, Repair, Place_Asset, Place, Cartridge, Cartridge_Model_General_Model, Cartridge_General_Model_Printer_Model, Cartridge_Printer, ROM, Cooler, Storage, Acoustics, Telephone, Battery, Optical_Drive, Printer, Power_suply, Motherboard, CPU, Case, Claim
 from todoes.models import  Person #, Task, ProblemByWorker, ProblemByUser, Categories, RegularTask, Activity, Note, Resource, File,
 import datetime
@@ -43,15 +46,15 @@ inp_f=( '%d-%m-%Y %H:%M:%S',     # '2006-10-25 14:30:59'
         '%d/%m/%y %H:%M:%S',     # '10/25/06 14:30:59'
         '%d/%m/%y %H:%M',        # '10/25/06 14:30'
         '%d/%m/%y',       )
-        
+
 class NewAssetForm(forms.Form):
     # model = forms.CharField(max_length=140, label='Модель')
     price = forms.DecimalField(min_value=0, decimal_places=2, max_digits=8, initial=0, label='Цена')
     current_place = forms.ModelChoiceField(queryset  = Place.objects.all(), label='Место расположения')
     status = forms.ModelChoiceField(queryset  = Status.objects.all(), label='Статус')
-    guarantee_period = forms.DecimalField(min_value=0, max_value=9999, initial=0,label='Срок гарантии, месяцев')    
+    guarantee_period = forms.DecimalField(min_value=0, max_value=9999, initial=0,label='Срок гарантии, месяцев')
     note = forms.CharField(widget=forms.Textarea, label='Примечания',required=False)
-        
+
     def __init__(self,arg_dict):
         # print str(kwargs)
         self.number = arg_dict.pop('number','')
@@ -61,13 +64,18 @@ class NewAssetForm(forms.Form):
         # print "doing prefix"
         field_name = str(self.number)+"_"+field_name
         return super(NewAssetForm, self).add_prefix(field_name)
-    
+
 class NewCashBillForm(forms.Form):
-    date = forms.DateField(initial=datetime.date.today, label="Дата чека/покупки/внесения",help_text='Пустое значение означает текущую дату',required=False,input_formats=inp_f)
-    garanty = forms.IntegerField(min_value=0, label='Номер гарантии')
-    bill_number = forms.CharField(max_length=40, label='Номер чека')
-    
-class NewContractorForm(forms.Form):   
+    date = forms.DateField(initial=datetime.date.today,help_text='Пустое значение означает текущую дату',required=False,input_formats=inp_f)
+    garanty = forms.IntegerField(min_value=0)
+    bill_number = forms.CharField(max_length=40)
+    def __init__(self, *args, **kwargs):
+        super(NewCashBillForm, self).__init__(*args, **kwargs)
+        self.fields['date'].label = _("Check/Buy/Input date")
+        self.fields['garanty'].label = _("Garanty number")
+        self.fields['bill_number'].label = _("Check number")
+
+class NewContractorForm(forms.Form):
     name = forms.CharField(max_length=140, label='Название фирмы')
     email = forms.EmailField(label = 'Мыло',required=False)
     tel = forms.CharField(label='Телефон', max_length=10, min_length=10,required=False)
@@ -76,10 +84,10 @@ class NewContractorForm(forms.Form):
 class NewAssetTypeForm(forms.Form):
     asset_type = forms.CharField(max_length=200,label="Тип актива")
     catalogue_name = forms.ChoiceField(choices = ASSET_TYPES_CATALOGUE_NAME, label='Таблица в справочнике')
-    
+
 # Формы для добавления новых моделей
 class NewModel_Printer(ModelForm):
     class Meta:
         model = Printer
         localized_fields = '__all__'
-    
+

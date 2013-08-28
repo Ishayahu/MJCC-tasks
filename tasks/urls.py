@@ -2,7 +2,7 @@
 # coding=<utf8>
 
 from django.conf.urls.defaults import patterns, include, url
-import todoes.views 
+import todoes.views
 import assets.views
 import assets.test_view
 import assets.api
@@ -30,14 +30,14 @@ urlpatterns = patterns('',
     url(r'^unclose/([^/]+)/$', todoes.views.unclose_task),
     # подтверждение выполнения задачи
     url(r'^confirm/([^/]+)/$', todoes.views.confirm_task),
-# повторяющиеся задачи    
+# повторяющиеся задачи
     # создание повторяющейся задачи
     url(r'^new_regular_ticket/$', todoes.views.new_regular_ticket),
     # редактирование повторяющейся задачи
     url(r'^edit_regular/([^/]+)/$', todoes.views.edit_regular_task),
     # отметка как сделанная повторяющейся задачи
     url(r'^regular_task_done/([^/]+)/$', todoes.views.regular_task_done),
-# общее для всех задач    
+# общее для всех задач
     url(r'^task/([^/]+)/(\d+)/$', todoes.views.task),
     # установка напоминалки повторяющейся задачи
     # удаление повторяющейся задачи
@@ -49,12 +49,12 @@ urlpatterns = patterns('',
     # http://192.168.1.157:8080/move_to_call/47 - изменение категории на "Звонки"
     url(r'^move_to_call/([^/]+)/(\d+)/$', todoes.views.move_to_call),
     # http://192.168.1.157:8080/set_reminder/47 - установка напоминания для задачи
-    url(r'^set_reminder/([^/]+)/(\d+)/$', todoes.views.set_reminder), 
+    url(r'^set_reminder/([^/]+)/(\d+)/$', todoes.views.set_reminder),
 # Для администратора:
     url(r'^users/', todoes.views.get_all_logged_in_users),
     url(r'^tasks/to/([^/]+)/$', todoes.views.to),
 
-    
+
     url(r'^accounts/$', login),
     url(r'^accounts/login/$', login),
     url(r'^accounts/register/$', todoes.views.register),
@@ -89,9 +89,9 @@ urlpatterns = patterns('',
     # Выдача формы добавления поставщика, в качестве параметра - название
     url(r'^api/get_new_contractor_add_form/([^/]*)/$', assets.api.get_new_contractor_add_form),
     # Сохраняем нового поставщика
-    url(r'^api/save_new_contractor/$', assets.api.save_new_contractor),    
+    url(r'^api/save_new_contractor/$', assets.api.save_new_contractor),
     # Получаем список типов активов, в качестве парамета - id выбранного
-    url(r'^api/get_asset_type_list/(\d*)/$', assets.api.get_asset_type_list),    
+    url(r'^api/get_asset_type_list/(\d*)/$', assets.api.get_asset_type_list),
     # Пометить конкретный чек/счёт к удалению - тип,id
     url(r'^api/bill/delete/([^/]+)/(\d*)/$', assets.api.mark_as_deleted_bill),
     url(r'^bill/delete/([^/]+)/(\d*)/$', assets.api.mark_as_deleted_bill),
@@ -114,11 +114,16 @@ urlpatterns = patterns('',
     url(r'^api/asset/save_edited/(\d+)/$', assets.api.asset_save_edited),
     # Получаем форму для добавления актива - id типа актива, имя модели
     url(r'^api/get_new_model_add_form/(\d+)/([^/]+)/$', assets.api.get_new_asset_model_add_form),
+    # Сохраняем новую модель актива- id типа актива
+    url(r'^api/asset_types/model/save/(\d+)/$', assets.api.save_new_model),
 # API для выдачи JSON
     # Список моделей актива для типа актива - id типа актива
-    url(r'^api/json/get/models/(\d+)/$', assets.api.json_models),    
+    url(r'^api/json/get/models/(\d+)/$', assets.api.json_models),
 # Логирование и т.п.
     url(r'^show_last_logs/(\d*)/$', logs.views.show_last_logs),
+
+
+
 # Тестированание
     url(r'^test/bill/add/$', assets.test_view.bill_add),
     url(r'^test/simple/$', assets.test_view.simple),

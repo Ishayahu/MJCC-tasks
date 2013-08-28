@@ -12,7 +12,7 @@
 <table>
     <tr>
         <td>
-            <input name="contractor" type="text" id="contractor" size="20" maxlength="50" onclick="list_down2('dropdown')" onkeyup="autohelper()" value="{{name_to_select}}" onkeydown="return CheckTab(event);"/>
+            <input name="contractor" type="text" id="contractor" size="20" maxlength="50" onclick="list_down2('contractor_dropdown')" onkeyup="autohelper()" value="{{name_to_select}}" onkeydown="return CheckTab(event);"/>
         </td>
     </tr>
     <tr>
@@ -22,20 +22,20 @@
     </tr>
     <tr>
         <td>
-            <ul id="dropdown" style="display:none;" class="dropdown_list">
+            <ul id="contractor_dropdown" style="display:none;" class="dropdown_list">
                 {% for c in contractors %}
-                    <li onclick="select_element('{{c.id}}', '{{c.name}}', 'contractor', 'contractor_id','contractor_error','dropdown')">{{c.name}}</li>
+                    <li onclick="select_element('{{c.id}}', '{{c.name}}', 'contractor', 'contractor_id','contractor_error','contractor_dropdown')">{{c.name}}</li>
                 {% endfor %}
             </ul>
         </td>
     </tr>
 </table>
 <script>
-    autohelper=list_on_change(c_list,'contractor','contractor_error','Хотите добавить нового поставщика?','content_to_hide','additional_content', '/api/get_new_contractor_add_form/','contractor','/')
-    function CheckTab(e){	
+    autohelper=list_on_change(c_list,'contractor','contractor_dropdown','contractor_error','Хотите добавить нового поставщика?','content_to_hide','additional_content', '/api/get_new_contractor_add_form/','contractor','/')
+    function CheckTab(e){
         if(e.keyCode == '9'){
-            return false;		
-        }	
+            return false;
+        }
     }
 </script>
 

@@ -1,8 +1,10 @@
-<form method="post" action="javascript:send('/api/models/save/','new_asset_type','asset_table','message');" id="new_asset_type">
+<form method="post" action="javascript:send2('/api/asset_types/model/save/{{asset_type_id}}/','new_asset_type','additional_content','content_to_hide','message','NO_NEEDED');" id="new_asset_type">
     {% csrf_token %}
     <table border=1>
         {{ NewModelForm.as_table }}
     </table>
-    <input type="button" value="Отправить" onClick="send('/api/asset_types/type/save/','new_asset_type','asset_table','message');" />
+    <input type="button" value="Отправить" onClick="send2('/api/asset_types/model/save/{{asset_type_id}}/','new_asset_type','additional_content','content_to_hide','message','NO_NEEDED');" />
 </form>
-{# Отправляем данные, удаляем форму ввода поставщика и перезагружаем это поле в таблице счёта, установив введённое значение значением по умолчанию. Скрипт хранится в /todoes/files/js/bill_contractor.js Для того, чтобы он мог подружаться в заголовке страницы. Такой вот франкенштейн #} 
+{# Отправляем данные, удаляем форму ввода поставщика и перезагружаем это поле в таблице счёта, установив введённое значение значением по умолчанию. Скрипт хранится в /todoes/files/js/bill_contractor.js Для того, чтобы он мог подружаться в заголовке страницы. Такой вот франкенштейн #}
+
+{# (url,form_id,hide_id,show_id,message_id,dropdown_id) #}

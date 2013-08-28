@@ -47,7 +47,7 @@ app='assets'
 # l_forms = {'ru':forms_RUS,
            # 'eng':forms_ENG,
     # }
-    
+
     #lang=select_language(request)
     #..........
     #if request.method == 'POST':
@@ -124,8 +124,8 @@ def save_new_contractor(request):
                         tel_of_support = data['tel_of_support'],
                         contact_name = data['contact_name'],)
             c.save()
-            html='<input type="hidden" id="c_id" value="%s" /><input type="hidden" id="c_name" value="%s" />' % (c.id, c.name)
-            return (True,('OK.html', {},{},request,app))
+            html=u'<input type="hidden" id="c_id" value="%s" /><input type="hidden" id="c_name" value="%s" />' % (c.id, c.name)
+            return (True,('OK.html', {},{'html':html},request,app))
             # return render_to_response(languages[lang]+'OK.html', {'c':c,'html':html},RequestContext(request))
     raise IOError
     return "Произошла какая-то ошибка, но не могу представить какая. Надо выяснить и записать для диагностики"
@@ -208,7 +208,7 @@ def asset_delete(request,id,type_id):
         return (False,(HttpResponseRedirect("/")))
     a=make_request_with_logging(user,"Удаляем актив №%s" % str(id),a.delete,{})
     html=u'Актив %s удалён' % str(id)
-    return (True,('OK.html', {},{},request,app))
+    return (True,('OK.html', {},{'html':html},request,app))
 @login_required
 @multilanguage
 @admins_only
@@ -292,8 +292,13 @@ def asset_save_edited(request,asset_id):
 def json_models(request,asset_type_id):
     import json
     asset_type = Asset_type.objects.get(id=asset_type_id)
-    models = Asset.objects.filter(asset_type=asset_type).values('model')
-    mj = list(set([i['model']for i in models]))
+    models_module_name = 'assets.models'
+    asset_type_model_name = asset_type.catalogue_name
+    app_module = __import__(models_module_name)
+    models_model = getattr(app_module,'models')
+    asset_type_model = getattr(models_model,asset_type_model_name)
+    models = asset_type_model.objects.all().values('model_name')
+    mj = list(set([i['model_name']for i in models]))
     return (False,HttpResponse(json.dumps(mj), mimetype="application/json"))
 @login_required
 @multilanguage
@@ -308,4 +313,30 @@ def get_new_asset_model_add_form(request,asset_type_id,asset_model_name):
     method = request.method
     asset_type = Asset_type.objects.get(id=asset_type_id)
     form_name = 'NewModel_'+asset_type.catalogue_name
-    return (True,('get_new_asset_model_add_form.html', {form_name:{'model_name':asset_model_name}},{'method':method,'form_template_name':'NewModelForm'},request,app))
+    return (True,('get_new_asset_model_add_form.html', {form_name:{'model_name':asset_model_name}},{'method':method,'form_template_name':'NewModelForm','asset_type_id':asset_type_id},request,app))
+@login_required
+@multilanguage
+@shows_errors
+def save_new_model(request,asset_type_id):
+    lang=select_language(request)
+    user = request.user.username
+    try:
+        fio = Person.objects.get(login=user)
+    except Person.DoesNotExist:
+        fio = FioError()
+    method = request.method
+    asset_type = Asset_type.objects.get(id=asset_type_id)
+    form_name = 'NewModel_'+asset_type.catalogue_name
+    print form_name
+    if request.method == 'POST':
+        # f = ArticleForm(request.POST)
+        f = get_localized_form(form_name,app,request)(request.POST)
+        if f.is_valid():
+            # Save a new object from the form's data.
+            print form_name
+            print f
+            new_model=f.save()
+            return (True,('OK.html', {},{'html':u'Модель '+new_model.model_name+u' успешно добавлена в базу'},request,app))
+        else:
+            print "Not valid"
+    return (True,('OK.html', {},{'html':u'Случилась неведомая фигня в функции api.save_new_model'},request,app))

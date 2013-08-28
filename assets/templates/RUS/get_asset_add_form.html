@@ -9,13 +9,13 @@
         </tr>
         {{ NewAssetForm.as_table }}
     </table>
-    
+
  <script>
     $.getJSON('/api/json/get/models/{{asset_type.id}}/', function(json){
             // надо номер формы добавлять в id
             models_list = json;
-            model_{{number}}_autohelper=list_on_change(models_list,'{{number}}_model','{{number}}_model_error','Хотите добавить новую модель?','content_to_hide','additional_content',
-            '/api/get_new_model_add_form/','{{number}}_model','/')
+            model_{{number}}_autohelper=list_on_change(models_list,'{{number}}_model','{{number}}_models_dropdown','{{number}}_model_error','Хотите добавить новую модель?','content_to_hide','additional_content',
+            '/api/get_new_model_add_form/{{asset_type.id}}/','{{number}}_model','/')
             modles_list_html="<ul id='{{number}}_models_dropdown' style='display:none;'  class='dropdown_list'>"
             for (i=0;i<models_list.length;i++) {
                 modles_list_html = modles_list_html + "<li onclick=\"select_element('"+models_list[i]+"', '"+models_list[i]+"', '{{number}}_model', '{{number}}_model_id','{{number}}_model_error','{{number}}_models_dropdown')\">"+models_list[i]+"</li>"

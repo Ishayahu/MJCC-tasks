@@ -1,36 +1,20 @@
-{% extends "RUS/base_assets.html" %}
+﻿{% extends "RUS/base_assets.html" %}
 {% block title %}
     Новый счёт
 {% endblock %}
 {% block style %}
     {# Для выпадающего списка с возможность ввода #}
-        <script type="text/javascript" src="/media/js/dropdown.js"></script> 
-        <link rel="stylesheet" type="text/css" href="/media/css/dropdown.css" /> 
+        <script type="text/javascript" src="/media/js/dropdown.js"></script>
+        <link rel="stylesheet" type="text/css" href="/media/css/dropdown.css" />
+        <script type="text/javascript" src="/media/js/sending.js"></script>
     {# нужно для добавления нового поставщика. Проверка изменения значения поля и обработка ввода нового поставщика проводится в скрипте в get_contractor_list.html #}
     <script type="text/javascript" src="/media/js/bill_contractor.js"></script>
     {# нужно для работы с активами #}
-    <script type="text/javascript" src="/media/js/bill_assets.js"></script>    
+    <script type="text/javascript" src="/media/js/bill_assets.js"></script>
     <style>
     </style>
 {% endblock %}
 {% block content %}
-
-
-{% load i18n %}
-
-{% get_current_language as LANGUAGE_CODE %}
-<!-- Current language: {{ LANGUAGE_CODE }} -->
-<p>{% trans "Welcome to our page" %}</p>
-
-{% language 'en' %}
-    {% get_current_language as LANGUAGE_CODE %}
-    <!-- Current language: {{ LANGUAGE_CODE }} -->
-    <p>{% trans "Welcome to our page" %}</p>
-{% endlanguage %}
-
-
-
-
     <div id="message">
         </div>
     <div id="content_to_hide">
@@ -44,7 +28,7 @@
             <table border=1>
                 <tr>
                     <th>
-                        <label for="contractor">{% trans Поставщик %}:</label>
+                        <label for="contractor">Поставщик:</label>
                     </th>
                     <td>
                         <ul class="errorlist" id="contractor_error">

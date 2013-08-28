@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-08-07 11:14+0400\n"
+"POT-Creation-Date: 2013-08-27 11:51+0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,6 +18,46 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)\n"
+
+#: forms_rus.py:74
+msgid "Check/Buy/Input date"
+msgstr "Дата чека/покупки/внесения"
+
+#: forms_rus.py:75
+msgid "Garanty number"
+msgstr "Номер гарантии"
+
+#: forms_rus.py:76
+msgid "Check number"
+msgstr "Номер чека"
+
+#: models.py:211
+msgid "Model name"
+msgstr "Название модели"
+
+#: models.py:212
+msgid "WiFi connection"
+msgstr "Может подключаться по WiFi"
+
+#: models.py:213
+msgid "Ethernet connection"
+msgstr "Может подключаться по ethernet"
+
+#: models.py:214
+msgid "Firm"
+msgstr "Фирма производитель"
+
+#: models.py:215
+msgid "Colored?"
+msgstr "Цветной?"
+
+#: models.py:216
+msgid "Monochrome printing speed"
+msgstr "Скорость чёрно-белой печати"
+
+#: models.py:217
+msgid "Color printing speed"
+msgstr "Скорость цветной печати"
 
 #. Translators: This message appears on the home page only
 #: test_view.py:109 tets_view.py:107
