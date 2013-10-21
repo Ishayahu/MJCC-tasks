@@ -37,19 +37,20 @@ class Cash(models.Model):
     date = models.DateTimeField()
     contractor = models.ForeignKey('Contractor')
     bill_number =  models.CharField(max_length=40)
+    closed_for = models.TextField(blank = True, null = True)
     def __unicode__(self):
         return u';'.join((str(self.id),self.bill_number,str(self.date),self.contractor.name))
 # Счёт по безналу
 class Cashless(models.Model):
     date_of_invoice = models.DateTimeField()
-    dates = models.TextField()
-    stages = models.TextField()
-    date_of_assets = models.DateTimeField()
-    date_of_documents = models.DateTimeField()
+    dates = models.TextField(blank = True, null = True) # даты прохождения этапов, разделённые ;
+    stages = models.TextField() # этапы прохождения счёта, разделённые ;
+    date_of_assets = models.DateTimeField(blank = True, null = True)
+    date_of_documents = models.DateTimeField(blank = True, null = True)
     contractor = models.ForeignKey('Contractor')
     bill_number =  models.CharField(max_length=40)
     def __unicode__(self):
-        return u';'.join((str(self.id),self.bill_number,self.contractor.name,self.dates,self.stages))
+        return u';'.join((str(self.id),self.bill_number,self.contractor.name,self.stages))
 # Заявка
 class Claim(models.Model):
     date_of_invoice = models.DateTimeField()
@@ -110,11 +111,11 @@ class Cartridge(models.Model):
     payment = models.ForeignKey('Payment')
     status = models.ForeignKey('Status')
 class Cartridge_Model_General_Model(models.Model):
-    model = models.CharField(max_length=140)
-    general_model = models.CharField(max_length=140)
+    model = models.CharField(max_length=140)      # общая
+    model_name = models.CharField(max_length=140) # частная
 class Cartridge_General_Model_Printer_Model(models.Model):
     printer_model = models.CharField(max_length=140)
-    general_model = models.CharField(max_length=140)
+    cartrige_model = models.CharField(max_length=140)
 class Cartridge_Printer(models.Model):
     installation_date = models.DateTimeField()
     drawdown_date = models.DateTimeField()

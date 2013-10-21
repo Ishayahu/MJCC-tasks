@@ -7,6 +7,7 @@ import assets.views
 import assets.test_view
 import assets.api
 import logs.views
+# import user_settings.views
 import djlib
 from django.contrib import admin
 from django.contrib.auth.views import login, logout
@@ -72,7 +73,9 @@ urlpatterns = patterns('',
 
 # Работа с активами
     # Добавление чека, где указывается плата + сколько там чего
-    url(r'^bill/add/$', assets.views.bill_add),
+    url(r'^bill/cash/add/$', assets.views.bill_cash_add),
+    # Добавление счёта, где указывается плата + сколько там чего
+    url(r'^bill/cashless/add/$', assets.views.bill_cashless_add),
     # Просмотр списка счетов, как по налу так и по безналу с фильтрами
     url(r'^all_bills/$', assets.views.all_bills),
     # Просмотр конкретного чека/счёта - тип,id
@@ -116,17 +119,20 @@ urlpatterns = patterns('',
     url(r'^api/get_new_model_add_form/(\d+)/([^/]+)/$', assets.api.get_new_asset_model_add_form),
     # Сохраняем новую модель актива- id типа актива
     url(r'^api/asset_types/model/save/(\d+)/$', assets.api.save_new_model),
+    # Меняем пройденные этапы для счёта по безналу - номер счёта, название этапа, включить/выключить (провести/отменить проведение)
+    url(r'^api/bill/cashless/edit/stages/(\d+)/([^/]+)/(\d+)/$', assets.api.cashless_edit_stages),
 # API для выдачи JSON
     # Список моделей актива для типа актива - id типа актива
     url(r'^api/json/get/models/(\d+)/$', assets.api.json_models),
 # Логирование и т.п.
     url(r'^show_last_logs/(\d*)/$', logs.views.show_last_logs),
 
-
+# Настройки
+    # url(r'^settings/$', user_settings.views.show_settings),
 
 # Тестированание
-    url(r'^test/bill/add/$', assets.test_view.bill_add),
-    url(r'^test/simple/$', assets.test_view.simple),
+    # url(r'^test/bill/add/$', assets.test_view.bill_add),
+    # url(r'^test/simple/$', assets.test_view.simple),
     (r'^i18n/', include('django.conf.urls.i18n')),
 )
 if settings.DEBUG:

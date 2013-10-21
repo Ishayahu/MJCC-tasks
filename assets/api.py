@@ -327,16 +327,60 @@ def save_new_model(request,asset_type_id):
     method = request.method
     asset_type = Asset_type.objects.get(id=asset_type_id)
     form_name = 'NewModel_'+asset_type.catalogue_name
-    print form_name
+##    print form_name
     if request.method == 'POST':
         # f = ArticleForm(request.POST)
         f = get_localized_form(form_name,app,request)(request.POST)
         if f.is_valid():
             # Save a new object from the form's data.
-            print form_name
-            print f
+##            print form_name
+##            print f
             new_model=f.save()
             return (True,('OK.html', {},{'html':u'Модель '+new_model.model_name+u' успешно добавлена в базу'},request,app))
         else:
-            print "Not valid"
+##            print "Not valid"
+            pass
     return (True,('OK.html', {},{'html':u'Случилась неведомая фигня в функции api.save_new_model'},request,app))
+@login_required
+@multilanguage
+def cashless_edit_stages(request,bill_number,stage_name,new_stage):
+    cl=Cashless.objects.get(id=bill_number)
+    stage_number=cl.stages.split(';').index(stage_name)
+    if new_stage=='1':
+        today=str(datetime.datetime.today()).split(' ')[0].replace('-','.') # '2013.10.21'
+        dates=cl.dates.split(';')
+        dates[stage_number] = today
+        cl.dates = ';'.join(dates)
+        cl.save()
+    else:
+        dates=cl.dates.split(';')
+        dates[stage_number] = ''
+        cl.dates = ';'.join(dates)
+        cl.save()
+    # из views.show_bill для построения новой таблицы
+    # если безнал - надо получить пройденные этапы и не пройденные и предоставить возможность их пройти в "пакетном режиме"
+    from user_settings.functions import get_stages
+    stages = get_stages(";").split(";")
+    class Stages_info():
+        class Stage():
+            def __init__(self,n,d):
+                self.name = n
+                self.date = d
+        def __init__(self):
+            self.items=[]
+            for x in stages:
+                self.items.append(self.Stage(x,""))
+        def edit(self,n,d):
+            self.items[n].date=d
+    si = Stages_info()
+    if cl.dates:
+        d=cl.dates.split(";")
+        for x in range(len(stages)):
+            if not d[x]:
+                #break
+                pass
+            else:
+                si.edit(x,d[x])
+
+        
+    return (True,('stages_table.html', {},{'stages_info':si},request,app))

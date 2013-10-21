@@ -8,18 +8,32 @@
 
 {% block content %}
     {% if admin %}
-        <a href="/all_deleted_bills/">Удалённые счета</a>
+       <p> <a href="/all_deleted_bills/">Удалённые счета</a></p>
     {% endif %}
+    <p><a href="/bill/cash/add/">Новый чек</a></p>
+    <p><a href="/bill/cashless/add/">Новый счёт</a></p>
     <h1>Чеки</h1>
     <ol>
         {% for item in cashs %}
-            <li><a href="/bill/show/cash/{{item.id}}/">id={{item.id}}; №{{item.bill_number}} от {{item.date}} от {{item.contractor}}</a> <a href="/bill/delete/cash/{{item.id}}/" title="Пометить как удалённый" onclick="if (confirm('Уверены?')) {return true} else {return false};">X</a></li>
+            <li><a href="/bill/show/cash/{{item.bill.id}}/" title="{{item.title}}">id={{item.bill.id}}; №{{item.bill.bill_number}} от {{item.bill.date}} от {{item.bill.contractor}}</a> <a href="/bill/delete/cash/{{item.bill.id}}/" title="Пометить как удалённый" onclick="if (confirm('Уверены?')) {return true} else {return false};">X</a></li>
         {% endfor %}
     </ol>
     <h1>Счета</h1>
-    <ol>
-        {% for item in cashlesss %}
-            <li><a href="/bill/show/cashless/{{item.id}}/">id={{item.id}}; №{{item.bill_number}} от {{item.date_of_invoice}} от {{item.contractor}}</a> <a href="/bill/delete/cashless/{{item.id}}/" title="Пометить как удалённый" onclick="if (confirm('Уверены?')) {return true} else {return false};">X</a></li>
+        {% for bs in cashlesss %}
+            {% if bs.set %}
+                <h2>{{bs.name}}</h2>
+                    <ol>
+                        {% for item in bs.set %}
+                            <li><a href="/bill/show/cashless/{{item.bill.id}}/" title="{{item.title}}">id={{item.bill.id}}; №{{item.bill.bill_number}} от {{item.bill.date_of_invoice}} от {{item.bill.contractor}}</a> <a href="/bill/delete/cashless/{{item.bill.id}}/" title="Пометить как удалённый" onclick="if (confirm('Уверены?')) {return true} else {return false};">X</a></li>
+                        {% endfor %}
+                    </ol>
+            {% endif %}
         {% endfor %}
-    </ol>
+    {% comment %}
+        <ol>
+            {% for item in cashlesss %}
+                <li><a href="/bill/show/cashless/{{item.id}}/">id={{item.id}}; №{{item.bill_number}} от {{item.date_of_invoice}} от {{item.contractor}}</a> <a href="/bill/delete/cashless/{{item.id}}/" title="Пометить как удалённый" onclick="if (confirm('Уверены?')) {return true} else {return false};">X</a></li>
+            {% endfor %}
+        </ol>
+    {% endcomment %}
 {% endblock %}

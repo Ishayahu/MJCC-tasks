@@ -109,7 +109,12 @@ def generate_next_reminder(ranges, stop_date):
                     # to_next = True
     if to_next:
         year += 1
-    next_reminder = datetime.datetime(year,crit_dict['month'],crit_dict['day'],crit_dict['hour'],crit_dict['minute'])
+	# Убираем проблему с выходом дня за рамки возможного для месяца
+    try:
+		next_reminder = datetime.datetime(year,crit_dict['month'],crit_dict['day'],crit_dict['hour'],crit_dict['minute'])
+	except ValueError:
+		crit_dict['month']+=1
+		crit_dict['day']=crit_dict['day']-30
     # return crit_dict['minute'],crit_dict['hour'],crit_dict['day'],crit_dict['month'],crit_dict['wday']
     if stop_date and next_reminder > stop_date:
         return False

@@ -18,6 +18,10 @@
     <div id="message">
         </div>
     <div id="content_to_hide">
+        {# Если безнал #}
+        {% if stages %}
+            Счёт будет записан со следующими этапами оплаты: {{stages}}
+        {% endif %}
         {% if form.errors %}
         {#    {{form.errors}} #}
         {% endif %}

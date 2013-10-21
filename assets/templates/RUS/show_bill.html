@@ -7,6 +7,35 @@
 {% endblock %}
 
 {% block content %}
+    {% if cashles %}
+    <div id="stage_table">
+        <table border=1>
+            <tr>
+                <th>
+                    Этап
+                </th>
+                <th>
+                    Дата прохождения
+                </th>
+            </tr>
+            {% for stage in stages_info.items %}
+            <tr>
+                <td>
+                    {{stage.name}}
+                </td>
+                <td>
+                    {{stage.date}}
+                    {% if stage.date %}
+                        <input type="checkbox" id="{{stage.name}}" onclick="send_new_stage('{{stage.name}}')" checked />
+                    {% else %}
+                        <input type="checkbox" id="{{stage.name}}" onclick="send_new_stage('{{stage.name}}')" />
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+    {% endif %}
     {% if assets %}
         <table border=1>
             <tr>
@@ -28,4 +57,19 @@
                 </tr>
             {% endfor %}
     {% endif %}
+<script>
+function send_new_stage(stage_name) { // оно же id поля
+    var field = $("#"+stage_name);
+    var value=0;
+    if (field.is(':checked')) {
+        value=1;
+    }
+    var pathname = window.location.pathname;
+    var bill_number = pathname.split("/")[pathname.split("/").length-2]
+    var url="/api/bill/cashless/edit/stages/"+bill_number+"/"+stage_name+"/"+value+"/";
+    // отправляем данные и перезагружаем таблицу с этапами.
+    // На мой взгляд, так удобнее
+    $("#stage_table").load(url);
+}
+</script>
 {% endblock %}

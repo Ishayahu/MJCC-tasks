@@ -48,7 +48,7 @@ app='assets'
 
 @login_required
 @multilanguage
-def bill_add(request):
+def bill_cash_add(request):
     lang,user,fio,method = get_info(request)
     if request.method == 'POST':
         # Порядок действия таков:
@@ -105,17 +105,133 @@ def bill_add(request):
     contractors_list = assets.api.get_contractors_list(request,internal=True)
     asset_types_list = assets.api.get_asset_type_list(request,internal=True)
     return (True,('new_bill.html', {'NewCashBillForm':{'garanty':garanty_number}},{'contractors_list':contractors_list,'asset_types_list':asset_types_list, 'method':method},request,app))
-
+@login_required
+@multilanguage
+def bill_cashless_add(request):
+    lang,user,fio,method = get_info(request)
+    # Получаем настройки из файла:
+    fn=r"user_settings/config.txt"
+    import ConfigParser
+    config=ConfigParser.RawConfigParser()
+    config.read(fn)
+    stages = ";".join([a[1] for a in config.items("cashless_stages")])
+    if request.method == 'POST':
+        # Порядок действия таков:
+        # 1) Создаём Cashless c этапами из файла настройки
+        # 2) Создаём Payment с этим Cash
+        # 3) Создаём Garanty - если её ещё нет. Если есть - добавляем к имеющейся
+        # 4) Итерируем по элементам в форме от 1 до макс добавляя активы в список активов
+        # 5) Если всё прошло хорошо - активы из списка сохраняем
+        bill_date = request.POST.get('date','')
+        if bill_date:
+            a=[int(a) for a in bill_date.split(bill_date[2])]
+            a.reverse()
+            bill_date=datetime.datetime(*a)
+        else:
+            bill_date = datetime.datetime.now()
+        cashless = Cashless(date_of_invoice = bill_date,
+                stages=stages,
+                # нужно для более простой обработки в дальнейшем
+                dates = ';'.join(map(str,range(len(stages.split(';'))))),
+                contractor = Contractor.objects.get(id=request.POST.get('contractor_id')),
+                bill_number = request.POST.get('bill_number'),
+                )
+        cashless.save()
+        payment = Payment(cashless = cashless,
+                )
+        payment.save()
+        try:
+            garanty = Garanty.objects.get(number = request.POST.get('garanty'))
+        except Garanty.DoesNotExist:
+            garanty = Garanty(number = request.POST.get('garanty'))
+            garanty.save()
+        for item_number in range(1,int(request.POST.get('max_asset_form_number'))+1):
+            sitem_number = str(item_number)
+            if sitem_number+'_model' in request.POST:
+                for count in range(0,int(request.POST.get('count_of_asset'+sitem_number))):
+                    a=Asset(asset_type = Asset_type.objects.get(id=request.POST.get(sitem_number+'_asset_type')),
+                        payment = payment,
+                        garanty = garanty,
+                        model = request.POST.get(sitem_number+'_model'),
+                        status = Status.objects.get(id=request.POST.get(sitem_number+'_status')),
+                        guarantee_period = request.POST.get(sitem_number+'_guarantee_period'),
+                        note = request.POST.get(sitem_number+'_note'),
+                        price = request.POST.get(sitem_number+'_price'),
+                        )
+                    a.save()
+                    cur_place=Place_Asset(installation_date = bill_date,
+                        asset = a,
+                        place = Place.objects.get(id=request.POST.get(sitem_number+'_current_place')),
+                        )
+                    cur_place.save()
+        return (False,HttpResponseRedirect('/tasks/'))
+    # Создаём новый счёт, значит теперь надо номер новой гарантии
+    garanty_number = int(Garanty.objects.all().order_by('-number')[0].number)+1
+    contractors_list = assets.api.get_contractors_list(request,internal=True)
+    asset_types_list = assets.api.get_asset_type_list(request,internal=True)
+    return (True,('new_bill.html', {'NewCashBillForm':{'garanty':garanty_number}},{'stages':stages,'contractors_list':contractors_list,'asset_types_list':asset_types_list, 'method':method},request,app))
 @login_required
 @multilanguage
 @shows_errors
 @for_admins
 def all_bills(request):
+    # вспомогательный класс для вывода счётов по этапам
+    class Bill_Set():
+        def __init__(self):
+            self.name=""
+            self.set=[]
+        def __unicode__(self):
+            return name+str(set)
+        def __str__(self):
+            return name+str(set)
+    class Bill_with_title():
+        def __init__(self,c,title):
+            self.bill=c
+            self.title=title
     lang,user,fio,method = get_info(request)
-    # cashs = make_request_with_logging(user,"Запрашиваем все чеки",Cash.objects.filter,{'payment__in':Payment.objects.filter(deleted=False)})
-    cashs =  Cash.objects.filter(payment__in=Payment.objects.filter(deleted=False))
-    cashlesss = Cashless.objects.filter(payment__in=Payment.objects.filter(deleted=False))
-    return (True,('all_bills.html',{},{'title':'Список всех счетов и чеков','cashs':cashs, 'cashlesss':cashlesss},request,app))
+    # выбираем только ещё не закрытые чеки
+    cashs_tmp =  Cash.objects.filter(payment__in=Payment.objects.filter(deleted=False)).filter(closed_for=False)
+    cashs=[]
+    for c in cashs_tmp:
+        # Для каждого чека делаем подсказку - что в нём
+        title=""
+        payment=c.payment_set.get()
+        assets=payment.asset_set.all()
+        for asset in assets:
+            title+=asset.model
+            title+="; "
+        title=title[:-2]
+        cashs.append(Bill_with_title(c,title))
+    # выбираем только счета, по которым ещё не сдали документы
+    cashlesss = Cashless.objects.filter(payment__in=Payment.objects.filter(deleted=False)).filter(date_of_documents__isnull=True)
+    # сортируем счета по безналу по этапам
+    # импортируем функцию для получения количества этапов на счёт
+    from user_settings.functions import get_stages
+    stages = get_stages(";").split(";")
+    stages_number = len(stages)
+    cashlesss_sorted=[Bill_Set() for x in range(stages_number)]
+    for x in range(stages_number):
+        cashlesss_sorted[x].name=stages[x]
+    # Делаем класс a.name and a.list, делаем из него список по очереди
+    # каждый класс - один из этапов
+    for cl in cashlesss:
+        # Для каждого чека делаем подсказку - что в нём
+        title=""
+        payment=cl.payment_set.get()
+        assets=payment.asset_set.all()
+        for asset in assets:
+            title+=asset.model
+            title+="; "
+        title=title[:-2]
+        if cl.dates:
+            d=cl.dates.split(";")
+            for x in range(stages_number):
+                if not d[x]:
+                    cashlesss_sorted[x].set.append(Bill_with_title(cl,title))
+                    break
+        else:
+            cashlesss_sorted[0].set.append(Bill_with_title(cl,title))
+    return (True,('all_bills.html',{},{'title':'Список всех счетов и чеков','cashs':cashs, 'cashlesss':cashlesss_sorted,'stages':stages,'stages_range':range(stages_number)},request,app))
 @login_required
 @multilanguage
 def show_bill(request,type,id):
@@ -125,6 +241,34 @@ def show_bill(request,type,id):
     assets=payment.asset_set.all()
     for asset in assets:
         asset.place=asset.place_asset_set.latest('installation_date').place.place
+    if type=='cashless':
+        # если безнал - надо получить пройденные этапы и не пройденные и предоставить возможность их пройти в "пакетном режиме"
+        from user_settings.functions import get_stages
+        stages = get_stages(";").split(";")
+        class Stages_info():
+            class Stage():
+                def __init__(self,n,d):
+                    self.name = n
+                    self.date = d
+            def __init__(self):
+                self.items=[]
+                for x in stages:
+                    self.items.append(self.Stage(x,""))
+            def edit(self,n,d):
+                self.items[n].date=d
+        si = Stages_info()
+        if bill.dates:
+            d=bill.dates.split(";")
+            for x in range(len(stages)):
+                if not d[x]:
+                    #break
+                    pass
+                else:
+                    si.edit(x,d[x])
+        return (True,('show_bill.html',{},{'bill':bill,'assets':assets,'cashles':True,'stages_info':si},request,app))
+
+
+
     return (True,('show_bill.html',{},{'bill':bill,'assets':assets},request,app))
 @login_required
 @multilanguage

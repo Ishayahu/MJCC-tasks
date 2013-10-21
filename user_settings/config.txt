@@ -1,0 +1,5 @@
+[cashless_stages]
+stage1=Песелев
+stage2=Мотя
+stage3=Борода
+stage4=Бухгалтерия

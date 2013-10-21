@@ -1,0 +1,25 @@
+<table border=1>
+    <tr>
+        <th>
+            Этап
+        </th>
+        <th>
+            Дата прохождения
+        </th>
+    </tr>
+    {% for stage in stages_info.items %}
+    <tr>
+        <td>
+            {{stage.name}}
+        </td>
+        <td>
+            {{stage.date}}
+            {% if stage.date %}
+                <input type="checkbox" id="{{stage.name}}" onclick="send_new_stage('{{stage.name}}')" checked />
+            {% else %}
+                <input type="checkbox" id="{{stage.name}}" onclick="send_new_stage('{{stage.name}}')" />
+            {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+</table>

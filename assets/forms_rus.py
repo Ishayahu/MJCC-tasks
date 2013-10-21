@@ -90,4 +90,7 @@ class NewModel_Printer(ModelForm):
     class Meta:
         model = Printer
         localized_fields = '__all__'
-
+class NewModel_Cartridge_Model_General_Model(ModelForm):
+    class Meta:
+        model = Cartridge_Model_General_Model
+        localized_fields = '__all__'
