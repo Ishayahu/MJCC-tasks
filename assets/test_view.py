@@ -159,3 +159,22 @@ def assets_by_type(request,type_id):
 def simple(request):
     output = _("Welcome to my site.")
     return HttpResponse(output)
+@login_required
+@multilanguage
+@shows_errors
+def test_cm(request):
+    lang,user,fio,method = get_info(request)
+    # Получаем настройки из файла:
+    cashless={'bill_number':88,'date_of_invoice':'00-11-12'}
+    fn=r"user_settings/config.txt"
+    import ConfigParser
+    config=ConfigParser.RawConfigParser()
+    config.read(fn)
+    text = config.get('cashless','text')
+    text=text.decode('utf8').format({'number':88,'where':"AAAAAAAAAAAAAAA",'date':'10-11-12','price':9854,'what':"DDDDDD",'who':fio.fio,'phones':fio.tel,'date2':str(datetime.datetime.now()).split('.')[0]}).replace('\n','<p>')
+    return (True,('cashless_redirect.html', {},{'text':text,'cashless':cashless},request,app))
+@login_required
+@multilanguage
+@shows_errors
+def cashless_maintenance(request):
+    return (True,('cashless_maintenance.html', {},{},request,app))

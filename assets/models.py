@@ -213,6 +213,7 @@ class Printer(models.Model):
     model_name = models.CharField(max_length=50,verbose_name=_("Model name"))
     wifi = models.BooleanField(default=False,verbose_name=_("WiFi connection"))
     ethernet = models.BooleanField(default=False,verbose_name=_("Ethernet connection"))
+    lazer = models.BooleanField(default=True,verbose_name=_("Laser printing"))
     firm = models.CharField(max_length=20, choices = catalogue.Printer_firm,verbose_name=_("Firm"))
     color = models.BooleanField(default=False,verbose_name=_("Colored?"))
     v_mono_print = models.IntegerField(verbose_name=_("Monochrome printing speed"))
@@ -296,7 +297,8 @@ class Case(models.Model):
     number_of_extension_slot = models.IntegerField()
     number_of_fan_places = models.IntegerField()
     size = models.CharField(max_length=50)
-
+class Delivery(models.Model):
+    model_name = models.CharField(max_length=50)
 
 
 

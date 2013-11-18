@@ -1,5 +1,5 @@
 from django.contrib import admin
-from assets.models import Asset, Payment, Cash, Cashless, Contractor, Garanty, Asset_type, Status, Budget, Repair, Place_Asset, Place, Cartridge, Cartridge_Model_General_Model, Cartridge_General_Model_Printer_Model, Cartridge_Printer, ROM, Cooler, Storage, Acoustics, Telephone, Battery, Optical_Drive, Printer, Power_suply, Motherboard, CPU, Case
+from assets.models import Asset, Payment, Cash, Cashless, Contractor, Garanty, Asset_type, Status, Budget, Repair, Place_Asset, Place, Cartridge, Cartridge_Model_General_Model, Cartridge_General_Model_Printer_Model, Cartridge_Printer, ROM, Cooler, Storage, Acoustics, Telephone, Battery, Optical_Drive, Printer, Power_suply, Motherboard, CPU, Case,Delivery
 
 admin.site.register(Asset)
 admin.site.register(Payment)
@@ -29,6 +29,8 @@ admin.site.register(Power_suply)
 admin.site.register(Motherboard)
 admin.site.register(CPU)
 admin.site.register(Case)
+admin.site.register(Delivery)
+
 
 #class WorkerAdmin(admin.ModelAdmin):
     #list_display = ('fio','login','tel','mail','raiting')

@@ -15,9 +15,9 @@
         <td>
             {{stage.date}}
             {% if stage.date %}
-                <input type="checkbox" id="{{stage.name}}" onclick="send_new_stage('{{stage.name}}')" checked />
+                <input type="checkbox" id="{{stage.id_name}}" onclick="send_new_stage('{{stage.id_name}}')" checked />
             {% else %}
-                <input type="checkbox" id="{{stage.name}}" onclick="send_new_stage('{{stage.name}}')" />
+                <input type="checkbox" id="{{stage.id_name}}" onclick="send_new_stage('{{stage.id_name}}')" />
             {% endif %}
         </td>
     </tr>

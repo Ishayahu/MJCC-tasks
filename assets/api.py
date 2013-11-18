@@ -343,35 +343,74 @@ def save_new_model(request,asset_type_id):
     return (True,('OK.html', {},{'html':u'Случилась неведомая фигня в функции api.save_new_model'},request,app))
 @login_required
 @multilanguage
-def cashless_edit_stages(request,bill_number,stage_name,new_stage):
+def cashless_edit_stages(request,bill_number,stage_name,new_stage,not_redirect):
+    print stage_name
     cl=Cashless.objects.get(id=bill_number)
-    stage_number=cl.stages.split(';').index(stage_name)
-    if new_stage=='1':
-        today=str(datetime.datetime.today()).split(' ')[0].replace('-','.') # '2013.10.21'
-        dates=cl.dates.split(';')
-        dates[stage_number] = today
-        cl.dates = ';'.join(dates)
-        cl.save()
-    else:
-        dates=cl.dates.split(';')
-        dates[stage_number] = ''
-        cl.dates = ';'.join(dates)
-        cl.save()
+    today=str(datetime.datetime.today()).split(' ')[0].replace('-','.') # '2013.10.21'
+    today_dash=str(datetime.datetime.today()) # '2013-10-21'
+    if stage_name in cl.stages.split(';'):
+    # Если меняется дата этапа из настроек
+        stage_number=cl.stages.split(';').index(stage_name)
+        if new_stage=='1':
+            dates=cl.dates.split(';')
+            dates[stage_number] = today
+            cl.dates = ';'.join(dates)
+            cl.save()
+        else:
+            dates=cl.dates.split(';')
+            dates[stage_number] = ''
+            cl.dates = ';'.join(dates)
+            cl.save()
+    # Если меняется дата получения товара и сдачи документов в бухгалтерию
+    if stage_name==u'Товар_получен':
+        assets = cl.payment_set.get().asset_set.filter()
+        status_reserved = Status.objects.get(status="Заказан")
+        status_new =  Status.objects.get(status="Новый")
+        if new_stage=='1':
+            cl.date_of_assets = today_dash
+            cl.save()
+            # Теперь надо активировать полученный товар в базе
+            for asset in assets:
+                asset.status = status_new
+                asset.save()
+        else:
+            cl.date_of_assets = None
+            cl.save()
+            # Теперь надо перенести полученный товар обратно в зарезервированный
+            for asset in assets:
+                asset.status = status_reserved
+                asset.save()
+    if stage_name==u'Документы_сданы':
+        if new_stage=='1':
+            cl.date_of_documents = today_dash
+            cl.save()
+        else:
+            cl.date_of_documents = None
+            cl.save()
     # из views.show_bill для построения новой таблицы
     # если безнал - надо получить пройденные этапы и не пройденные и предоставить возможность их пройти в "пакетном режиме"
-    from user_settings.functions import get_stages
-    stages = get_stages(";").split(";")
+    # from user_settings.functions import get_stages
+    
+    # Мы должны пользоваться теми этапами, которые предусмотрены для счёта
+    stages = cl.stages.split(';')
     class Stages_info():
         class Stage():
             def __init__(self,n,d):
                 self.name = n
                 self.date = d
+                self.id_name = n.replace(" ","_")
         def __init__(self):
             self.items=[]
             for x in stages:
                 self.items.append(self.Stage(x,""))
+            self.items.append(self.Stage("Товар получен",""))
+            self.items.append(self.Stage("Документы сданы",""))
         def edit(self,n,d):
             self.items[n].date=d
+        def date_of_assets(self,d):
+            self.items[-2].date=d
+        def date_of_documents(self,d):
+            self.items[-1].date=d
     si = Stages_info()
     if cl.dates:
         d=cl.dates.split(";")
@@ -381,6 +420,10 @@ def cashless_edit_stages(request,bill_number,stage_name,new_stage):
                 pass
             else:
                 si.edit(x,d[x])
-
-        
-    return (True,('stages_table.html', {},{'stages_info':si},request,app))
+    if cl.date_of_assets:
+        si.date_of_assets(cl.date_of_assets)
+    if cl.date_of_documents:
+        si.date_of_documents(cl.date_of_documents)
+    if not_redirect=='1':
+        return (True,('stages_table.html', {},{'stages_info':si},request,app))
+    return (False,(HttpResponseRedirect('/all_bills/')))

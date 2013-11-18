@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-08-27 11:51+0400\n"
+"POT-Creation-Date: 2013-10-28 21:13+0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -31,31 +31,35 @@ msgstr "Номер гарантии"
 msgid "Check number"
 msgstr "Номер чека"
 
-#: models.py:211
+#: models.py:213
 msgid "Model name"
 msgstr "Название модели"
 
-#: models.py:212
+#: models.py:214
 msgid "WiFi connection"
 msgstr "Может подключаться по WiFi"
 
-#: models.py:213
+#: models.py:215
 msgid "Ethernet connection"
 msgstr "Может подключаться по ethernet"
 
-#: models.py:214
+#: models.py:216
+msgid "Laser printing"
+msgstr "Лазерный?"
+
+#: models.py:217
 msgid "Firm"
 msgstr "Фирма производитель"
 
-#: models.py:215
+#: models.py:218
 msgid "Colored?"
 msgstr "Цветной?"
 
-#: models.py:216
+#: models.py:219
 msgid "Monochrome printing speed"
 msgstr "Скорость чёрно-белой печати"
 
-#: models.py:217
+#: models.py:220
 msgid "Color printing speed"
 msgstr "Скорость цветной печати"
 

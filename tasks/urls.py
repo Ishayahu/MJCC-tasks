@@ -119,8 +119,8 @@ urlpatterns = patterns('',
     url(r'^api/get_new_model_add_form/(\d+)/([^/]+)/$', assets.api.get_new_asset_model_add_form),
     # Сохраняем новую модель актива- id типа актива
     url(r'^api/asset_types/model/save/(\d+)/$', assets.api.save_new_model),
-    # Меняем пройденные этапы для счёта по безналу - номер счёта, название этапа, включить/выключить (провести/отменить проведение)
-    url(r'^api/bill/cashless/edit/stages/(\d+)/([^/]+)/(\d+)/$', assets.api.cashless_edit_stages),
+    # Меняем пройденные этапы для счёта по безналу - номер счёта, название этапа, включить/выключить (провести/отменить проведение), послать таблицу или перенаправить страницу?
+    url(r'^api/bill/cashless/edit/stages/(\d+)/([^/]+)/(\d+)/(\d+)$', assets.api.cashless_edit_stages),
 # API для выдачи JSON
     # Список моделей актива для типа актива - id типа актива
     url(r'^api/json/get/models/(\d+)/$', assets.api.json_models),
@@ -132,7 +132,9 @@ urlpatterns = patterns('',
 
 # Тестированание
     # url(r'^test/bill/add/$', assets.test_view.bill_add),
-    # url(r'^test/simple/$', assets.test_view.simple),
+    url(r'^test/test_cm/$', assets.test_view.test_cm),
+    url(r'^test/cashless_maintenance/$', assets.test_view.cashless_maintenance),
+    
     (r'^i18n/', include('django.conf.urls.i18n')),
 )
 if settings.DEBUG:
