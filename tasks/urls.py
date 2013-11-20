@@ -7,7 +7,7 @@ import assets.views
 import assets.test_view
 import assets.api
 import logs.views
-# import user_settings.views
+import user_settings.views
 import djlib
 from django.contrib import admin
 from django.contrib.auth.views import login, logout
@@ -128,9 +128,12 @@ urlpatterns = patterns('',
     url(r'^show_last_logs/(\d*)/$', logs.views.show_last_logs),
 
 # Настройки
-    # url(r'^settings/$', user_settings.views.show_settings),
+    url(r'^settings/$', user_settings.views.show_settings),
+    # Сохранить настройку после редактирования
+    url(r'^api/setting/save/([^/]+)/$', user_settings.views.save_edited_setting),
 
-# Тестированание
+    
+    # Тестированание
     # url(r'^test/bill/add/$', assets.test_view.bill_add),
     url(r'^test/test_cm/$', assets.test_view.test_cm),
     url(r'^test/cashless_maintenance/$', assets.test_view.cashless_maintenance),

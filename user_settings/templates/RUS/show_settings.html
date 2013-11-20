@@ -1,75 +1,86 @@
 {% extends "RUS/base_settings.html" %}
 {% block title %}
-    Просмотр чека №{{item.bill_number}} от {{item.date}} от {{item.contractor}} (id={{item.id}})
+    Просмотр настроек
 {% endblock %}
 {% block style %}
-
+    <style>
+        p {
+            margin-top: 0.1em;
+            margin-bottom: 0.1em;
+        }
+    </style>
+    <script>
+        function f_del_asset(id){
+            if (confirm('Уверены?')) {
+                $("#asset_id_"+id).load("/api/asset/delete/"+id+"/"+$('#asset_type option:selected').val()+"/",function(result){
+                    //console.log(result);
+                    $("#message").html("Актив id="+id+"успешно удалён из базы!");
+                    $("#asset_id_"+id).remove();
+                    }
+                )
+            } else {
+                return false
+            };
+        }
+        function f_edit_setting(name){
+           //$("#setting_"+name).load("/api/setting/edit/"+name+"/")
+           var val = $("#setting_"+name).html() 
+           $("#setting_"+name).html('<textarea rows="10" cols="40"  name="edit_setting_name">'+val+'</textarea>')
+           // поставить кнопку отправки
+        }
+        function send(url,form_id,result_div,error_div) {
+            // Отсылаем паметры
+            $.ajax({
+                    type: "POST",
+                    url:  url,
+                    data: $("#"+form_id).serialize(),
+                    // Выводим то что вернул PHP
+                    success: function(html)
+                    {
+                            $("#"+result_div).empty();
+                            $("#"+result_div).append(html);
+                    },
+                    error: function()
+                    {
+                        $("#"+error_div).empty();
+                        $("#"+error_div).append("Ошибка!");
+                    }
+                    }); 
+        }
+    </script>
 {% endblock %}
 
 {% block content %}
-    {% if cashles %}
-    <div id="stage_table">
-        <table border=1>
-            <tr>
-                <th>
-                    Этап
-                </th>
-                <th>
-                    Дата прохождения
-                </th>
-            </tr>
-            {% for stage in stages_info.items %}
-            <tr>
-                <td>
-                    {{stage.name}}
-                </td>
-                <td>
-                    {{stage.date}}
-                    {% if stage.date %}
-                        <input type="checkbox" id="{{stage.id_name}}" onclick="send_new_stage('{{stage.id_name}}')" checked />
-                    {% else %}
-                        <input type="checkbox" id="{{stage.id_name}}" onclick="send_new_stage('{{stage.id_name}}')" />
-                    {% endif %}
-                </td>
-            </tr>
-            {% endfor %}
-        </table>
-    </div>
-    {% endif %}
-    {% if assets %}
-        <table border=1>
-            <tr>
-                <th>ID</th>
-                <th>Модель</th>
-                <th>Цена</th>
-                <th>Статус</th>
-                <th>Номер гарантии</th>
-                <th>Место</th>
-            </tr>
-            {% for item in assets %}
+    <div id="settings_table">
+    {% for group in settings %}
+        <h3 title="{{group.description}}">{{group.name}}</h3>
+        <form method="post" id="asset_edition_form">
+            {% csrf_token %}
+            <table border=1>
                 <tr>
-                    <th>{{item.id}}</th>
-                    <th>{{item.model}}</th>
-                    <th>{{item.price}}</th>
-                    <th>{{item.status.status}}</th>
-                    <th>{{item.garanty.number}}</th>
-                    <th>{{item.place}}</th>
+                    <th>
+                        Название настройки
+                    </th>
+                    <th>
+                        Значение
+                    </th>
                 </tr>
-            {% endfor %}
-    {% endif %}
-<script>
-function send_new_stage(stage_name) { // оно же id поля
-    var field = $("#"+stage_name);
-    var value=0;
-    if (field.is(':checked')) {
-        value=1;
-    }
-    var pathname = window.location.pathname;
-    var bill_number = pathname.split("/")[pathname.split("/").length-2]
-    var url="/api/bill/cashless/edit/stages/"+bill_number+"/"+stage_name+"/"+value+"/1";
-    // отправляем данные и перезагружаем таблицу с этапами.
-    // На мой взгляд, так удобнее
-    $("#stage_table").load(url);
-}
-</script>
+                {% for setting in group.settings %}
+                    <tr>
+                        <td>
+                            <div title="{{setting.description}}">{{setting.name}}</div>
+                        </td>
+                        <td>
+                            <div  id="setting_{{setting.name}}">{{setting.value|safe}}</div>
+                        </td>
+                        <td>
+                            <input type="button" value="✎" title="Редактировать" name="edit_setting" onclick="f_edit_setting('{{setting.name}}')" />
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+    {% endfor %}
+    </div>
+    <script>
+    </script>
 {% endblock %}

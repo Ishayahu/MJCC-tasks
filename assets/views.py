@@ -24,7 +24,7 @@ from djlib.mail_utils import send_email_alternative
 from djlib.auxiliary import get_info
 from djlib.logging_utils import log, confirm_log, make_request_with_logging
 
-from user_settings.settings import server_ip, admins, admins_mail
+from user_settings.settings import server_ip, admins, admins_mail,config_file
 try:
     from user_settings.settings import assets_url_not_to_track as url_not_to_track
 except ImportError:
@@ -110,11 +110,13 @@ def bill_cash_add(request):
 def bill_cashless_add(request):
     lang,user,fio,method = get_info(request)
     # Получаем настройки из файла:
-    fn=r"user_settings/config.txt"
     import ConfigParser
     config=ConfigParser.RawConfigParser()
-    config.read(fn)
-    stages = ";".join([a[1] for a in config.items("cashless_stages")])
+    config.read(config_file)
+    # stages = ";".join([a[1] for a in config.items("cashless_stages")])
+    from user_settings.functions import get_stages
+    stages = get_stages(";")
+
     if request.method == 'POST':
         # Порядок действия таков:
         # 1) Создаём Cashless c этапами из файла настройки
@@ -181,7 +183,10 @@ def bill_cashless_add(request):
         # document.body.innerHTML=window.localStorage.getItem('text')        
         # return (False,HttpResponseRedirect('/all_bills/'))
         # Открывается окно с сопровождающей запиской, из него уже открывается окно списка счетов
-        return (True,('cashless_redirect.html', {},{'text':text,'cashless':cashless},request,app))
+        show_cashless_maintain = config.get('cashless','show_text')
+        if show_cashless_maintain=='True':
+            return (True,('cashless_redirect.html', {},{'text':text,'cashless':cashless},request,app))
+        return (False,HttpResponseRedirect('/all_bills/'))
     # Создаём новый счёт, значит теперь надо номер новой гарантии
     garanty_number = int(Garanty.objects.all().order_by('-number')[0].number)+1
     contractors_list = assets.api.get_contractors_list(request,internal=True)
