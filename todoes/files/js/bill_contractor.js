@@ -24,10 +24,10 @@ function send(url,form_id,result_div) {
 function send_and_show() {
     //показываем форму ввода счёта
     $("#content_to_hide").show();
-    var c_id = $("#c_id").val()
-    var c_name = $("#c_name").val()
-    $("#contractor").val(c_name)
-    $("#contractor_id").val(c_id)
+    // var c_id = $("#c_id").val()
+    // var c_name = $("#c_name").val()
+    // $("#contractor").val(c_name)
+    // $("#contractor_id").val(c_id)
     // удаляем старый список поставщиков
     $("#contractors_list").empty();
     // перезагружаем новый, со значением по умолчанию

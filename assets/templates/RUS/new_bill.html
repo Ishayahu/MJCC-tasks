@@ -58,9 +58,21 @@
     <div id="additional_content">
     </div>
     <script>
-        //$('#bill_form').submit(function(e){
-        //    e.preventDefault();
-            //твой код
-        //})
+        function isNumber(n) {
+            return !isNaN(parseFloat(n)) && isFinite(n) && parseFloat(n)>=0;
+        }
+        // Проверяем, что номер счёта и поставщик указаны
+        $(document).ready(function(){
+            $('#bill_form').bind('submit', function(event) {
+                    if(!$("#id_bill_number").val()) {
+                        event.preventDefault();
+                        $("#id_bill_number").css('border', '2px solid red');
+                    }
+                    if(!$("#contractor").val()) {
+                        event.preventDefault();
+                        $("#contractor").css('border', '2px solid red');
+                    }
+                });
+            });
     </script>
     {% endblock %}

@@ -170,8 +170,9 @@ def bill_cashless_add(request):
                         place = Place.objects.get(id=request.POST.get(sitem_number+'_current_place')),
                         )
                     cur_place.save()
-                    places += str(cur_place.place)
-                    what += a.model
+                    # a_TMP = cur_place.place.place
+                    places = places+ cur_place.place.place + u';'
+                    what = what + a.model + u';'
                     price += float(a.price)
         places = places[:-1]
         what = what[:-1]
