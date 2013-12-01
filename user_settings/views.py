@@ -41,15 +41,40 @@ try:
 except ImportError:
     url_one_record=('',)
 
-from user_settings.functions import get_option_description,get_section_description
+from user_settings.functions import get_option_description, get_section_description, get_bd_option_with_description
 from djlib.error_utils import FioError, ErrorMessage, add_error, shows_errors
 
 # Делаем переводы
 from djlib.multilanguage_utils import select_language,multilanguage,register_lang#,register_app
 
+import ConfigParser
+import codecs
+
 register_lang('ru','RUS')
 register_lang('eng','ENG')
 app='user_settings'
+
+class UnicodeConfigParser(ConfigParser.RawConfigParser):
+    def __init__(self, defaults=None, dict_type=dict):
+        ConfigParser.RawConfigParser.__init__(self, defaults, dict_type)
+    def write(self, fp):
+        """Fixed for Unicode output"""
+        if self._defaults:
+            fp.write("[%s]\n" % DEFAULTSECT)
+            for (key, value) in self._defaults.items():
+                fp.write("%s = %s\n" % (key, unicode(value).replace('\n', '\n\t')))
+            fp.write("\n")
+        for section in self._sections:
+            fp.write("[%s]\n" % section)
+            for (key, value) in self._sections[section].items():
+                if key != "__name__":
+                    fp.write("%s = %s\n" %
+                             (key, unicode(value).replace('\n','\n\t')))
+            fp.write("\n")
+    # This function is needed to override default lower-case conversion
+    # of the parameter's names. They will be saved 'as is'.
+    def optionxform(self, strOut):
+        return strOut
 
 
 @login_required
@@ -57,6 +82,11 @@ app='user_settings'
 @admins_only
 def show_settings(request):
     # a=open(os.path.sep.join((os.getcwd(),'user_settings','test_file.py')),'w')
+    
+    # raise NotImplementedError("Надо корректно обрабатывать настройки, связанные с БД!! например, место по умолчанию, статус по умолчанию+сделать, чтобы при редактировании всё было правильно")
+    # Надо корректно обрабатывать настройки, связанные с БД!! например, место по умолчанию, статус по умолчанию
+    #+сделать, чтобы при редактировании всё было правильно
+    
     class Setting():
         def __init__(self,name,value,description):
             self.name = name
@@ -68,35 +98,41 @@ def show_settings(request):
             self.settings = []
             self.description = description
     settings=[]
-    import ConfigParser
     config=ConfigParser.RawConfigParser()
     config.read(config_file)
     for section in config.sections():
         setting_goup = Settings_group(section,get_section_description(section))
         for item in config.items(section):
             # Не включаем описания опций
-            if item[0][-12:]!='_description':
+            if item[0][-12:]=='_description':
+                continue
+            # Настройки, связанные со значениями в БД
+            if item[0][:6]=='__bd__':
+                if item[0][:12]=='__bd__name__':
+                    option = item[0][12:]
+                    # return name,opt_id,opt_val,desc
+                    # Надо, чтобы при отображении в шаблоне редактировалось оно как список!
+                    name,opt_id,opt_val,desc = get_bd_option_with_description(section,option)
+                    setting_goup.settings.append(Setting(name,opt_id+";"+opt_val.replace('\n','<p>'),desc))
+            # Все остальные настройки
+            else:
                 setting_goup.settings.append(Setting(item[0],item[1].replace('\n','<p>'),get_option_description(section,item[0])))
+            
         settings.append(setting_goup)
     return (True,('show_settings.html', {},{'settings':settings,},request,app))
 @login_required
 @multilanguage
 @admins_only
-def save_edited_setting(request,name):
+def save_edited_setting(request,section,option):
+    raise NotImplementedError("Надо корректно обрабатывать настройки, связанные с БД!! например, место по умолчанию, статус по умолчанию+сделать, чтобы при редактировании всё было правильно")
+
     lang,user,fio,method = get_info(request)
-    try:
-        a = Asset.objects.get(id=id)
-    except Asset.DoesNotExist:
-        add_error(u"Актив с номером %s не найден!" % id,request)
-        return (False,(HttpResponseRedirect("/")))
-    asset_type = a.asset_type.catalogue_name
-    app_module_name = 'assets.models'
-    app_module = __import__(app_module_name)
-    models_module = getattr(app_module,'models')
-    asset_type_catalogue = getattr(models_module, a.asset_type.catalogue_name)
-    asset_type_models = asset_type_catalogue.objects.all()
-    statuses = Status.objects.all()
-    garantys = Garanty.objects.all()
-    places = Place.objects.all()
-    return (True,('edit_asset.html', {},{'models':asset_type_models,'statuses':statuses,'garantys':garantys,'places':places,'asset_id':id,'item':a},request,app))
+    if request.method == 'POST':
+        value = request.POST.get('new_value')
+        config=UnicodeConfigParser()
+        config.readfp(codecs.open(config_file, encoding='utf-8', mode='r'))
+        config.set(section,option,value)
+        config.write(codecs.open(config_file, encoding='utf-8', mode='w'))
+        return (True,('OK.html', {},{'html':value},request,app))
+    return (True,('Error.html', {},{'html':'метод не POST! Нифига не сделано!'},request,app))
     

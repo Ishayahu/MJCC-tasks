@@ -10,25 +10,14 @@
         }
     </style>
     <script>
-        function f_del_asset(id){
-            if (confirm('Уверены?')) {
-                $("#asset_id_"+id).load("/api/asset/delete/"+id+"/"+$('#asset_type option:selected').val()+"/",function(result){
-                    //console.log(result);
-                    $("#message").html("Актив id="+id+"успешно удалён из базы!");
-                    $("#asset_id_"+id).remove();
-                    }
-                )
-            } else {
-                return false
-            };
-        }
-        function f_edit_setting(name){
+        function f_edit_setting(section,option){
            //$("#setting_"+name).load("/api/setting/edit/"+name+"/")
-           var val = $("#setting_"+name).html() 
-           $("#setting_"+name).html('<textarea rows="10" cols="40"  name="edit_setting_name">'+val+'</textarea>')
+           var val = $("#setting_value_"+section+"_"+option).html() 
+           $("#setting_value_"+section+"_"+option).html('<textarea rows="10" cols="40"  name="new_value">'+val+'</textarea>')
            // поставить кнопку отправки
+           $("#button_"+section+"_"+option).html("<input type='button' value='Сохранить' onClick=\"send('/api/setting/save/"+section+"/"+option+"/','settings_edition_form','setting_value_"+section+"_"+option+"','message','"+section+"','"+option+"');\" />")
         }
-        function send(url,form_id,result_div,error_div) {
+        function send(url,form_id,result_div,error_div,group_name,setting_name) {
             // Отсылаем паметры
             $.ajax({
                     type: "POST",
@@ -37,13 +26,17 @@
                     // Выводим то что вернул PHP
                     success: function(html)
                     {
-                            $("#"+result_div).empty();
-                            $("#"+result_div).append(html);
+                        $("#"+result_div).empty();
+                        $("#"+result_div).append(html);
+                        $("#"+error_div).empty();
+                        $("#"+error_div).append("Настройка успешно сохранена!");
+                        // изменяем кнопку обратно на редактирование
+                        $("#button_"+group_name+"_"+setting_name).html('<input type="button" value="✎" title="Редактировать" name="edit_setting" onclick="f_edit_setting(\''+group_name+'\',\''+setting_name+'\')" />')
                     },
                     error: function()
                     {
                         $("#"+error_div).empty();
-                        $("#"+error_div).append("Ошибка!");
+                        $("#"+error_div).append("Ошибка сохранения настройки!");
                     }
                     }); 
         }
@@ -51,10 +44,11 @@
 {% endblock %}
 
 {% block content %}
+    <div id="message"></div>
     <div id="settings_table">
     {% for group in settings %}
         <h3 title="{{group.description}}">{{group.name}}</h3>
-        <form method="post" id="asset_edition_form">
+        <form method="post" id="settings_edition_form" action="">
             {% csrf_token %}
             <table border=1>
                 <tr>
@@ -66,15 +60,15 @@
                     </th>
                 </tr>
                 {% for setting in group.settings %}
-                    <tr>
+                    <tr  id="setting_{{group.name}}_{{setting.name}}">
                         <td>
                             <div title="{{setting.description}}">{{setting.name}}</div>
                         </td>
                         <td>
-                            <div  id="setting_{{setting.name}}">{{setting.value|safe}}</div>
+                            <div  id="setting_value_{{group.name}}_{{setting.name}}">{{setting.value|safe}}</div>
                         </td>
                         <td>
-                            <input type="button" value="✎" title="Редактировать" name="edit_setting" onclick="f_edit_setting('{{setting.name}}')" />
+                            <div id="button_{{group.name}}_{{setting.name}}"><input type="button" value="✎" title="Редактировать" name="edit_setting" onclick="f_edit_setting('{{group.name}}','{{setting.name}}')" /></div>
                         </td>
                     </tr>
                 {% endfor %}

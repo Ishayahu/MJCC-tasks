@@ -170,14 +170,14 @@ def bill_cashless_add(request):
                         place = Place.objects.get(id=request.POST.get(sitem_number+'_current_place')),
                         )
                     cur_place.save()
-                    places += cur_place.place
+                    places += str(cur_place.place)
                     what += a.model
                     price += float(a.price)
         places = places[:-1]
         what = what[:-1]
         # Теперь надо выдать штуку для распечатки сопровождения счёта
         text = config.get('cashless','text')
-        text=text.decode('utf8').format({'number':88,'where':"AAAAAAAAAAAAAAA",'date':'10-11-12','price':9854,'what':"DDDDDD",'who':fio.fio,'phones':fio.tel,'date2':str(datetime.datetime.now()).split('.')[0]}).replace('\n','<p>')
+        text=text.decode('utf8').format({'number':88,'where':places,'date':'10-11-12','price':9854,'what':what,'who':fio.fio,'phones':fio.tel,'date2':str(datetime.datetime.now()).split('.')[0]}).replace('\n','<p>')
         # window.open("http://mylink.net", "windowName");
         # window.localStorage.setItem('text',text)
         # document.body.innerHTML=window.localStorage.getItem('text')        

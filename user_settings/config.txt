@@ -20,3 +20,15 @@ text: В приёмную господина Вайсберга
 text_description=Текст для сопроводительной записки к счёту
 show_text=True
 show_text_description=Показывать выводить ли сопроводительную записку при вводе счёта
+__bd__name__default_place = Место по умолчанию
+__bd__option__default_place = 1
+__bd__app__default_place = assets
+__bd__model__default_place = Place
+__bd__field__default_place = place
+__bd__description__default_place = Место, которое выставляется по умолчанию для нового актива при создании счёта
+__bd__name__default_status = Статус по умолчанию
+__bd__option__default_status = 1
+__bd__app__default_status = assets
+__bd__model__default_status = Status
+__bd__field__default_status = status
+__bd__description__default_status = Статус, который выставляется по умолчанию для нового актива при создании счёта

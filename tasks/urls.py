@@ -10,7 +10,7 @@ import logs.views
 import user_settings.views
 import djlib
 from django.contrib import admin
-from django.contrib.auth.views import login, logout
+from django.contrib.auth.views import login, logout, password_change,password_change_done
 from django.conf import settings
 admin.autodiscover()
 
@@ -57,7 +57,10 @@ urlpatterns = patterns('',
 
 
     url(r'^accounts/$', login),
+    url(r'^login/$', login),
     url(r'^accounts/login/$', login),
+    url(r'^test/password2/$', password_change),
+    url(r'^password_change_done/$', password_change_done),
     url(r'^accounts/register/$', todoes.views.register),
     url(r'^accounts/logout/$', logout),
     url(r'^accounts/profile/$', todoes.views.profile),
@@ -124,18 +127,22 @@ urlpatterns = patterns('',
 # API для выдачи JSON
     # Список моделей актива для типа актива - id типа актива
     url(r'^api/json/get/models/(\d+)/$', assets.api.json_models),
+    # Получение цены и срока гарантии для последнего купленного актива этой модели этой фирмы. Данные передаются через POST запрос
+    url(r'^api/json/get/price_and_warranty/$', assets.api.json_price_and_warranty),
 # Логирование и т.п.
     url(r'^show_last_logs/(\d*)/$', logs.views.show_last_logs),
 
 # Настройки
     url(r'^settings/$', user_settings.views.show_settings),
     # Сохранить настройку после редактирования
-    url(r'^api/setting/save/([^/]+)/$', user_settings.views.save_edited_setting),
-
+    url(r'^api/setting/save/([^/]+)/([^/]+)/$', user_settings.views.save_edited_setting),
     
     # Тестированание
     # url(r'^test/bill/add/$', assets.test_view.bill_add),
     url(r'^test/test_cm/$', assets.test_view.test_cm),
+    # url(r'^test/password/$', assets.test_view.password),
+    # (r'^change-password/$', 'django.contrib.auth.views.password_change'), 
+    # (r'^password-changed/$', 'django.contrib.auth.views.password_change_done'),
     url(r'^test/cashless_maintenance/$', assets.test_view.cashless_maintenance),
     
     (r'^i18n/', include('django.conf.urls.i18n')),

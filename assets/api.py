@@ -3,6 +3,7 @@
 
 import datetime
 from itertools import chain
+import json
 
 from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.shortcuts import render_to_response
@@ -25,6 +26,8 @@ from djlib.auxiliary import get_info
 from djlib.logging_utils import log, confirm_log, make_request_with_logging
 
 from user_settings.settings import server_ip, admins, admins_mail
+from user_settings.functions import get_option_with_description,get_bd_option_with_description
+
 try:
     from user_settings.settings import assets_url_not_to_track as url_not_to_track
 except ImportError:
@@ -71,7 +74,11 @@ def get_asset_add_form(request,asset_category,form_number):
     except Asset_type.DoesNotExist:
         return ErrorMessage('Неверно указан код категории актива: '+str(asset_category))
     # print form_number
-    return (True,('get_asset_add_form.html', {'NewAssetForm':{'number':form_number}},{'number':form_number,'asset_type':asset_type, 'method':method},request,app))
+    # функция для загрузки последней цены, срока гарантии + установка статуса в {{статус по умолчанию}} и места в {{место по умолчанию}} из настроек раздела [cashless] (из get_asset_add_form.html)
+    # get_bd_option_with_description returns name,opt_id,opt_val,desc
+    a,b,default_place,c = get_bd_option_with_description('cashless','default_place')
+    a,b,default_status,c = get_bd_option_with_description('cashless','default_status')
+    return (True,('get_asset_add_form.html', {'NewAssetForm':{'number':form_number}},{'default_place':default_place,'default_status':default_status,'number':form_number,'asset_type':asset_type, 'method':method},request,app))
 @login_required
 @multilanguage
 def get_contractors_list(request,name_to_select='',internal=False):
@@ -290,7 +297,6 @@ def asset_save_edited(request,asset_id):
 @multilanguage
 @shows_errors
 def json_models(request,asset_type_id):
-    import json
     asset_type = Asset_type.objects.get(id=asset_type_id)
     models_module_name = 'assets.models'
     asset_type_model_name = asset_type.catalogue_name
@@ -300,6 +306,37 @@ def json_models(request,asset_type_id):
     models = asset_type_model.objects.all().values('model_name')
     mj = list(set([i['model_name']for i in models]))
     return (False,HttpResponse(json.dumps(mj), mimetype="application/json"))
+@login_required
+@multilanguage
+@shows_errors
+def json_price_and_warranty(request):
+    lang,user,fio,method = get_info(request)
+    if request.method == 'POST':
+        model = request.POST.get('model')
+        contractor = request.POST.get('contractor')
+        ass = Asset.objects.filter(model=model)
+        assets = []
+        for asset in ass:
+            try:
+                ass_contractor = asset.payment.cash.contractor.name
+                asset.data = asset.payment.cash.date
+            except AttributeError:
+                ass_contractor = asset.payment.cashless.contractor.name
+                asset.data = asset.payment.cashless.date_of_invoice
+            if ass_contractor == contractor:
+                assets.append(asset)
+        def sort_key(a):
+            return a.data
+        assets.sort(key=sort_key,reverse=True)
+        # То что нужно - assets[0]
+        # Возвращаем JSON
+        try:
+            a={'price':float(assets[0].price),'warranty':assets[0].guarantee_period}
+        except IndexError:
+            a={'price':0,'warranty':0}
+        a=json.dumps(a)
+        return (False,HttpResponse(a, mimetype="application/json"))
+        
 @login_required
 @multilanguage
 @shows_errors
