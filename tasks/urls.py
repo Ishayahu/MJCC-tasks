@@ -90,6 +90,10 @@ urlpatterns = patterns('',
 # API для работы с активами
     # Выдача формы добавления актива, в качестве параметра - категория актива, префикс к имени полей формы (число)
     url(r'^api/get_asset_add_form/(\d+)/(\d*)/$', assets.api.get_asset_add_form),
+    # Выдача заголовка для формы добавления актива
+    url(r'^api/get_asset_add_form_header/$', assets.api.get_asset_add_form_header),
+    # Выдача скрипта для формы добавления актива
+    url(r'^api/get_asset_add_form_script/(\d+)/(\d*)/$', assets.api.get_asset_add_form_script),
     # Выдача списка поставщиков, в качестве параметра - тот поставщик, который должен быть указан, name
     url(r'^api/get_contractors_list/([^/]*)/$', assets.api.get_contractors_list),
     # Выдача формы добавления поставщика, в качестве параметра - название
@@ -101,7 +105,7 @@ urlpatterns = patterns('',
     # Пометить конкретный чек/счёт к удалению - тип,id
     url(r'^api/bill/delete/([^/]+)/(\d*)/$', assets.api.mark_as_deleted_bill),
     url(r'^bill/delete/([^/]+)/(\d*)/$', assets.api.mark_as_deleted_bill),
-    # Пометить конкретный чек/счёт к удалению - тип,id
+    # Удалить конкретный чек/счёт - тип,id
     url(r'^api/bill/full_delete/([^/]+)/(\d*)/$', assets.api.full_delete_bill),
     url(r'^bill/full_delete/([^/]+)/(\d*)/$', assets.api.full_delete_bill),
     # Получение списка активов по категориям
@@ -119,7 +123,7 @@ urlpatterns = patterns('',
     # Редактирование актива - id актива
     url(r'^api/asset/save_edited/(\d+)/$', assets.api.asset_save_edited),
     # Получаем форму для добавления актива - id типа актива, имя модели
-    url(r'^api/get_new_model_add_form/(\d+)/([^/]+)/$', assets.api.get_new_asset_model_add_form),
+    url(r'^api/get_new_model_add_form/(\d+)/(.+)/$', assets.api.get_new_asset_model_add_form),
     # Сохраняем новую модель актива- id типа актива
     url(r'^api/asset_types/model/save/(\d+)/$', assets.api.save_new_model),
     # Меняем пройденные этапы для счёта по безналу - номер счёта, название этапа, включить/выключить (провести/отменить проведение), послать таблицу или перенаправить страницу?
@@ -136,8 +140,13 @@ urlpatterns = patterns('',
     url(r'^settings/$', user_settings.views.show_settings),
     # Сохранить настройку после редактирования
     url(r'^api/setting/save/([^/]+)/([^/]+)/$', user_settings.views.save_edited_setting),
-    
-    # Тестированание
+    # Выдать форму для редактирования настроек, берущихся из БД
+    url(r'^api/setting/edit_from_bd/([^/]+)/([^/]+)/$', user_settings.views.edit_from_bd),
+    # Сохранить настройку из БД после редактирования
+    url(r'^api/setting/save_from_bd/([^/]+)/([^/]+)/$', user_settings.views.save_from_bd),
+
+
+# Тестированание
     # url(r'^test/bill/add/$', assets.test_view.bill_add),
     url(r'^test/test_cm/$', assets.test_view.test_cm),
     # url(r'^test/password/$', assets.test_view.password),

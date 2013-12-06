@@ -178,3 +178,15 @@ def test_cm(request):
 @shows_errors
 def cashless_maintenance(request):
     return (True,('cashless_maintenance.html', {},{},request,app))
+@login_required
+@multilanguage
+@shows_errors
+def password(request):
+    lang,user,fio,method = get_info(request)
+    if request.method == 'POST':
+        from django.contrib.auth.models import User
+        u = User.objects.get(username__exact='john')
+        u.set_password('new password')
+        u.save()
+        return (True,('password.html', {},{},request,app))
+    return (True,('password.html', {},{},request,app))

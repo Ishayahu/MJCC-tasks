@@ -299,6 +299,14 @@ class Case(models.Model):
     size = models.CharField(max_length=50)
 class Delivery(models.Model):
     model_name = models.CharField(max_length=50)
+class CKC(models.Model):
+    model_name = models.CharField(max_length=150,verbose_name=_("Model name"))
+    def __unicode__(self):
+        return str(self.id)+';'+self.model_name
+class Telephone_Works(models.Model):
+    model_name = models.CharField(max_length=150,verbose_name=_("Model name"))
+    def __unicode__(self):
+        return str(self.id)+';'+self.model_name
 
 
 

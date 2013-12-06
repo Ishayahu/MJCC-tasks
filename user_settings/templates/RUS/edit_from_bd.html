@@ -1,0 +1,9 @@
+<select name="new_value">
+    {% for opt in opts %}
+        <option value="{{opt.id}}"
+            {% if opt.selected %}
+                selected="selected"
+            {% endif %}
+        >{{opt.val}}</option> 
+    {% endfor %}            
+</select>

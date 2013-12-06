@@ -28,7 +28,7 @@ function list_on_change(item_list,input_field_id,dropdown_field_id,error_field_i
             // проверяем, является ли значение новым или нет
             check_contractor(item_list,input_field_id,dropdown_field_id,error_field_id,confirm_message,field_to_hide_id,filed_to_load_id,url_to_load)
         } else {
-            //var inputed = $("#contractor").val()
+            // Если нажат не энтер или таб - оставляем только те варианты, которые соответствуют уже введённому тексту
             var inputed = $("#"+input_field_id).val()
             for (x=0;x<$("#"+dropdown_field_id).find('li').length;x++) {
                 if ($("#"+dropdown_field_id).find('li')[x].innerHTML.toLowerCase().indexOf(inputed.toLowerCase())==-1) {
@@ -63,7 +63,7 @@ function select_element(id,value,input_field_id,id_field_id,error_field_id,dropd
     if_not_new_callback()
 }
 function check_contractor(item_list,input_field_id,dropdown_field_id,error_field_id,confirm_message,field_to_hide_id,field_to_load_id,url_to_load) {
-    // Проверяем введённое значение если был выбран элемент
+    // Проверяем введённое значение если был выбран элемент - оно новое или нет
     // if (!if_not_new_callback) {
        // if_not_new_callback =function (){}
     // }
@@ -82,17 +82,14 @@ function check_contractor(item_list,input_field_id,dropdown_field_id,error_field
         if (confirm (confirm_message)) {
             // скрываем поле счёта
             $("#"+field_to_hide_id).hide();
-            // загружаем форму добавления новго поставщика
+            // загружаем форму добавления нового поставщика
             // замена нужна для русского языка, может быть только под Windows7
             //var contractor_name=b.value.replace(/ /g,"%20")
             $("#"+field_to_load_id).load(url_to_load);
             event.preventDefault();
             event.stopPropagation();
         }
-    // } else {
-        // if_not_new_callback()
     }
-    
 }
 // функция для загрузки последней цены, срока гарантии + установка статуса в {статус по умолчанию} и места в {место по умолчанию} из настроек раздела [cashless]
 function autocompletion(number,dp,ds,model_value){

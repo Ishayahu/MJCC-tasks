@@ -1,0 +1,7 @@
+            <th><label>Тип актива</label></th>
+            <th><label>Модель</label></th>
+            {% for field in NewAssetForm.visible_fields %}
+                <th>{{ field.label|capfirst }}</th>
+            {% endfor %}
+            <th><label>Количество</label></th>
+            <th><label>Удалить</label></th>

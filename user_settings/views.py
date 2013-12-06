@@ -41,7 +41,7 @@ try:
 except ImportError:
     url_one_record=('',)
 
-from user_settings.functions import get_option_description, get_section_description, get_bd_option_with_description
+from user_settings.functions import get_option_description, get_section_description, get_bd_option_with_description, get_option_with_name_and_description, get_bd_option_variants
 from djlib.error_utils import FioError, ErrorMessage, add_error, shows_errors
 
 # Делаем переводы
@@ -88,10 +88,12 @@ def show_settings(request):
     #+сделать, чтобы при редактировании всё было правильно
     
     class Setting():
-        def __init__(self,name,value,description):
+        def __init__(self, option, value, name, description, from_bd):
             self.name = name
-            self.value = value
+            self.value = value.replace('\n','<p>')
             self.description = description
+            self.option = option
+            self.from_bd = from_bd
     class Settings_group():
         def __init__(self,name,description):
             self.name = name
@@ -103,8 +105,8 @@ def show_settings(request):
     for section in config.sections():
         setting_goup = Settings_group(section,get_section_description(section))
         for item in config.items(section):
-            # Не включаем описания опций
-            if item[0][-12:]=='_description':
+            # Не включаем описания и названия опций
+            if item[0][-12:]=='_description' or item[0][-5:]=='_name':
                 continue
             # Настройки, связанные со значениями в БД
             if item[0][:6]=='__bd__':
@@ -113,10 +115,10 @@ def show_settings(request):
                     # return name,opt_id,opt_val,desc
                     # Надо, чтобы при отображении в шаблоне редактировалось оно как список!
                     name,opt_id,opt_val,desc = get_bd_option_with_description(section,option)
-                    setting_goup.settings.append(Setting(name,opt_id+";"+opt_val.replace('\n','<p>'),desc))
+                    setting_goup.settings.append(Setting(option, opt_id+";"+opt_val, name, desc, 1))
             # Все остальные настройки
-            else:
-                setting_goup.settings.append(Setting(item[0],item[1].replace('\n','<p>'),get_option_description(section,item[0])))
+            else: 
+                setting_goup.settings.append(Setting(*get_option_with_name_and_description(section,item[0]), from_bd=0))
             
         settings.append(setting_goup)
     return (True,('show_settings.html', {},{'settings':settings,},request,app))
@@ -124,7 +126,7 @@ def show_settings(request):
 @multilanguage
 @admins_only
 def save_edited_setting(request,section,option):
-    raise NotImplementedError("Надо корректно обрабатывать настройки, связанные с БД!! например, место по умолчанию, статус по умолчанию+сделать, чтобы при редактировании всё было правильно")
+    # raise NotImplementedError("Надо корректно обрабатывать настройки, связанные с БД!! например, место по умолчанию, статус по умолчанию+сделать, чтобы при редактировании всё было правильно")
 
     lang,user,fio,method = get_info(request)
     if request.method == 'POST':
@@ -135,4 +137,33 @@ def save_edited_setting(request,section,option):
         config.write(codecs.open(config_file, encoding='utf-8', mode='w'))
         return (True,('OK.html', {},{'html':value},request,app))
     return (True,('Error.html', {},{'html':'метод не POST! Нифига не сделано!'},request,app))
-    
+@login_required
+@multilanguage
+@admins_only
+def save_from_bd(request,section,option):
+    # raise NotImplementedError("Надо корректно обрабатывать настройки, связанные с БД!! например, место по умолчанию, статус по умолчанию+сделать, чтобы при редактировании всё было правильно")
+    lang,user,fio,method = get_info(request)
+    if request.method == 'POST':
+        value = request.POST.get('new_value')
+        config=UnicodeConfigParser()
+        config.readfp(codecs.open(config_file, encoding='utf-8', mode='r'))
+        config.set(section,"__bd__option__"+option,value)
+        config.write(codecs.open(config_file, encoding='utf-8', mode='w'))
+        name,opt_id,opt_val,desc = get_bd_option_with_description(section,option)
+        returning_value = str(opt_id)+";"+opt_val
+        return (True,('OK.html', {},{'html':returning_value},request,app))
+    return (True,('Error.html', {},{'html':'метод не POST! Нифига не сделано!'},request,app))
+@login_required
+@multilanguage
+@admins_only
+def edit_from_bd(request,section,option):
+    lang,user,fio,method = get_info(request)
+    config=ConfigParser.RawConfigParser()
+    config.read(config_file)
+    name,opt_id,opt_val,desc = get_bd_option_with_description(section,option)
+    opts = get_bd_option_variants(section,option)
+    for opt in opts:
+        if str(opt.id) == str(opt_id):
+            opt.selected = True
+    # raise NotImplementedError("Надо корректно обрабатывать настройки, связанные с БД!! например, место по умолчанию, статус по умолчанию+сделать, чтобы при редактировании всё было правильно")
+    return (True,('edit_from_bd.html', {},{'opts':opts,'option':option},request,app))

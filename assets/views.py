@@ -108,6 +108,13 @@ def bill_cash_add(request):
 @login_required
 @multilanguage
 def bill_cashless_add(request):
+    def what_to_people_friendly(a):
+        b=list(set(a.split(';')))
+        c = ''
+        for word in b:
+            count=a.split(';').count(b[0])
+            c = c + b[0] + ' -' + str(count) + 'шт'
+        return c
     lang,user,fio,method = get_info(request)
     # Получаем настройки из файла:
     import ConfigParser
@@ -171,14 +178,18 @@ def bill_cashless_add(request):
                         )
                     cur_place.save()
                     # a_TMP = cur_place.place.place
-                    places = places+ cur_place.place.place + u';'
+                    if cur_place.place.place + u';' not in places:
+                        places = places+ cur_place.place.place + u';'
+                    # if a.model + u';' not in what:    
+                        # what = what + a.model + u';'
                     what = what + a.model + u';'
                     price += float(a.price)
         places = places[:-1]
-        what = what[:-1]
+        # Приводим к человеческому виду "кот - 5шт"
+        what = what_to_people_friendly(what[:-1])
         # Теперь надо выдать штуку для распечатки сопровождения счёта
         text = config.get('cashless','text')
-        text=text.decode('utf8').format({'number':88,'where':places,'date':'10-11-12','price':9854,'what':what,'who':fio.fio,'phones':fio.tel,'date2':str(datetime.datetime.now()).split('.')[0]}).replace('\n','<p>')
+        text=text.decode('utf8').format({'number':cashless.bill_number,'where':places,'date':str(cashless.date_of_invoice),'price':price,'what':what,'who':fio.fio,'phones':fio.tel,'date2':str(datetime.datetime.now()).split('.')[0]}).replace('\n','<p>')
         # window.open("http://mylink.net", "windowName");
         # window.localStorage.setItem('text',text)
         # document.body.innerHTML=window.localStorage.getItem('text')        

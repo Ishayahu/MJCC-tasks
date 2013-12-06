@@ -1,28 +1,55 @@
-﻿    {% csrf_token %}
-    <table border=1>
-        <tr>
-            <th><label>Тип актива</label></th>
-            <th>{{asset_type.asset_type}}<input type="hidden" value="{{asset_type.id}}" name="{{number}}_asset_type"</th>
-        </tr>
-        <tr id="for_model_{{number}}">
-            {# Сюда будет вставлена форма для выбора модели из имеющейся #}
-        </tr>
-        {{ NewAssetForm.as_table }}
-    </table>
+    {# csrf_token #}
+    {#<table border=1>#}
+        {% comment %}
+            {% ifequal number "1"%}
+                <tr>
+                    <th><label>Тип актива</label></th>
+                    <th><label>Модель</label></th>
+                    {% for field in NewAssetForm.visible_fields %}
+                        <th>{{ field.label|capfirst }}</th>
+                    {% endfor %}
+                    <th><label>Количество</label></th>
+                    <th><label>Удалить</label></th>
+                </tr>
+            {% endifequal %}
+        {% endcomment %}
+        {# <tr class="{% cycle row1,row2 %}"> #}
+            <td>{{asset_type.asset_type}}<input type="hidden" value="{{asset_type.id}}" name="{{number}}_asset_type"</td>
+            <td id="for_model_{{number}}">
+                {#  Сюда будет вставлена форма для выбора модели из имеющейся #}
+            </td>
+            {% for field in NewAssetForm.visible_fields %}
+                <td>
+                    {# Include the hidden fields in the form #}
+                    {% if forloop.first %}
+                      {% for hidden in NewAssetForm.hidden_fields %}
+                      {{ hidden }}
+                      {% endfor %}
+                    {% endif %}
+                      {{ field.errors.as_ul }}
+                      {{ field }}
+                </td>
+            {% endfor %}
+            <td><input type="number" value="1" name="count_of_asset{{number}}" /></td>
+            <td><input type="button" value="X" onclick="delete_asset_form('{{number}}')" /></td>
+        {# </tr>#}
+    {#</table>#}
 
- <script>
-    $.getJSON('/api/json/get/models/{{asset_type.id}}/', function(json){
-            // надо номер формы добавлять в id
-            models_list = json;
-            model_{{number}}_autohelper=list_on_change(models_list,'{{number}}_model','{{number}}_models_dropdown','{{number}}_model_error','Хотите добавить новую модель?','content_to_hide','additional_content',
-            '/api/get_new_model_add_form/{{asset_type.id}}/','{{number}}_model','/')
-            modles_list_html="<ul id='{{number}}_models_dropdown' style='display:none;'  class='dropdown_list'>"
-            for (i=0;i<models_list.length;i++) {
-                modles_list_html = modles_list_html + "<li onclick=\"select_element('"+models_list[i]+"', '"+models_list[i]+"', '{{number}}_model', '{{number}}_model_id','{{number}}_model_error','{{number}}_models_dropdown',autocompletion('{{number}}','{{default_place}}','{{default_status}}','"+models_list[i]+"'))\">"+models_list[i]+"</li>"
-            }
-            modles_list_html = modles_list_html + "</ul>"
-            $("#for_model_{{number}}").html("<th>\n<label for='{{number}}_model'>Модель:</label>\n</th>\n<td>\n<ul class='errorlist' id='{{number}}_model_error'>\n<li>Обязательное поле.</li>\n</ul>\n<div id='{{number}}_models_list'>\n<table>\n<tr>\n<td>\n<input name='{{number}}_model' type='text' id='{{number}}_model' size='20' maxlength='50' onclick='list_down2(\"{{number}}_models_dropdown\")' onkeyup='model_{{number}}_autohelper()'  onkeydown='return CheckTab(event);' value='' />\n</td>\n</tr>\n<tr>\n<td>\n<input type='hidden' name='{{number}}_model_id' id='{{number}}_model_id' value='' />\n</td>\n</tr>\n<tr>\n<td>" + modles_list_html + "</td>\n</tr>\n</table>\n</div>\n</td>")
-            //console.log(modles_list_html);
-            //console.log(models_list);
-            });
+{% comment %}
+     <script>
+        $.getJSON('/api/json/get/models/{{asset_type.id}}/', function(json){
+                // надо номер формы добавлять в id
+                models_list = json;
+                model_{{number}}_autohelper=list_on_change(models_list,'{{number}}_model','{{number}}_models_dropdown','{{number}}_model_error','Хотите добавить новую модель?','content_to_hide','additional_content',
+                '/api/get_new_model_add_form/{{asset_type.id}}/','{{number}}_model','/')
+                modles_list_html="<ul id='{{number}}_models_dropdown' style='display:none;'  class='dropdown_list'>"
+                for (i=0;i<models_list.length;i++) {
+                    modles_list_html = modles_list_html + "<li onclick=\"select_element('"+models_list[i]+"', '"+models_list[i]+"', '{{number}}_model', '{{number}}_model_id','{{number}}_model_error','{{number}}_models_dropdown',autocompletion('{{number}}','{{default_place}}','{{default_status}}','"+models_list[i]+"'))\">"+models_list[i]+"</li>"
+                }
+                modles_list_html = modles_list_html + "</ul>"
+                $("#for_model_{{number}}").html("<ul class='errorlist' id='{{number}}_model_error'>\n<li>Обязательное поле.</li>\n</ul>\n<div id='{{number}}_models_list'>\n<table>\n<tr>\n<td>\n<input name='{{number}}_model' type='text' id='{{number}}_model' size='20' maxlength='50' onclick='list_down2(\"{{number}}_models_dropdown\")' onkeyup='model_{{number}}_autohelper()'  onkeydown='return CheckTab(event);' value='' />\n</td>\n</tr>\n<tr>\n<td>\n<input type='hidden' name='{{number}}_model_id' id='{{number}}_model_id' value='' />\n</td>\n</tr>\n<tr>\n<td>" + modles_list_html + "</td>\n</tr>\n</table>\n</div>\n")
+                //console.log(modles_list_html);
+                //console.log(models_list);
+                });
 </script>
+{% endcomment %}

@@ -9,7 +9,7 @@ from django.contrib.admin import widgets
 ##from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import ugettext as _
 
-from assets.models import Asset, Payment, Cash, Cashless, Contractor, Garanty, Asset_type, Status, Budget, Repair, Place_Asset, Place, Cartridge, Cartridge_Model_General_Model, Cartridge_General_Model_Printer_Model, Cartridge_Printer, ROM, Cooler, Storage, Acoustics, Telephone, Battery, Optical_Drive, Printer, Power_suply, Motherboard, CPU, Case, Claim
+from assets.models import Asset, Payment, Cash, Cashless, Contractor, Garanty, Asset_type, Status, Budget, Repair, Place_Asset, Place, Cartridge, Cartridge_Model_General_Model, Cartridge_General_Model_Printer_Model, Cartridge_Printer, ROM, Cooler, Storage, Acoustics, Telephone, Battery, Optical_Drive, Printer, Power_suply, Motherboard, CPU, Case, Claim, CKC, Telephone_Works
 from todoes.models import  Person #, Task, ProblemByWorker, ProblemByUser, Categories, RegularTask, Activity, Note, Resource, File,
 import datetime
 
@@ -33,6 +33,9 @@ ASSET_TYPES_CATALOGUE_NAME = (
         ('Motherboard','Motherboard'),
         ('CPU','CPU'),
         ('Case','Case'),
+        ('CKC','CKC'),
+        ('Telephone_Works','Telephone_Works'),
+
         )
 inp_f=( '%d-%m-%Y %H:%M:%S',     # '2006-10-25 14:30:59'
         '%d-%m-%Y %H:%M',        # '2006-10-25 14:30'
@@ -53,7 +56,7 @@ class NewAssetForm(forms.Form):
     current_place = forms.ModelChoiceField(queryset  = Place.objects.all(), label='Место расположения')
     status = forms.ModelChoiceField(queryset  = Status.objects.all(), label='Статус')
     guarantee_period = forms.DecimalField(min_value=0, max_value=9999, initial=0,label='Срок гарантии, месяцев')
-    note = forms.CharField(widget=forms.Textarea, label='Примечания',required=False)
+    note = forms.CharField(widget=forms.Textarea(attrs={'cols': 20}), label='Примечания',required=False)
 
     def __init__(self,arg_dict):
         # print str(kwargs)
@@ -93,4 +96,12 @@ class NewModel_Printer(ModelForm):
 class NewModel_Cartridge_Model_General_Model(ModelForm):
     class Meta:
         model = Cartridge_Model_General_Model
+        localized_fields = '__all__'
+class NewModel_CKC(ModelForm):
+    class Meta:
+        model = CKC
+        localized_fields = '__all__'
+class NewModel_Telephone_Works(ModelForm):
+    class Meta:
+        model = Telephone_Works
         localized_fields = '__all__'

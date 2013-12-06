@@ -1,0 +1,194 @@
+Каким образом происходит добавление нового актива в счёт?
+
+При нажатии на "+" вызывается функция add_asset() из bill_assets.js. Эта функция запрашивает форму с URL "/api/get_asset_add_form/"+asset_type_id+"/"+asset_form_number+"/", где asset_type_id - типа актива, asset_form_number - номер формы актива (для того, чтобы у каждой формы был индивидуальный id и чтобы можно было определять данные для каждого актива)
+
+За обработку этого url отвечает assets.api.get_asset_add_form
+
+    # Выдача формы добавления актива, в качестве параметра - категория актива, префикс к имени полей формы (число)
+    url(r'^api/get_asset_add_form/(\d+)/(\d*)/$', assets.api.get_asset_add_form),
+    
+def get_asset_add_form(request,asset_category,form_number):
+    lang=select_language(request)
+    user = request.user.username
+    try:
+        fio = Person.objects.get(login=user)
+    except Person.DoesNotExist:
+        fio = FioError()
+    method = request.method
+    try:
+        asset_type = Asset_type.objects.get(id=asset_category)
+    except Asset_type.DoesNotExist:
+        return ErrorMessage('Неверно указан код категории актива: '+str(asset_category))
+    # функция для загрузки последней цены, срока гарантии + установка статуса в {{статус по умолчанию}} и места в {{место по умолчанию}} из настроек раздела [cashless] (из get_asset_add_form.html)
+    # get_bd_option_with_description returns name,opt_id,opt_val,desc
+    a,b,default_place,c = get_bd_option_with_description('cashless','default_place')
+    a,b,default_status,c = get_bd_option_with_description('cashless','default_status')
+    return (True,('get_asset_add_form.html', {'NewAssetForm':{'number':form_number}},{'default_place':default_place,'default_status':default_status,'number':form_number,'asset_type':asset_type, 'method':method},request,app))
+    
+форма NewAssetForm
+
+class NewAssetForm(forms.Form):
+    price = forms.DecimalField(min_value=0, decimal_places=2, max_digits=8, initial=0, label='Цена')
+    current_place = forms.ModelChoiceField(queryset  = Place.objects.all(), label='Место расположения')
+    status = forms.ModelChoiceField(queryset  = Status.objects.all(), label='Статус')
+    guarantee_period = forms.DecimalField(min_value=0, max_value=9999, initial=0,label='Срок гарантии, месяцев')
+    note = forms.CharField(widget=forms.Textarea, label='Примечания',required=False)
+
+    def __init__(self,arg_dict):
+        self.number = arg_dict.pop('number','')
+        super(NewAssetForm, self).__init__(arg_dict)
+    def add_prefix(self, field_name):
+        field_name = str(self.number)+"_"+field_name
+        return super(NewAssetForm, self).add_prefix(field_name)
+        
+Список уже внесённых в базу активов происходит в get_asset_add_form.html
+
+    {% csrf_token %}
+    <table border=1>
+        <tr>
+            <th><label>Тип актива</label></th>
+            <th>{{asset_type.asset_type}}<input type="hidden" value="{{asset_type.id}}" name="{{number}}_asset_type"</th>
+        </tr>
+        <tr id="for_model_{{number}}">
+            {# Сюда будет вставлена форма для выбора модели из имеющейся #}
+        </tr>
+        {{ NewAssetForm.as_table }}
+    </table>
+
+ <script>
+    $.getJSON('/api/json/get/models/{{asset_type.id}}/', function(json){
+            // надо номер формы добавлять в id
+            models_list = json;
+            model_{{number}}_autohelper=list_on_change(models_list,'{{number}}_model','{{number}}_models_dropdown','{{number}}_model_error','Хотите добавить новую модель?','content_to_hide','additional_content',
+            '/api/get_new_model_add_form/{{asset_type.id}}/','{{number}}_model','/')
+            modles_list_html="<ul id='{{number}}_models_dropdown' style='display:none;'  class='dropdown_list'>"
+            for (i=0;i<models_list.length;i++) {
+                modles_list_html = modles_list_html + "<li onclick=\"select_element('"+models_list[i]+"', '"+models_list[i]+"', '{{number}}_model', '{{number}}_model_id','{{number}}_model_error','{{number}}_models_dropdown',autocompletion('{{number}}','{{default_place}}','{{default_status}}','"+models_list[i]+"'))\">"+models_list[i]+"</li>"
+            }
+            modles_list_html = modles_list_html + "</ul>"
+            $("#for_model_{{number}}").html("<th>\n<label for='{{number}}_model'>Модель:</label>\n</th>\n<td>\n<ul class='errorlist' id='{{number}}_model_error'>\n<li>Обязательное поле.</li>\n</ul>\n<div id='{{number}}_models_list'>\n<table>\n<tr>\n<td>\n<input name='{{number}}_model' type='text' id='{{number}}_model' size='20' maxlength='50' onclick='list_down2(\"{{number}}_models_dropdown\")' onkeyup='model_{{number}}_autohelper()'  onkeydown='return CheckTab(event);' value='' />\n</td>\n</tr>\n<tr>\n<td>\n<input type='hidden' name='{{number}}_model_id' id='{{number}}_model_id' value='' />\n</td>\n</tr>\n<tr>\n<td>" + modles_list_html + "</td>\n</tr>\n</table>\n</div>\n</td>")
+            //console.log(modles_list_html);
+            //console.log(models_list);
+            });
+</script>
+
+    # Список моделей актива для типа актива - id типа актива
+    url(r'^api/json/get/models/(\d+)/$', assets.api.json_models),
+
+    
+def json_models(request,asset_type_id):
+    # Получаем экземпляр типа активов и название таблицы в БД, содержащей список и характеристики моделей этого типа
+    asset_type = Asset_type.objects.get(id=asset_type_id)
+    asset_type_model_name = asset_type.catalogue_name
+    # Импортируем модуль с моделями
+    models_module_name = 'assets.models'
+    app_module = __import__(models_module_name)
+    models_model = getattr(app_module,'models')
+    # Получаем модель БД, описывающую таблицу со списком моделей нужного типа
+    asset_type_model = getattr(models_model,asset_type_model_name)
+    # Получаем список моделей этого типа
+    models = asset_type_model.objects.all().values('model_name')
+    # Подготавливаем к отправке JSON и посылаем
+    mj = list(set([i['model_name']for i in models]))
+    return (False,HttpResponse(json.dumps(mj), mimetype="application/json"))
+
+В случае, если введён новый актив (проверка в dropdown.js):
+
+function check_contractor(item_list,input_field_id,dropdown_field_id,error_field_id,confirm_message,field_to_hide_id,field_to_load_id,url_to_load) {
+    ....
+    // Если ввели нового поставщика
+    if (c_list.indexOf(b.value)==-1) {
+        if (confirm (confirm_message)) {
+            // скрываем поле счёта
+            $("#"+field_to_hide_id).hide();
+            // загружаем форму добавления нового поставщика
+            // замена нужна для русского языка, может быть только под Windows7
+            //var contractor_name=b.value.replace(/ /g,"%20")
+            $("#"+field_to_load_id).load(url_to_load);
+            event.preventDefault();
+            event.stopPropagation();
+        }
+    }
+}
+
+url_to_load формируется в:
+
+function list_on_change(item_list,input_field_id,dropdown_field_id,error_field_id,confirm_message,field_to_hide_id,filed_to_load_id,url_to_load_prefix,url_to_load_element_id,url_to_load_postfix) {
+    function wrapped(e) {
+        // Изменение списка возможных вариантов в соответствии с введёнными в input_field_id символами
+        var e = e||window.event;
+        if (e.keyCode == 9 || e.keyCode == 13) {
+            // если энтер или таб - добавить нового поставщика
+            // TODO: а если мышкой увели фокус?
+            // TODO: при энтере отправляется форма
+            // формируем url с которого должна загрузиться форма для ввода нового значения(?)
+            url_to_load = url_to_load_prefix + document.getElementById(url_to_load_element_id).value.replace(/ /g,'%20') + url_to_load_postfix
+            // проверяем, является ли значение новым или нет
+            check_contractor(item_list,input_field_id,dropdown_field_id,error_field_id,confirm_message,field_to_hide_id,filed_to_load_id,url_to_load)
+        }...
+    }
+    return wrapped
+};
+
+То есть для нового принтера он будет иметь вид: 
+            
+url_to_load_prefix = '/api/get_new_model_add_form/{{asset_type.id}}/'
+url_to_load_element_id = '{{number}}_model'
+url_to_load_postfix = '/'
+
+url_to_load = '/api/get_new_model_add_form/{{asset_type.id}}/' + document.getElementById(url_to_load_element_id).value.replace(/ /g,'%20') + '/'
+
+За обработку этого url отвечает
+
+    # Получаем форму для добавления актива - id типа актива, имя модели
+    url(r'^api/get_new_model_add_form/(\d+)/([^/]+)/$', assets.api.get_new_asset_model_add_form),
+
+def get_new_asset_model_add_form(request,asset_type_id,asset_model_name):
+    lang=select_language(request)
+    user = request.user.username
+    try:
+        fio = Person.objects.get(login=user)
+    except Person.DoesNotExist:
+        fio = FioError()
+    method = request.method
+    # Имя формы для ввода нового актива получается добавлением каталожного имени к 'NewModel_'
+    asset_type = Asset_type.objects.get(id=asset_type_id)
+    form_name = 'NewModel_'+asset_type.catalogue_name
+    return (True,('get_new_asset_model_add_form.html', {form_name:{'model_name':asset_model_name}},{'method':method,'form_template_name':'NewModelForm','asset_type_id':asset_type_id},request,app))
+
+UPD: Работает это теперь по другому: при первом нажатии создаётся табица, куда загружается заголовок через get_asset_add_form_header и ещё куда-то загружаются скрипты через get_asset_add_form_script, чтобы отображение добавленных активов шло в строчку таблицы
+
+    
+Вот модели для принтера и картриджа
+
+# Формы для добавления новых моделей
+class NewModel_Printer(ModelForm):
+    class Meta:
+        model = Printer
+        localized_fields = '__all__'
+class NewModel_Cartridge_Model_General_Model(ModelForm):
+    class Meta:
+        model = Cartridge_Model_General_Model
+        localized_fields = '__all__'
+
+Принтер добавляется как принтер, а картридж - как модель для соответствующей общей модели (например, CT-CE310A для CE310A)
+
+Таким образом, для добавления нового актива в систему (не модели, а категории актива, например, "Работы по телефонии", "СКС") надо:
+
+1) создать соответствующую модель в models.py
+class CKC(models.Model):
+    model_name = models.CharField(max_length=50,verbose_name=_("Model name"))
+    def __unicode__(self):
+        return str(self.id)+';'+self.model_name
+1) добавить форму в forms_XXX.py со ссылкой на соответствующую модель
+class NewModel_CKC(ModelForm):
+    class Meta:
+        model = CKC
+        localized_fields = '__all__'
+1) синхронизировать базу с новыми моделями
+./manage.py schemamigration assets --auto
+./manage.py migrate assets
+1) надо в forms_XXX.py добавить в ASSET_TYPES_CATALOGUE_NAME соответствующие поля:
+        ('CKC','CKC'),
+1) в таблицу asset_type добавить новую запись, где Asset type:CKC, Catalogue name:CKC
+Вроде можно сделать через /assets_by_type/1/, там есть кнопка добавления. Добавлю её и к счетам?

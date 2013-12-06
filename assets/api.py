@@ -73,12 +73,50 @@ def get_asset_add_form(request,asset_category,form_number):
         asset_type = Asset_type.objects.get(id=asset_category)
     except Asset_type.DoesNotExist:
         return ErrorMessage('Неверно указан код категории актива: '+str(asset_category))
-    # print form_number
     # функция для загрузки последней цены, срока гарантии + установка статуса в {{статус по умолчанию}} и места в {{место по умолчанию}} из настроек раздела [cashless] (из get_asset_add_form.html)
     # get_bd_option_with_description returns name,opt_id,opt_val,desc
     a,b,default_place,c = get_bd_option_with_description('cashless','default_place')
     a,b,default_status,c = get_bd_option_with_description('cashless','default_status')
     return (True,('get_asset_add_form.html', {'NewAssetForm':{'number':form_number}},{'default_place':default_place,'default_status':default_status,'number':form_number,'asset_type':asset_type, 'method':method},request,app))
+@login_required
+@multilanguage
+def get_asset_add_form_script(request,asset_category,form_number):
+    lang=select_language(request)
+    user = request.user.username
+    try:
+        fio = Person.objects.get(login=user)
+    except Person.DoesNotExist:
+        fio = FioError()
+    method = request.method
+    try:
+        asset_type = Asset_type.objects.get(id=asset_category)
+    except Asset_type.DoesNotExist:
+        return ErrorMessage('Неверно указан код категории актива: '+str(asset_category))
+    # функция для загрузки последней цены, срока гарантии + установка статуса в {{статус по умолчанию}} и места в {{место по умолчанию}} из настроек раздела [cashless] (из get_asset_add_form.html)
+    # get_bd_option_with_description returns name,opt_id,opt_val,desc
+    a,b,default_place,c = get_bd_option_with_description('cashless','default_place')
+    a,b,default_status,c = get_bd_option_with_description('cashless','default_status')
+    return (True,('get_asset_add_form_script.html', {},{'default_place':default_place,'default_status':default_status,'number':form_number,'asset_type':asset_type, 'method':method},request,app))
+@login_required
+@multilanguage
+def get_asset_add_form_header(request):
+    lang=select_language(request)
+    # user = request.user.username
+    # try:
+        # fio = Person.objects.get(login=user)
+    # except Person.DoesNotExist:
+        # fio = FioError()
+    # method = request.method
+    # try:
+        # asset_type = Asset_type.objects.get(id=asset_category)
+    # except Asset_type.DoesNotExist:
+        # return ErrorMessage('Неверно указан код категории актива: '+str(asset_category))
+    # функция для загрузки последней цены, срока гарантии + установка статуса в {{статус по умолчанию}} и места в {{место по умолчанию}} из настроек раздела [cashless] (из get_asset_add_form.html)
+    # get_bd_option_with_description returns name,opt_id,opt_val,desc
+    # a,b,default_place,c = get_bd_option_with_description('cashless','default_place')
+    # a,b,default_status,c = get_bd_option_with_description('cashless','default_status')
+    # return (True,('get_asset_add_form_header.html', {'NewAssetForm':{'number':0}},{'default_place':default_place,'default_status':default_status,'number':form_number,'asset_type':asset_type, 'method':method},request,app))
+    return (True,('get_asset_add_form_header.html', {'NewAssetForm':{'number':0}},{},request,app))
 @login_required
 @multilanguage
 def get_contractors_list(request,name_to_select='',internal=False):
@@ -297,13 +335,18 @@ def asset_save_edited(request,asset_id):
 @multilanguage
 @shows_errors
 def json_models(request,asset_type_id):
+    # Получаем экземпляр типа активов и название таблицы в БД, содержащей список и характеристики моделей этого типа
     asset_type = Asset_type.objects.get(id=asset_type_id)
-    models_module_name = 'assets.models'
     asset_type_model_name = asset_type.catalogue_name
+    # Импортируем модуль с моделями
+    models_module_name = 'assets.models'
     app_module = __import__(models_module_name)
     models_model = getattr(app_module,'models')
+    # Получаем модель БД, описывающую таблицу со списком моделей нужного типа
     asset_type_model = getattr(models_model,asset_type_model_name)
+    # Получаем список моделей этого типа
     models = asset_type_model.objects.all().values('model_name')
+    # Подготавливаем к отправке JSON и посылаем
     mj = list(set([i['model_name']for i in models]))
     return (False,HttpResponse(json.dumps(mj), mimetype="application/json"))
 @login_required
@@ -348,6 +391,7 @@ def get_new_asset_model_add_form(request,asset_type_id,asset_model_name):
     except Person.DoesNotExist:
         fio = FioError()
     method = request.method
+    # Имя формы для ввода нового актива получается добавлением каталожного имени к 'NewModel_'
     asset_type = Asset_type.objects.get(id=asset_type_id)
     form_name = 'NewModel_'+asset_type.catalogue_name
     return (True,('get_new_asset_model_add_form.html', {form_name:{'model_name':asset_model_name}},{'method':method,'form_template_name':'NewModelForm','asset_type_id':asset_type_id},request,app))
@@ -381,7 +425,7 @@ def save_new_model(request,asset_type_id):
 @login_required
 @multilanguage
 def cashless_edit_stages(request,bill_number,stage_name,new_stage,not_redirect):
-    print stage_name
+    # print stage_name
     cl=Cashless.objects.get(id=bill_number)
     today=str(datetime.datetime.today()).split(' ')[0].replace('-','.') # '2013.10.21'
     today_dash=str(datetime.datetime.today()) # '2013-10-21'
@@ -401,8 +445,11 @@ def cashless_edit_stages(request,bill_number,stage_name,new_stage,not_redirect):
     # Если меняется дата получения товара и сдачи документов в бухгалтерию
     if stage_name==u'Товар_получен':
         assets = cl.payment_set.get().asset_set.filter()
-        status_reserved = Status.objects.get(status="Заказан")
-        status_new =  Status.objects.get(status="Новый")
+        # raise NotImplementedError("Надо чтобы статусы брались из настроек. Причём вместо заказан - статус для добавленного в счёт актива")
+        name_before,opt_id_before,opt_val_before,desc_before = get_bd_option_with_description("cashless","default_status")
+        name_after,opt_id_after,opt_val_after,desc_after = get_bd_option_with_description("cashless","status_after_closing_bill")
+        status_reserved = Status.objects.get(status=opt_val_before)
+        status_new =  Status.objects.get(status=opt_val_after)
         if new_stage=='1':
             cl.date_of_assets = today_dash
             cl.save()

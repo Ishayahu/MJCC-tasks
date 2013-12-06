@@ -11,11 +11,58 @@
     </style>
     <script>
         function f_edit_setting(section,option){
-           //$("#setting_"+name).load("/api/setting/edit/"+name+"/")
-           var val = $("#setting_value_"+section+"_"+option).html() 
-           $("#setting_value_"+section+"_"+option).html('<textarea rows="10" cols="40"  name="new_value">'+val+'</textarea>')
-           // поставить кнопку отправки
-           $("#button_"+section+"_"+option).html("<input type='button' value='Сохранить' onClick=\"send('/api/setting/save/"+section+"/"+option+"/','settings_edition_form','setting_value_"+section+"_"+option+"','message','"+section+"','"+option+"');\" />")
+            //$("#setting_"+name).load("/api/setting/edit/"+name+"/")
+            // Закрываем редактирование других настроек!
+            table=$("#settings_table_inner")
+            rows=$("#settings_table_inner").children().children().slice(1)
+            for (x=0;x<rows.length;x++) {
+                // Проверяем, что тут стоит редактирование (то есть, НЕ как у нашей опции (себя то мы только начинаем редактировать!) )
+                if (rows[x].children[2].children[0].children[0].value!=$("#button_"+section+"_"+option).children().val()){
+                    //console.log(rows[x].children[2].children[0].id)
+                    if (rows[x].children[2].children[0].id!=("#button_"+section+"_"+option).slice(1)){
+                        //console.log("mach!")
+                        // Надо заменить поле на просто значение + изменить кнопку на редактирование
+                        // Получаем сперва значения "раздел" и "опция" для текущей строки
+                        r_section = rows[x].getAttribute('section')
+                        r_option = rows[x].getAttribute('option')
+                        // меняем поле на просто значение 
+                            // для не БД = rows[x].children[1].children[0].children[0].innerHTML
+                            if (rows[x].getAttribute('from_bd')=='0'){
+                                value = rows[x].children[1].children[0].children[0].innerHTML.split('&gt;').join('>').split('&lt;').join('<');
+                                rows[x].children[1].children[0].innerHTML=value
+                            } else {
+                                // для  БД = 
+                                opts = rows[x].children[1].children[0].children[0].children
+                                for (y=0;y<opts.length;y++){
+                                    if (opts[y].getAttribute('selected')){
+                                        selected_id = opts[y].value
+                                        selected_val = opts[y].innerText
+                                    }
+                                }
+                                // теперь заменяем виджет выбора на текст
+                                rows[x].children[1].children[0].innerHTML=' '+selected_id+';'+selected_val
+                            }
+                                // кнопка - меняем на "редактировать"
+                        rows[x].children[2].children[0].innerHTML='<input type="button" value="✎" title="Редактировать" name="edit_setting" onclick="f_edit_setting(\''+r_section+'\',\''+r_option+'\')" />'
+                        
+                        
+                        
+                        
+                    }
+                }
+            }
+            
+            var val = $("#setting_value_"+section+"_"+option).html() 
+            var from_bd = $("#setting_value_"+section+"_"+option).parent().parent().attr('from_bd')
+            if (!parseInt(from_bd)) {
+                $("#setting_value_"+section+"_"+option).html('<textarea rows="10" cols="40"  name="new_value">'+val+'</textarea>')
+                // поставить кнопку отправки
+                $("#button_"+section+"_"+option).html("<input type='button' value='Сохранить' onClick=\"send('/api/setting/save/"+section+"/"+option+"/','settings_edition_form','setting_value_"+section+"_"+option+"','message','"+section+"','"+option+"');\" />")
+            } else {
+                $("#setting_value_"+section+"_"+option).load("/api/setting/edit_from_bd/"+section+"/"+option+"/",function(result){
+                    $("#button_"+section+"_"+option).html("<input type='button' value='Сохранить' onClick=\"send('/api/setting/save_from_bd/"+section+"/"+option+"/','settings_edition_form','setting_value_"+section+"_"+option+"','message','"+section+"','"+option+"');\" />")
+                });
+            }
         }
         function send(url,form_id,result_div,error_div,group_name,setting_name) {
             // Отсылаем паметры
@@ -47,10 +94,10 @@
     <div id="message"></div>
     <div id="settings_table">
     {% for group in settings %}
-        <h3 title="{{group.description}}">{{group.name}}</h3>
+        <h3>{{group.description}}</h3>
         <form method="post" id="settings_edition_form" action="">
             {% csrf_token %}
-            <table border=1>
+            <table border=1 id="settings_table_inner">
                 <tr>
                     <th>
                         Название настройки
@@ -60,15 +107,15 @@
                     </th>
                 </tr>
                 {% for setting in group.settings %}
-                    <tr  id="setting_{{group.name}}_{{setting.name}}">
+                    <tr  id="setting_{{group.name}}_{{setting.option}}" from_bd="{{setting.from_bd}}" section="{{group.name}}" option="{{setting.option}}">
                         <td>
                             <div title="{{setting.description}}">{{setting.name}}</div>
                         </td>
                         <td>
-                            <div  id="setting_value_{{group.name}}_{{setting.name}}">{{setting.value|safe}}</div>
+                            <div  id="setting_value_{{group.name}}_{{setting.option}}">{{setting.value|safe}}</div>
                         </td>
                         <td>
-                            <div id="button_{{group.name}}_{{setting.name}}"><input type="button" value="✎" title="Редактировать" name="edit_setting" onclick="f_edit_setting('{{group.name}}','{{setting.name}}')" /></div>
+                            <div id="button_{{group.name}}_{{setting.option}}"><input type="button" value="✎" title="Редактировать" name="edit_setting" onclick="f_edit_setting('{{group.name}}','{{setting.option}}')" /></div>
                         </td>
                     </tr>
                 {% endfor %}
