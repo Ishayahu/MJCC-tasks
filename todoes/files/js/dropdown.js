@@ -78,7 +78,8 @@ function check_contractor(item_list,input_field_id,dropdown_field_id,error_field
         $("#"+error_field_id).html("<li>Обязательное поле.</li>")
     }
     // Если ввели нового поставщика
-    if (c_list.indexOf(b.value)==-1) {
+    //if (c_list.indexOf(b.value)==-1) {
+    if (item_list.indexOf(b.value)==-1) {
         if (confirm (confirm_message)) {
             // скрываем поле счёта
             $("#"+field_to_hide_id).hide();
@@ -88,6 +89,8 @@ function check_contractor(item_list,input_field_id,dropdown_field_id,error_field
             $("#"+field_to_load_id).load(url_to_load);
             event.preventDefault();
             event.stopPropagation();
+        } else {
+            $("#"+input_field_id).val('')
         }
     }
 }

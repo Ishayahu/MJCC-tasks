@@ -18,7 +18,8 @@ function add_asset(asset_type_id) {
     });
     $("#bill_assets").append("<div id='script_for_form_"+form_name+"'></div>")
     $("#script_for_form_"+form_name).load(url2,function(result){
-    });}
+                                                });
+    }
 function delete_asset_form(id) {
     var form_name = "asset_form_"+id;
     $("#"+form_name).remove();

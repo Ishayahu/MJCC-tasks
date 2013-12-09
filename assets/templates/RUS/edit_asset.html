@@ -1,7 +1,7 @@
 {# 'models':asset_type_models,'statuses':statuses,'garantys':garantys,'places':places,'asset_id':id,'item':a #}
     <td>{{item.id}}</td>
     <td>
-        <input type="text" name="{{item.id}}_model" id="{{item.id}}_model" value="{{model.model_name}}" onclick="list_down2('{{item.id}}_models_dropdown')" onkeyup="model_1_autohelper()" onkeydown="return CheckTab(event);"/>
+        <input type="text" name="{{item.id}}_model" id="{{item.id}}_model" value="{{model.model_name}}" onclick="list_down2('{{item.id}}_models_dropdown')" onkeyup="model_{{item.id}}_autohelper()" onkeydown="return CheckTab(event);"/>
         <input type="hidden" name="{{item.id}}_model_id" id="{{item.id}}_model_id" value="">
         
         <ul style="display:none" id="{{item.id}}_models_dropdown" class="dropdown_list">
