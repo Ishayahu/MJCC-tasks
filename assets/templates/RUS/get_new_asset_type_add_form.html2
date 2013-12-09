@@ -1,8 +1,0 @@
-<form method="post" action="javascript:send('/api/asset_types/{{asset_type_id}}/save/','new_asset_type','asset_table','message');" id="new_asset_type">
-    {% csrf_token %}
-    <table border=1>
-        {{ NewAssetTypeForm.as_table }}
-    </table>
-    <input type="button" value="Отправить" onClick="send('/api/asset_types/{{asset_type_id}}/save/','new_asset_type','asset_table','message');" />
-</form>
-{# Отправляем данные, удаляем форму ввода поставщика и перезагружаем это поле в таблице счёта, установив введённое значение значением по умолчанию. Скрипт хранится в /todoes/files/js/bill_contractor.js Для того, чтобы он мог подружаться в заголовке страницы. Такой вот франкенштейн #}

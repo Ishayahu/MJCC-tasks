@@ -1,15 +1,16 @@
 {# 'models':asset_type_models,'statuses':statuses,'garantys':garantys,'places':places,'asset_id':id,'item':a #}
-{% comment %}
-<script>
-var m_list="adfadfaf"
-</script>
-{% endcomment %}
     <td>{{item.id}}</td>
     <td>
-        <input type="text" name="model_{{item.id}}" value="{{model.model_name}}" />
-        <ul id="dropdown" style="display:none">
+        <input type="text" name="{{item.id}}_model" id="{{item.id}}_model" value="{{model.model_name}}" onclick="list_down2('{{item.id}}_models_dropdown')" onkeyup="model_1_autohelper()" onkeydown="return CheckTab(event);"/>
+        <input type="hidden" name="{{item.id}}_model_id" id="{{item.id}}_model_id" value="">
+        
+        <ul style="display:none" id="{{item.id}}_models_dropdown" class="dropdown_list">
             {% for model in models %}
-                <li value="{{model.id}}" onclick="select_contractor({{c.id}},'{{c.name}}')">{{model.model_name}}</li>
+                {# <li value="{{model.id}}" onclick="select_contractor({{c.id}},'{{c.name}}')">{{model.model_name}}</li> #}
+                <li value="{{model.id}}" onclick="select_element('{{model.id}}', '{{model.model_name}}', '{{item.id}}_model', '{{item.id}}_model_id','{{item.id}}_model_error','{{item.id}}_models_dropdown')">{{model.model_name}}</li>
+                
+                
+                
             {% endfor %}            
         </ul>
         {% comment %}
@@ -35,10 +36,14 @@ var m_list="adfadfaf"
             {% endfor %}
         </select>    
     </td>
-    <td>
-        <select name="place_{{item.id}}">
+    <td id="table_cell_with_place_for_{{item.id}}">
+        <select name="place_{{item.id}}" id="place_{{item.id}}" onchange="changing_place({{item.id}})">
             {% for place in places %}
-                <option value="{{place.id}}">{{place.place}}</option>
+                {% if place.selected %}
+                    <option value="{{place.id}}" selected="selected">{{place.place}}</option>
+                {% else %}
+                    <option value="{{place.id}}">{{place.place}}</option>
+                {% endif %}
             {% endfor %}
         </select>
     </td>

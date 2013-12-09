@@ -102,6 +102,12 @@ class Place_Asset(models.Model):
     asset = models.ForeignKey('Asset')
     place = models.ForeignKey('Place')
     reason_of_drawdown = models.TextField(blank = True, null = True)
+    def __unicode__(self):
+        # a = str(self.id)
+        # b = unicode(self.asset.model)
+        # c = self.place.place
+        # d = str(self.installation_date)
+        return u';'.join((str(self.id),unicode(self.asset.model),unicode(self.place.place),str(self.installation_date),str(self.drawdown_date)))
 class Place(models.Model):
     place = models.CharField(max_length=140)
     def __unicode__(self):

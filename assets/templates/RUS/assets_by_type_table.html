@@ -16,7 +16,7 @@
                 <td>{{item.price}}</td>
                 <td>{{item.status.status}}</td>
                 <td>{{item.garanty.number}}</td>
-                <td>{{item.place}}</td>
+                <td id="table_cell_with_place_for_{{item.id}}">{{item.place}}</td>
                 <td>
                     <input type="button" value="✎" title="Редактировать актив" name="edit_asset" onclick="f_edit_asset('{{item.id}}')" />
                     {% if admin %}

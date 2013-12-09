@@ -5,8 +5,10 @@
                 <td>{{item.garanty.number}}</td>
                 <td>{{item.place}}</td>
                 <td>
-                    <input type="submit" value="✎" title="Редактировать актив" name="edit_asset" onclick="edit_asset('{{item.id}}')" />
+                    <input type="button" value="✎" title="Редактировать актив" name="edit_asset" onclick="f_edit_asset('{{item.id}}')">
+                    {# <input type="submit" value="✎" title="Редактировать актив" name="edit_asset" onclick="edit_asset('{{item.id}}')" /> #}
                     {% if admin %}
-                        <input type="submit" value="✕" title="Удалить актив" name="del_asset" onclick="del_asset('{{item.id}}')" />
+                        {# <input type="submit" value="✕" title="Удалить актив" name="del_asset" onclick="del_asset('{{item.id}}')" /> #}
+                        <input type="button" value="✕" title="Удалить актив" name="del_asset" onclick="f_del_asset('{{item.id}}')">
                     {% endif %}
                 </td>

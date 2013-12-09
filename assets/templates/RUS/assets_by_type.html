@@ -5,7 +5,11 @@
 {% block style %}
     <script type="text/javascript" src="/media/js/dropdown.js"></script>
     <link rel="stylesheet" type="text/css" href="/media/css/dropdown.css" />
+    <link rel="stylesheet" type="text/css" href="/media/css/main.css" />
     <script>
+    jQuery.fn.exists = function() {
+       return $(this).length;
+    }
     function f_del_asset(id){
         if (confirm('Уверены?')) {
             $("#asset_id_"+id).load("/api/asset/delete/"+id+"/"+$('#asset_type option:selected').val()+"/",function(result){
@@ -18,8 +22,24 @@
             return false
         };
     }
+    // "словарь" для хранения мест активов до их изменения
+    cur_place_dict={}
+    //cur_model_dict={}
     function f_edit_asset(id){
-       $("#asset_id_"+id).load("/api/asset/edit/"+id+"/")
+        // сохраняем исходное значение
+        //cur_model_dict[id] = $("#asset_id_"+id).children()[1].innerText
+        var cur_model_dict = $("#asset_id_"+id).children()[1].innerText
+        $("#asset_id_"+id).load("/api/asset/edit/"+id+"/", function(result){
+            // заносим в словарь мест имеющееся значение (то есть текущее в базе)
+            // берём его из загрузки, чтобы получить id, а не просто значение
+            // хотя, конечно, можно изменить шаблон, чтобы и при просто отображении
+            // можно было получить id места
+            if (!cur_place_dict[id]){
+                cur_place_dict[id]=$("#place_"+id).val()
+            }
+            // записываем то значение модели, которое было
+            $("#"+id+"_model").val(cur_model_dict)
+        })
     }
     function send(url,form_id,result_div,error_div) {
         // Отсылаем паметры
@@ -39,6 +59,27 @@
                     $("#"+error_div).append("Ошибка!");
                 }
                 }); 
+    }
+    // функция, вызываемая при изменении места актива
+    function changing_place(item_id) {
+        // если место уже есть, то есть, меняется не первый раз
+        // проверяем, не совпадает ли место с тем, которое было до этого
+        if (cur_place_dict[item_id]==$("#place_"+item_id).val()) {
+            // если поменялось на исходное - убираем поле ввода причины изменения места
+            $("#table_cell_with_place_for_"+item_id).remove()
+        } else {
+            // если поменялось на другое, то
+            //если если нет поля для ввода причины изменения места- добавляем
+            if (!$("#reason_of_drawdown_"+item_id).exists()) {
+                // добавляется поле с серым текстом подсказки, текст убирается при клике на него + меняем цвет текста на чёрный
+                $("#table_cell_with_place_for_"+item_id).append('<textarea id="reason_of_drawdown_'+item_id+'" rows="10" cols="20" name="reason_of_drawdown_'+item_id+'" class="grey_text">Укажите причину смены места</textarea>')
+                $("#reason_of_drawdown_"+item_id).bind('click',function(){
+                    $("#reason_of_drawdown_"+item_id).text("");
+                    $("#reason_of_drawdown_"+item_id).css({color:"black"});
+                    $("#reason_of_drawdown_"+item_id).unbind('click');
+                })
+            }
+        }
     }
     </script>
 {% endblock %}

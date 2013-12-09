@@ -172,8 +172,8 @@ def save_new_contractor(request):
             html=u'<input type="hidden" id="c_id" value="%s" /><input type="hidden" id="c_name" value="%s" />' % (c.id, c.name)
             return (True,('OK.html', {},{'html':html},request,app))
             # return render_to_response(languages[lang]+'OK.html', {'c':c,'html':html},RequestContext(request))
-    raise IOError
-    return "Произошла какая-то ошибка, но не могу представить какая. Надо выяснить и записать для диагностики"
+    raise IOError("Произошла какая-то ошибка, но не могу представить какая. Надо выяснить и записать для диагностики")
+    # return 0
 @login_required
 @multilanguage
 @shows_errors
@@ -234,10 +234,11 @@ def full_delete_bill(request,b_type,id):
 @for_admins
 def assets_by_type(request,type_id):
     lang,user,fio,method = get_info(request)
-    assets = Asset.objects.filter(asset_type=type_id)
+    assets = Asset.objects.filter(asset_type=type_id).order_by('id')
     asset_types = Asset_type.objects.all()
     for asset in assets:
         asset.place=asset.place_asset_set.latest('installation_date').place.place
+        asset.place_id=asset.place_asset_set.latest('installation_date').place.id
     return (True,('assets_by_type_table.html',{},{'assets':assets},request,app))
 @login_required
 @multilanguage
@@ -258,6 +259,8 @@ def asset_delete(request,id,type_id):
 @multilanguage
 @admins_only
 def asset_edit(request,id):
+    raise NotImplementedError("Добавить возможность введения новой модели")            
+
     lang,user,fio,method = get_info(request)
     try:
         a = Asset.objects.get(id=id)
@@ -273,6 +276,9 @@ def asset_edit(request,id):
     statuses = Status.objects.all()
     garantys = Garanty.objects.all()
     places = Place.objects.all()
+    for place in places:
+        if place == a.place_asset_set.latest('installation_date').place:
+            place.selected = True
     return (True,('edit_asset.html', {},{'models':asset_type_models,'statuses':statuses,'garantys':garantys,'places':places,'asset_id':id,'item':a},request,app))
 @login_required
 @multilanguage
@@ -322,14 +328,38 @@ def get_new_asset_type_save(request):
 @login_required
 @multilanguage
 @shows_errors
+@for_admins
 def asset_save_edited(request,asset_id):
+    # raise NotImplementedError("Должно быть выпадающее меню для модели, если хотят её изменить")
     asset = Asset.objects.get(id=asset_id)
-    asset.model = request.POST.get('model_'+asset_id)
-    asset.price = request.POST.get('price_'+asset_id)
+    # Меняем значения на новые
+    asset.model = request.POST.get(asset_id+'_model')
+    asset.price = float(request.POST.get('price_'+asset_id).replace(',','.'))
+    ttt = request.POST
+    tt = 'status_'+asset_id
+    t = request.POST.get('status_'+asset_id)
+    t2 = request.POST.get(asset_id+'_model')
+    t3 = request.POST.get('price_'+asset_id)
     asset.status = Status.objects.get(id=request.POST.get('status_'+asset_id))
     asset.garanty = Garanty.objects.get(id=request.POST.get('garanty_'+asset_id))
-    asset.place = Place.objects.get(id=request.POST.get('place_'+asset_id))
+    # А вот с местом надо по другому!
+    # Надо найти предыдущее (точно есть!), поставить туда дату снятия и после этого уже вносить новое место
+    # И вообще, asset.place нет такого, см assets.views.bill_cashless_add как надо работать с местами
+    # raise NotImplementedError("Так ли оно?") ---------- ВРОДЕ ТАК
+    new_place = Place.objects.get(id=request.POST.get('place_'+asset_id))
+    # raise NotImplementedError("Надо реализовать правильное изменение места. см комментарий в коде")
+    # raise NotImplementedError("Надо брать последнее место") ---------- ВРОДЕ РАБОТАЕТ
+    asset.place_asset_set.latest('installation_date').drawdown_date = datetime.datetime.now()
+    # raise NotImplementedError("Надо запрашивать причину изменения") ---------- ВРОДЕ РАБОТАЕТ
+    # то есть, при изменении места надо вызывать обработчик, который сохраняет первое значение (если изменение на него - то отмена), и добавляет к форме поле причины, где-то внизу, чтобы его тоже можно было редактировать
+    asset.place_asset_set.latest('installation_date').reason_of_drawdown = request.POST.get('reason_of_drawdown_'+asset_id)
+    new_place_asset = Place_Asset(installation_date = datetime.datetime.now(),
+                                    asset = asset,
+                                    place = new_place,
+                                )
+    new_place_asset.save()
     asset.save()
+    asset.place = asset.place_asset_set.latest('installation_date').place.place
     return (True,('edited_asset.html',{},{'item':asset,},request,app))
 @login_required
 @multilanguage
