@@ -9,6 +9,7 @@
             margin-bottom: 0.1em;
         }
     </style>
+    <link rel="stylesheet" type="text/css" href="/media/css/main.css" />
     <script>
         function f_edit_setting(section,option){
             //$("#setting_"+name).load("/api/setting/edit/"+name+"/")
@@ -109,10 +110,22 @@
                 {% for setting in group.settings %}
                     <tr  id="setting_{{group.name}}_{{setting.option}}" from_bd="{{setting.from_bd}}" section="{{group.name}}" option="{{setting.option}}">
                         <td>
-                            <div title="{{setting.description}}">{{setting.name}}</div>
+                            <div title="{{setting.description}}">
+                                {{setting.name}} 
+                            </div>
+                            <div class="help_message">
+                                {% if setting.help_message %}
+                                ?
+                                {% endif %}
+                            </div>
                         </td>
                         <td>
-                            <div  id="setting_value_{{group.name}}_{{setting.option}}">{{setting.value|safe}}</div>
+                            <div  id="setting_value_{{group.name}}_{{setting.option}}">
+                                {% if setting.id %}
+                                    {{setting.id}};
+                                {% endif %}
+                                {{setting.html_value|safe}}
+                            </div>
                         </td>
                         <td>
                             <div id="button_{{group.name}}_{{setting.option}}"><input type="button" value="✎" title="Редактировать" name="edit_setting" onclick="f_edit_setting('{{group.name}}','{{setting.option}}')" /></div>

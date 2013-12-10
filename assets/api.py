@@ -26,7 +26,7 @@ from djlib.auxiliary import get_info
 from djlib.logging_utils import log, confirm_log, make_request_with_logging
 
 from user_settings.settings import server_ip, admins, admins_mail
-from user_settings.functions import get_option_with_description,get_bd_option_with_description
+from user_settings.functions import get_full_option, get_full_bd_option
 
 try:
     from user_settings.settings import assets_url_not_to_track as url_not_to_track
@@ -75,8 +75,10 @@ def get_asset_add_form(request,asset_category,form_number):
         return ErrorMessage('Неверно указан код категории актива: '+str(asset_category))
     # функция для загрузки последней цены, срока гарантии + установка статуса в {{статус по умолчанию}} и места в {{место по умолчанию}} из настроек раздела [cashless] (из get_asset_add_form.html)
     # get_bd_option_with_description returns name,opt_id,opt_val,desc
-    a,b,default_place,c = get_bd_option_with_description('cashless','default_place')
-    a,b,default_status,c = get_bd_option_with_description('cashless','default_status')
+    # a,b,default_place,c = get_bd_option_with_description('cashless','default_place')
+    default_place = get_full_bd_option('cashless','default_place').value
+    # a,b,default_status,c = get_bd_option_with_description('cashless','default_status')
+    default_status = get_full_bd_option('cashless','default_status').value
     return (True,('get_asset_add_form.html', {'NewAssetForm':{'number':form_number}},{'default_place':default_place,'default_status':default_status,'number':form_number,'asset_type':asset_type, 'method':method},request,app))
 @login_required
 @multilanguage
@@ -94,8 +96,10 @@ def get_asset_add_form_script(request,asset_category,form_number):
         return ErrorMessage('Неверно указан код категории актива: '+str(asset_category))
     # функция для загрузки последней цены, срока гарантии + установка статуса в {{статус по умолчанию}} и места в {{место по умолчанию}} из настроек раздела [cashless] (из get_asset_add_form.html)
     # get_bd_option_with_description returns name,opt_id,opt_val,desc
-    a,b,default_place,c = get_bd_option_with_description('cashless','default_place')
-    a,b,default_status,c = get_bd_option_with_description('cashless','default_status')
+    # a,b,default_place,c = get_bd_option_with_description('cashless','default_place')
+    default_place = get_full_bd_option('cashless','default_place').value
+    # a,b,default_status,c = get_bd_option_with_description('cashless','default_status')
+    default_status = get_full_bd_option('cashless','default_status').value
     return (True,('get_asset_add_form_script.html', {},{'default_place':default_place,'default_status':default_status,'number':form_number,'asset_type':asset_type, 'method':method},request,app))
 @login_required
 @multilanguage
@@ -478,8 +482,10 @@ def cashless_edit_stages(request,bill_number,stage_name,new_stage,not_redirect):
     if stage_name==u'Товар_получен':
         assets = cl.payment_set.get().asset_set.filter()
         # raise NotImplementedError("Надо чтобы статусы брались из настроек. Причём вместо заказан - статус для добавленного в счёт актива")
-        name_before,opt_id_before,opt_val_before,desc_before = get_bd_option_with_description("cashless","default_status")
-        name_after,opt_id_after,opt_val_after,desc_after = get_bd_option_with_description("cashless","status_after_closing_bill")
+        # name_before,opt_id_before,opt_val_before,desc_before = get_bd_option_with_description("cashless","default_status")
+        # name_after,opt_id_after,opt_val_after,desc_after = get_bd_option_with_description("cashless","status_after_closing_bill")
+        opt_val_before = get_full_bd_option('cashless','default_status').id
+        opt_val_after = get_full_bd_option('cashless','status_after_closing_bill').id
         status_reserved = Status.objects.get(status=opt_val_before)
         status_new =  Status.objects.get(status=opt_val_after)
         if new_stage=='1':

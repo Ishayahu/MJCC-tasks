@@ -41,7 +41,9 @@ try:
 except ImportError:
     url_one_record=('',)
 
-from user_settings.functions import get_option_description, get_section_description, get_bd_option_with_description, get_option_with_name_and_description, get_bd_option_variants
+from user_settings.functions import  get_section_description, get_full_bd_option, get_full_option
+from user_settings.functions import get_bd_option_variants
+
 from djlib.error_utils import FioError, ErrorMessage, add_error, shows_errors
 
 # Делаем переводы
@@ -87,13 +89,13 @@ def show_settings(request):
     # Надо корректно обрабатывать настройки, связанные с БД!! например, место по умолчанию, статус по умолчанию
     #+сделать, чтобы при редактировании всё было правильно
     
-    class Setting():
-        def __init__(self, option, value, name, description, from_bd):
-            self.name = name
-            self.value = value.replace('\n','<p>')
-            self.description = description
-            self.option = option
-            self.from_bd = from_bd
+    # class Setting():
+        # def __init__(self, option, value, name, description, from_bd):
+            # self.name = name
+            # self.value = value.replace('\n','<p>')
+            # self.description = description
+            # self.option = option
+            # self.from_bd = from_bd
     class Settings_group():
         def __init__(self,name,description):
             self.name = name
@@ -106,7 +108,7 @@ def show_settings(request):
         setting_goup = Settings_group(section,get_section_description(section))
         for item in config.items(section):
             # Не включаем описания и названия опций
-            if item[0][-12:]=='_description' or item[0][-5:]=='_name':
+            if item[0][-12:]=='_description' or item[0][-5:]=='_name' or item[0][-5:]=='_help':
                 continue
             # Настройки, связанные со значениями в БД
             if item[0][:6]=='__bd__':
@@ -114,12 +116,15 @@ def show_settings(request):
                     option = item[0][12:]
                     # return name,opt_id,opt_val,desc
                     # Надо, чтобы при отображении в шаблоне редактировалось оно как список!
-                    name,opt_id,opt_val,desc = get_bd_option_with_description(section,option)
-                    setting_goup.settings.append(Setting(option, opt_id+";"+opt_val, name, desc, 1))
+                    # name,opt_id,opt_val,desc = get_bd_option_with_description(section,option)
+                    full_option = get_full_bd_option(section,option)
+                    # setting_goup.settings.append(Setting(option, opt_id+";"+opt_val, name, desc, 1))
+                    setting_goup.settings.append(full_option)
             # Все остальные настройки
             else: 
-                setting_goup.settings.append(Setting(*get_option_with_name_and_description(section,item[0]), from_bd=0))
-            
+                # setting_goup.settings.append(Setting(*get_option_with_name_and_description(section,item[0]), from_bd=0))
+                full_option = get_full_option(section,item[0])
+                setting_goup.settings.append(full_option)
         settings.append(setting_goup)
     return (True,('show_settings.html', {},{'settings':settings,},request,app))
 @login_required
@@ -149,7 +154,9 @@ def save_from_bd(request,section,option):
         config.readfp(codecs.open(config_file, encoding='utf-8', mode='r'))
         config.set(section,"__bd__option__"+option,value)
         config.write(codecs.open(config_file, encoding='utf-8', mode='w'))
-        name,opt_id,opt_val,desc = get_bd_option_with_description(section,option)
+        # name,opt_id,opt_val,desc = get_bd_option_with_description(section,option)
+        opt_id = get_full_bd_option(section,option).id
+        opt_val = get_full_bd_option(section,option).value
         returning_value = str(opt_id)+";"+opt_val
         return (True,('OK.html', {},{'html':returning_value},request,app))
     return (True,('Error.html', {},{'html':'метод не POST! Нифига не сделано!'},request,app))
@@ -160,7 +167,8 @@ def edit_from_bd(request,section,option):
     lang,user,fio,method = get_info(request)
     config=ConfigParser.RawConfigParser()
     config.read(config_file)
-    name,opt_id,opt_val,desc = get_bd_option_with_description(section,option)
+    # name,opt_id,opt_val,desc = get_bd_option_with_description(section,option)
+    opt_id = get_full_bd_option(section,option).id
     opts = get_bd_option_variants(section,option)
     for opt in opts:
         if str(opt.id) == str(opt_id):
