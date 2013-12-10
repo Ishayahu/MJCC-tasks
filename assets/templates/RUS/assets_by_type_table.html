@@ -10,9 +10,9 @@
             <th>Место</th>
         </tr>
         {% for item in assets %}
-            <tr id="asset_id_{{item.id}}">
+            <tr id="asset_id_{{item.id}}"  class="{% cycle 'row1' 'row2' %}">
                 <td>{{item.id}}</td>
-                <td>{{item.model}}</td>
+                <td><a href="/asset/{{item.id}}/">{{item.model}}</a></td>
                 <td>{{item.price}}</td>
                 <td>{{item.status.status}}</td>
                 <td>{{item.garanty.number}}</td>

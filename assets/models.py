@@ -14,7 +14,7 @@ class Asset(models.Model):
     # current_place = models.ForeignKey('Place_Asset',related_name='for_asset')
     model = models.CharField(max_length=140)
     status = models.ForeignKey('Status')
-    claim = models.ForeignKey('Claim',blank=True, null=True)
+    # claim = models.ForeignKey('Claim',blank=True, null=True)
     guarantee_period = models.IntegerField()
     note = models.TextField(blank=True, null=True)
     price = models.DecimalField(decimal_places=2, max_digits=8)

@@ -259,7 +259,7 @@ def asset_delete(request,id,type_id):
 @multilanguage
 @admins_only
 def asset_edit(request,id):
-    raise NotImplementedError("Добавить возможность введения новой модели")            
+    # raise NotImplementedError("Добавить возможность введения новой модели")            
 
     lang,user,fio,method = get_info(request)
     try:
@@ -349,10 +349,12 @@ def asset_save_edited(request,asset_id):
     new_place = Place.objects.get(id=request.POST.get('place_'+asset_id))
     # raise NotImplementedError("Надо реализовать правильное изменение места. см комментарий в коде")
     # raise NotImplementedError("Надо брать последнее место") ---------- ВРОДЕ РАБОТАЕТ
-    asset.place_asset_set.latest('installation_date').drawdown_date = datetime.datetime.now()
+    last_place_asset = asset.place_asset_set.latest('installation_date')
+    last_place_asset.drawdown_date = datetime.datetime.now()
     # raise NotImplementedError("Надо запрашивать причину изменения") ---------- ВРОДЕ РАБОТАЕТ
     # то есть, при изменении места надо вызывать обработчик, который сохраняет первое значение (если изменение на него - то отмена), и добавляет к форме поле причины, где-то внизу, чтобы его тоже можно было редактировать
-    asset.place_asset_set.latest('installation_date').reason_of_drawdown = request.POST.get('reason_of_drawdown_'+asset_id)
+    last_place_asset.reason_of_drawdown = request.POST.get('reason_of_drawdown_'+asset_id)
+    last_place_asset.save()
     new_place_asset = Place_Asset(installation_date = datetime.datetime.now(),
                                     asset = asset,
                                     place = new_place,

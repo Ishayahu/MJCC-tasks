@@ -361,6 +361,7 @@ def show_bill(request,type,id):
 @login_required
 @multilanguage
 @admins_only
+@shows_errors
 def all_deleted_bills(request):
     lang,user,fio,method = get_info(request)
     cashs =  Cash.objects.filter(payment__in=Payment.objects.filter(deleted=True))
@@ -383,3 +384,30 @@ def assets_by_type(request,type_id):
         type_name_asset_type = u"Такого типа акивов нет"
         asset_types=[]
     return (True,('assets_by_type.html',{},{'type_name':type_name_asset_type,'asset_types':asset_types,'type_id':type_id},request,app))
+@login_required
+@multilanguage
+@shows_errors
+def asset_view(request,asset_id):
+    def add_months(sourcedate,months):
+        import calendar
+        month = sourcedate.month - 1 + months
+        year = sourcedate.year + month / 12
+        month = month % 12 + 1
+        day = min(sourcedate.day,calendar.monthrange(year,month)[1])
+        return datetime.date(year,month,day)
+    lang,user,fio,method = get_info(request)
+    asset = Asset.objects.get(id=asset_id)
+    places = asset.place_asset_set.all().order_by('-installation_date')
+    date_of_asset = None
+    if asset.payment.cashless:
+        if asset.payment.cashless.date_of_assets:
+            date_of_asset = asset.payment.cashless.date_of_assets
+    else:
+        date_of_asset = asset.payment.cash.date
+    if date_of_asset:
+        asset.garanty_end = add_months(date_of_asset,asset.guarantee_period)
+    else:
+        asset.garanty_end = u'Ещё не поступил в распоряжение'
+    return (True,('asset.html',{},{'asset':asset,'places':places},request,app))
+    
+    

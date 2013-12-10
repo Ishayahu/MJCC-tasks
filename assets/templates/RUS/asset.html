@@ -1,0 +1,107 @@
+{% extends "RUS/base_assets.html" %}
+{% block title %}
+    Список активов по типу {{type_name}}
+{% endblock %}
+{% block style %}
+<!--     <script type="text/javascript" src="/media/js/dropdown.js"></script>
+    <script type="text/javascript" src="/media/js/sending.js"></script>
+    <link rel="stylesheet" type="text/css" href="/media/css/dropdown.css" /> -->
+    <link rel="stylesheet" type="text/css" href="/media/css/main.css" />
+
+    <script>
+    </script>
+{% endblock %}
+
+{% block content %}
+    {% if admin %}
+    
+    {% endif %}
+    <table border=1>
+        <tr>
+            <th colspan=2>
+                Описание актива № {{asset.id}}, {{asset.model}}
+            </th>
+        </tr>
+        <tr>
+            <td>
+                Тип актива
+            </td>
+            <td>
+                {{asset.asset_type.asset_type}}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Номер гарантии
+            </td>
+            <td>
+                {{asset.garanty.number}}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Статус
+            </td>
+            <td>
+                {{asset.status.status}}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Завершение гарантии
+            </td>
+            <td>
+                {{asset.garanty_end}}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Цена
+            </td>
+            <td>
+                {{asset.price}}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Примечание
+            </td>
+            <td>
+                {{asset.note}}
+            </td>
+        </tr>
+    </table>
+    
+    <table border=1>
+        <tr>
+            <th colspan=5>
+                История перемещения актива
+            </th>
+        </tr>
+        <tr>
+            <td>ID</td>
+            <td>Место</td>
+            <td>Дата установки</td>
+            <td>Дата перемещения</td>
+            <td>Причина перемещения</td>
+        </tr>
+        {% for place in places %}
+            <tr class="{% cycle 'row1' 'row2' %}">
+                <td>{{place.id}}</td>
+                <td>{{place.place}}</td>
+                <td>{{place.installation_date}}</td>
+                <td>
+                    {% if place.drawdown_date|default_if_none:"" %}
+                        {{place.drawdown_date}}
+                    {% endif %}
+                </td>
+                <td>
+                    {% if place.reason_of_drawdown|default_if_none:"" %}
+                        {{place.reason_of_drawdown}}
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+
+{% endblock %}

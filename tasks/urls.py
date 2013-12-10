@@ -87,6 +87,8 @@ urlpatterns = patterns('',
     url(r'^all_deleted_bills/$', assets.views.all_deleted_bills),
     # Просмотр активов по категориям
     url(r'^assets_by_type/(\d*)/$', assets.views.assets_by_type),
+    # Просмотр актива
+    url(r'^asset/(\d*)/$', assets.views.asset_view),
 # API для работы с активами
     # Выдача формы добавления актива, в качестве параметра - категория актива, префикс к имени полей формы (число)
     url(r'^api/get_asset_add_form/(\d+)/(\d*)/$', assets.api.get_asset_add_form),

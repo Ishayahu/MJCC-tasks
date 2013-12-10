@@ -47,7 +47,7 @@
             var url2 = "/api/get_asset_add_form_script/"+asset_type_id+"/"+asset_form_number+"/";
             $("#script_for_form").load(url2,function(result){
                                                 //$("#script_for_form").append(result)
-                                                console.log(result)
+                                                //console.log(result)
                                                 test = result
                                                 $("#script_for_form").append(test.slice(9).slice(0,-11))
                                             })
