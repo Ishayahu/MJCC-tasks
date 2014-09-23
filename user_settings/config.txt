@@ -8,7 +8,7 @@ stages_name=Этапы счёта
 stage_for_budget_description=Этап, по которому будет считаться, к какому месяцу относится
 stage_for_budget_name=Этап для бюджета
 stage_for_budget = 1
-stage_for_budget_help = 1
+stage_for_budget_help = Этап, по которому будет считаться, к какому месяцу относится
 
 text: В приёмную господина Вайсберга
     Прошу Вас разрешить оплату счёта {0[number]} от {0[date]}

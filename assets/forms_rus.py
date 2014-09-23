@@ -9,7 +9,7 @@ from django.contrib.admin import widgets
 ##from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import ugettext as _
 
-from assets.models import Asset, Payment, Cash, Cashless, Contractor, Garanty, Asset_type, Status, Budget, Repair, Place_Asset, Place, Cartridge, Cartridge_Model_General_Model, Cartridge_General_Model_Printer_Model, Cartridge_Printer, ROM, Cooler, Storage, Acoustics, Telephone, Battery, Optical_Drive, Printer, Power_suply, Motherboard, CPU, Case, Claim, CKC, Telephone_Works
+from assets.models import Asset, Payment, Cash, Cashless, Contractor, Garanty, Asset_type, Status, Budget, Repair, Place_Asset, Place, Cartridge, Cartridge_Model_General_Model, Cartridge_General_Model_Printer_Model, Cartridge_Printer, ROM, Cooler, Storage, Acoustics, Telephone, Battery, Optical_Drive, Printer, Power_suply, Motherboard, CPU, Case, Claim, CKC, Telephone_Works, UPS
 from todoes.models import  Person #, Task, ProblemByWorker, ProblemByUser, Categories, RegularTask, Activity, Note, Resource, File,
 import datetime
 
@@ -35,6 +35,8 @@ ASSET_TYPES_CATALOGUE_NAME = (
         ('Case','Case'),
         ('CKC','CKC'),
         ('Telephone_Works','Telephone_Works'),
+        ('UPS','UPS'),
+        ('Delivery','Delivery'),
 
         )
 inp_f=( '%d-%m-%Y %H:%M:%S',     # '2006-10-25 14:30:59'
@@ -104,4 +106,36 @@ class NewModel_CKC(ModelForm):
 class NewModel_Telephone_Works(ModelForm):
     class Meta:
         model = Telephone_Works
+        localized_fields = '__all__'
+class NewModel_UPS(ModelForm):
+    class Meta:
+        model = UPS
+        localized_fields = '__all__'
+class NewModel_Storage(ModelForm):
+    class Meta:
+        model = Storage
+        localized_fields = '__all__'
+class NewModel_Cooler(ModelForm):
+    class Meta:
+        model = Cooler
+        localized_fields = '__all__'
+class NewModel_ROM(ModelForm):
+    class Meta:
+        model = ROM
+        localized_fields = '__all__'
+class NewModel_Power_suply(ModelForm):
+    class Meta:
+        model = Power_suply
+        localized_fields = '__all__'
+class NewModel_Motherboard(ModelForm):
+    class Meta:
+        model = Motherboard
+        localized_fields = '__all__'
+class NewModel_CPU(ModelForm):
+    class Meta:
+        model = CPU
+        localized_fields = '__all__'
+class NewModel_Case(ModelForm):
+    class Meta:
+        model = Case
         localized_fields = '__all__'

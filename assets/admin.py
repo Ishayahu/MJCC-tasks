@@ -1,7 +1,8 @@
 from django.contrib import admin
-from assets.models import Asset, Payment, Cash, Cashless, Contractor, Garanty, Asset_type, Status, Budget, Repair, Place_Asset, Place, Cartridge, Cartridge_Model_General_Model, Cartridge_General_Model_Printer_Model, Cartridge_Printer, ROM, Cooler, Storage, Acoustics, Telephone, Battery, Optical_Drive, Printer, Power_suply, Motherboard, CPU, Case,Delivery,CKC,Telephone_Works
+from assets.models import Asset, Payment, Cash, Cashless, Contractor, Garanty, Asset_type, Status, Budget, Repair, Place_Asset, Place, Cartridge, Cartridge_Model_General_Model, Cartridge_General_Model_Printer_Model, Cartridge_Printer, ROM, Cooler, Storage, Acoustics, Telephone, Battery, Optical_Drive, Printer, Power_suply, Motherboard, CPU, Case,Delivery,CKC,Telephone_Works, UPS
 
 admin.site.register(Asset)
+
 admin.site.register(Payment)
 admin.site.register(Cash)
 admin.site.register(Cashless)
@@ -32,6 +33,7 @@ admin.site.register(Case)
 admin.site.register(CKC)
 admin.site.register(Telephone_Works)
 admin.site.register(Delivery)
+admin.site.register(UPS)
 
 
 

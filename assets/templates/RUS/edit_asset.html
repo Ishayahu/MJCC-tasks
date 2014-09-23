@@ -25,14 +25,22 @@
     <td>
         <select name="status_{{item.id}}">
             {% for status in statuses %}
-                <option value="{{status.id}}">{{status.status}}</option>
+                {% if status.selected %}
+                    <option value="{{status.id}}" selected="selected">{{status.status}}</option>
+                {% else %}
+                    <option value="{{status.id}}">{{status.status}}</option>
+                {% endif %}
             {% endfor %}
         </select>
     </td>
     <td>
         <select name="garanty_{{item.id}}">
             {% for garanty in garantys %}
-                <option value="{{garanty.id}}">{{garanty.number}}</option>
+                {% if garanty.selected %}
+                    <option value="{{garanty.id}}" selected="selected">{{garanty.number}}</option>
+                {% else %}
+                    <option value="{{garanty.id}}">{{garanty.number}}</option>
+                {% endif %}
             {% endfor %}
         </select>    
     </td>

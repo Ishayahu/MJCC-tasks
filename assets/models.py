@@ -157,8 +157,10 @@ class Storage(models.Model):
     firm = models.CharField(max_length=50, choices = catalogue.Storage_firms)
     form_factor = models.CharField(max_length=10, choices = catalogue.Storage_form_factor)
     volume = models.IntegerField()
-    interfaces = models.TextField(blank = True, null = True)
+    interfaces = models.TextField(blank = True, null = True) #?
     rpm = models.CharField(max_length=20, choices = catalogue.Storage_rpm)
+
+    # TODO: добавить кеш
     # В Mb/сек
     v_read = models.IntegerField()
     v_write = models.IntegerField()
@@ -235,8 +237,45 @@ class Power_suply(models.Model):
     ATX_version = models.CharField(max_length=10, choices = catalogue.Power_ATX_version)
     number_of_sata = models.DecimalField(max_digits=1,decimal_places=0)
     number_of_molex = models.DecimalField(max_digits=1,decimal_places=0)
-class Motherboard(models.Model):
+class UPS(models.Model):
+    """
+    модель
+    производитель
+    количество комп. разъёмов с батареей
+    количество комп. разъёмов без батареи
+    количество розеток с батарей
+    количество розеток без батареи
+    защита телефонии
+    защита rj-45
+    выходная мощность
+    время работы
+    RS-232
+    USB
+    ethernet
+    LCD-дисплей
+    вес
+    тип
+    """
     model_name = models.CharField(max_length=50)
+    firm = models.CharField(max_length=30, choices = catalogue.UPS_firm)
+    number_of_comp_connectors_with_batt = models.IntegerField()
+    number_of_comp_connectors_without_batt = models.IntegerField()
+    number_of_outlets_with_batt = models.IntegerField()
+    number_of_outlets_without_batt = models.IntegerField()
+    telephone_line_protection = models.BooleanField(default=False)
+    lan_protection = models.BooleanField(default=False)
+    output_power = models.IntegerField()
+    working_time = models.DecimalField(max_digits=4,decimal_places=2)
+    rs232_interface = models.BooleanField(default=False)
+    usb_interface = models.BooleanField(default=False)
+    ethernet_interface = models.BooleanField(default=False)
+    lcd_display = models.BooleanField(default=False)
+    weight = models.DecimalField(max_digits=4,decimal_places=2)
+    type = models.CharField(max_length=30, choices = catalogue.UPS_types)
+class Delivery(models.Model):
+    model_name = models.CharField(max_length=50)
+class Motherboard(models.Model):
+    model_name = models.CharField(max_length=50, verbose_name=_("Model name"))
     firm = models.CharField(max_length=20, choices = catalogue.Motherboard_firm)
     socket = models.CharField(max_length=20, choices = catalogue.Sockets)
     chipset = models.CharField(max_length=20, choices = catalogue.Motherboard_chipset)
@@ -245,7 +284,7 @@ class Motherboard(models.Model):
     rom_number = models.IntegerField()
     rom_max_value = models.IntegerField()
     rom_frequency = models.CharField(max_length=50)
-    FSB  = models.CharField(max_length=50)
+    FSB  = models.CharField(max_length=50, blank = True, null = True)
     FDD = models.IntegerField()
     IDE = models.IntegerField()
     COM = models.IntegerField()
@@ -269,8 +308,8 @@ class Motherboard(models.Model):
     LPT = models.IntegerField()
     PS_2 = models.IntegerField()
     DisplayPort = models.IntegerField()
-    SupportedROM = models.TextField()
-    SupportedCPU = models.TextField()
+    SupportedROM = models.TextField(blank = True, null = True)
+    SupportedCPU = models.TextField(blank = True, null = True)
 class CPU(models.Model):
     model_name = models.CharField(max_length=50)
     firm = models.CharField(max_length=20, choices = catalogue.CPU_firm)
@@ -284,6 +323,7 @@ class CPU(models.Model):
     core_number = models.IntegerField()
     VT = models.BooleanField(default=False)
     integrated_graphics = models.BooleanField(default=False)
+    # TODO: добавить описание графики
     TPD = models.CharField(max_length=20)
 class Case(models.Model):
     model_name = models.CharField(max_length=50)

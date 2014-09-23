@@ -7,7 +7,7 @@ import json
 
 from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.shortcuts import render_to_response
-from assets.models import Asset, Payment, Cash, Cashless, Contractor, Garanty, Asset_type, Status, Budget, Repair, Place_Asset, Place, Cartridge, Cartridge_Model_General_Model, Cartridge_General_Model_Printer_Model, Cartridge_Printer, ROM, Cooler, Storage, Acoustics, Telephone, Battery, Optical_Drive, Printer, Power_suply, Motherboard, CPU, Case
+from assets.models import Asset, Payment, Cash, Cashless, Contractor, Garanty, Asset_type, Status, Budget, Repair, Place_Asset, Place, Cartridge, Cartridge_Model_General_Model, Cartridge_General_Model_Printer_Model, Cartridge_Printer, ROM, Cooler, Storage, Acoustics, Telephone, Battery, Optical_Drive, Printer, Power_suply, Motherboard, CPU, Case, UPS
 from todoes.models import  Person #, Task, ProblemByWorker, ProblemByUser, Categories, RegularTask, Activity, Note, Resource, File,
 # from assets.forms_rus import NewAssetForm_RUS, NewContractorForm_RUS
 # from assets.forms_eng import NewAssetForm_ENG, NewContractorForm_ENG
@@ -263,7 +263,7 @@ def asset_delete(request,id,type_id):
 @multilanguage
 @admins_only
 def asset_edit(request,id):
-    # raise NotImplementedError("Добавить возможность введения новой модели")            
+    # raise NotImplementedError("Добавить возможность введения новой модели")
 
     lang,user,fio,method = get_info(request)
     try:
@@ -280,9 +280,16 @@ def asset_edit(request,id):
     statuses = Status.objects.all()
     garantys = Garanty.objects.all()
     places = Place.objects.all()
+    # готовим всё, чтобы уже имеющиеся данные были установлены по умолчанию
     for place in places:
         if place == a.place_asset_set.latest('installation_date').place:
             place.selected = True
+    for status in statuses:
+        if status.id == a.status.id:
+            status.selected = True
+    for garanty in garantys:
+        if garanty.id == a.garanty.id:
+            garanty.selected = True
     return (True,('edit_asset.html', {},{'models':asset_type_models,'statuses':statuses,'garantys':garantys,'places':places,'asset_id':id,'item':a},request,app))
 @login_required
 @multilanguage
@@ -415,7 +422,7 @@ def json_price_and_warranty(request):
             a={'price':0,'warranty':0}
         a=json.dumps(a)
         return (False,HttpResponse(a, mimetype="application/json"))
-        
+
 @login_required
 @multilanguage
 @shows_errors
@@ -445,9 +452,12 @@ def save_new_model(request,asset_type_id):
     asset_type = Asset_type.objects.get(id=asset_type_id)
     form_name = 'NewModel_'+asset_type.catalogue_name
 ##    print form_name
+    aaa = request.method
+    #raise NotImplementedError('ERROR')
     if request.method == 'POST':
         # f = ArticleForm(request.POST)
         f = get_localized_form(form_name,app,request)(request.POST)
+        aaa = f.is_valid()
         if f.is_valid():
             # Save a new object from the form's data.
 ##            print form_name
@@ -455,7 +465,7 @@ def save_new_model(request,asset_type_id):
             new_model=f.save()
             return (True,('OK.html', {},{'html':u'Модель '+new_model.model_name+u' успешно добавлена в базу'},request,app))
         else:
-##            print "Not valid"
+            raise NotImplementedError(f.errors)
             pass
     return (True,('OK.html', {},{'html':u'Случилась неведомая фигня в функции api.save_new_model'},request,app))
 @login_required
@@ -486,8 +496,8 @@ def cashless_edit_stages(request,bill_number,stage_name,new_stage,not_redirect):
         # name_after,opt_id_after,opt_val_after,desc_after = get_bd_option_with_description("cashless","status_after_closing_bill")
         opt_val_before = get_full_bd_option('cashless','default_status').id
         opt_val_after = get_full_bd_option('cashless','status_after_closing_bill').id
-        status_reserved = Status.objects.get(status=opt_val_before)
-        status_new =  Status.objects.get(status=opt_val_after)
+        status_reserved = Status.objects.get(id=opt_val_before)
+        status_new =  Status.objects.get(id=opt_val_after)
         if new_stage=='1':
             cl.date_of_assets = today_dash
             cl.save()

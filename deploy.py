@@ -34,23 +34,24 @@ from fabric.api import *
 from fabric.contrib.console import confirm
 import sys
 # Словарь паролей
-env.passwords={'ishayahu@172.22.0.138':'aA111111',
-               'ishayahu@172.22.0.124':'aA111111'}
+env.passwords={'ishayahu@192.168.1.25':'aA111111','ishayahu@192.168.56.100':'aA111111'}
 env.shell='/bin/csh -c'
 # папка с fab файлом
-deployment_folder = "E:\\Dropbox\\scripts\\MJCC-tasks\\"
+# deployment_folder = '/usr/home/ishayahu/docsrv/scripts/MJCC-tasks/'
+deployment_folder = "C:\\Dropbox\\Dropbox\\scripts\\MJCC-tasks\\"
 # папка с исходниками в локальном git репозитории
-source_folder = r'E:\\Dropbox\\scripts\\MJCC-tasks\\'
+# source_folder = '/usr/home/ishayahu/docsrv/scripts/MJCC-tasks/'
+source_folder = r'C:\\Dropbox\\Dropbox\\scripts\\MJCC-tasks\\'
 # Сервера для выполнения задачи
-servers= {'test':['ishayahu@172.22.0.138',],
-          'deploy' : ['ishayahu@172.22.0.124',]
+servers= {'test':['ishayahu@192.168.56.100',],
+          'deploy' : ['ishayahu@192.168.1.25',]
           }
 
-servers_ip= {'test':'172.22.0.138',
-          'deploy' : '172.22.0.124'
+servers_ip= {'test':'192.168.56.100',
+          'deploy' : '192.168.1.25'
           }
-bds_ip= {'test':'172.22.0.138',
-          'deploy' : '172.22.0.123'
+bds_ip= {'test':'192.168.56.103',
+          'deploy' : '192.168.1.24'
           }
 
 def south_migrate(app,project):
@@ -61,7 +62,7 @@ def south_migrate(app,project):
         ans = prompt('Продолжаем?', default='Д')
         if ans == 'Д':
             run('python manage.py migrate '+app)
-        
+
 def new_branch(branch=''):
     """
     Создаёт новую ветку branch
@@ -71,7 +72,7 @@ def new_branch(branch=''):
         return
     local ('git branch %s' % branch)
     local ('git checkout %s' % branch)
-    
+
 def switch_branch(branch=''):
     """
     Переключается на ветку branch
@@ -228,7 +229,7 @@ INSTALLED_APPS = (
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.auth',
-    
+
     # 'django.contrib.sites',
     'django.contrib.messages',
     # 'django.contrib.staticfiles',
@@ -319,13 +320,7 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 def start_deploy_server(branch='', directory='',github='', project='',type_of_server='',e_mail='',e_psswd=''):
     """
-    Задача, подготавливающая сервер к разворачиванию на нём бранча
-    branch проекта (не приложения) project. Код из репозитория github
-    будет выгружаться в каталог directory
-
-    Дополнительно скачиваем библиотеку djlib
-    https://github.com/Ishayahu/djlib.git
-    и копируем её в папку с проектом
+    Задача, подготавливающая сервер к разворачиванию на нём бранча branch проекта (не приложения) project. Код из репозитория github будет выгружаться в каталог directory
     """
     # Создаём каталог, куда будут разворачиваться исходники
     env.hosts=servers[type_of_server][0]
@@ -334,13 +329,6 @@ def start_deploy_server(branch='', directory='',github='', project='',type_of_se
         # надо проверить, есть ли папка, и если есть - удалить её
         run('rm -rdf %s' % directory)
         run('mkdir %s' % directory)
-        Получаем библиотеки для django
-        run('mkdir djlib')
-         # Добавляем удалённый репозиторий github под имененм origin и настраиваем отслеживание на бранч branch
-            run('git remote add origin https://github.com/Ishayahu/djlib.git')
-            # Получаем файлы
-            run('git fetch')
-
         # Проверяем, где находимся
         run('pwd')
         # Переходим в созданный каталог
@@ -361,12 +349,9 @@ def start_deploy_server(branch='', directory='',github='', project='',type_of_se
                         make_and_send_settings(host=bd_ip,port='5432',email_host='smtp.gmail.com',email_port='25',email_user=e_mail,email_password=e_psswd,where_to_place='~/tasks/tasks/',srv_ip=srv_ip)
                     if type_of_server=='test':
                         make_and_send_settings(host=bd_ip,port='5432',email_host='smtp.gmail.com',email_port='25',email_user=e_mail,email_password=e_psswd,where_to_place='~/tasks/tasks/',srv_ip=srv_ip)
-        # Копируем библиотеки в каталог проекта
-        cd('..')
-        run('mv djlib/ %s/' % directory)
         # Запускаем сервер для проверки
         #run('python manage.py runserver 0.0.0.0:8080')
-    
+
 def deploy_server(directory='', project='',type_of_server='',e_mail='',e_psswd=''):
     """
     Обновляем код на тестовом сервере
@@ -409,7 +394,7 @@ def commit_branch(branch=''):
             local("git commit -m '%s'" % message)
             # Выгружаем на сервер
             local("git push origin %s" % branch)
-        
+
 def push_commit(branch=''):
     """
     Выгружаем на удалённый сервер нужный бранч без коммита
@@ -425,7 +410,7 @@ def push_commit(branch=''):
         if ans == 'Д':
             # Выгружаем код
             local("git push origin %s" % branch)
-        
+
 def change_source_test_to_master(branch=''):
     """
     Сливаем тестовый бранч и мастер и выгружаем на сервер кода. То есть перемещаем метку мастер на тестовый код
@@ -439,4 +424,4 @@ def change_source_test_to_master(branch=''):
         # Выгружаем код
         local('git push origin master')
 
-    
+
