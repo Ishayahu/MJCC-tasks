@@ -1,13 +1,17 @@
+{# ver 2.1a @29-05-2015 #}
 {% extends "base.html" %}
 {% block title %}
     {{page_title}}
 {% endblock %}
 {% block style %}
     <script>
-        function cronize(){ 
-            var time_field = document.getElementsByName("time").item(0);
-            var hours = time_field.value.slice(0,2)
-            var minutes = time_field.value.slice(3,5)
+        function cronize(){
+            try {
+                var time_field = document.getElementsByName("time").item(0);
+                var hours = time_field.value.slice(0, 2)
+                var minutes = time_field.value.slice(3, 5)
+            }
+            catch(err) {}
             //alert(hours)
             //alert(minutes)
             var repeat_type_options = document.getElementsByName("repeat_type");
@@ -107,14 +111,36 @@
                         cronized = minutes+'\t'+hours+'\t'+'*'+'\t*\t*'}
                     else {
                         cronized = minutes+'\t'+hours+'\t'+cronized.slice(1)+'\t*\t*'}*/
+                    //break
+                case 3:
+                    //hardcore-style
+                    var crontabs = document.getElementsByName('crontab');
+                    for (x = 0; x < crontabs.length; x++) {
+                        cronized = cronized + crontabs.item(x)
+                                .value+'\t';
+                    }
+                    cronized = cronized.slice(0,-1);
                     break
             }
             var html = "<input type='hidden' name='cronized' value='"+cronized+"' />"
             document.getElementById('cron').innerHTML = html;
         }
         function write_selection_field(div_id,text){
-            var time_field = document.getElementsByName("time").item(0);
-            var time_value = time_field.value
+            try {
+                var time_field = document.getElementsByName("time").item(0);
+                var time_value = time_field.value;
+                var hours = time_value.split(":")[0];
+                var mins = time_value.split(":")[1];
+            }
+            catch (err)
+            {
+                var hours
+                        =
+                        document.getElementsByName('crontab').item(1).value;
+                var mins =
+                        document.getElementsByName('crontab').item(0).value;
+                var time_value = hours+":"+mins;
+            }
             switch (text) {
                 case 'По дням':
                     html = "<input type='time' name='time' value='"+time_value+"'/><table border='1'> <tr> <td> <input type='checkbox' value='1' name='day' />1 </td> <td> <input type='checkbox' value='2' name='day' />2 </td> <td> <input type='checkbox' value='3' name='day' />3 </td> <td> <input type='checkbox' value='4' name='day' />4 </td> <td> <input type='checkbox' value='5' name='day' />5 </td> <td> <input type='checkbox' value='6' name='day' />6 </td> <td> <input type='checkbox' value='7' name='day' />7 </td> </tr> <tr> <td> <input type='checkbox' value='8' name='day' />8 </td> <td> <input type='checkbox' value='9' name='day' />9 </td> <td> <input type='checkbox' value='10' name='day' />10 </td> <td> <input type='checkbox' value='11' name='day' />11 </td> <td> <input type='checkbox' value='12' name='day' />12 </td> <td> <input type='checkbox' value='13' name='day' />13 </td> <td> <input type='checkbox' value='14' name='day' />14 </td> </tr> <tr> <td> <input type='checkbox' value='15' name='day' />15 </td> <td> <input type='checkbox' value='16' name='day' />16 </td> <td> <input type='checkbox' value='17' name='day' />17 </td> <td> <input type='checkbox' value='18' name='day' />18 </td> <td> <input type='checkbox' value='19' name='day' />19 </td> <td> <input type='checkbox' value='20' name='day' />20 </td> <td> <input type='checkbox' value='21' name='day' />21 </td> </tr> <tr> <td> <input type='checkbox' value='22' name='day' />22 </td> <td> <input type='checkbox' value='23' name='day' />23 </td> <td> <input type='checkbox' value='24' name='day' />24 </td> <td> <input type='checkbox' value='25' name='day' />25 </td> <td> <input type='checkbox' value='26' name='day' />26 </td> <td> <input type='checkbox' value='27' name='day' />27 </td> <td> <input type='checkbox' value='28' name='day' />28 </td> </tr> <tr> <td> <input type='checkbox' value='29' name='day' />29 </td> <td> <input type='checkbox' value='30' name='day' />30 </td> <td> <input type='checkbox' value='31' name='day' />31 </td> </tr> </table> "
@@ -126,7 +152,8 @@
                     html = "<input type='time' name='time' value='"+time_value+"'/><table border='1'> <tr> <td> <input type='checkbox' value='1' name='day' />1 </td> <td> <input type='checkbox' value='2' name='day' />2 </td> <td> <input type='checkbox' value='3' name='day' />3 </td> <td> <input type='checkbox' value='4' name='day' />4 </td> <td> <input type='checkbox' value='5' name='day' />5 </td> <td> <input type='checkbox' value='6' name='day' />6 </td> <td> <input type='checkbox' value='7' name='day' />7 </td> </tr> <tr> <td> <input type='checkbox' value='8' name='day' />8 </td> <td> <input type='checkbox' value='9' name='day' />9 </td> <td> <input type='checkbox' value='10' name='day' />10 </td> <td> <input type='checkbox' value='11' name='day' />11 </td> <td> <input type='checkbox' value='12' name='day' />12 </td> <td> <input type='checkbox' value='13' name='day' />13 </td> <td> <input type='checkbox' value='14' name='day' />14 </td> </tr> <tr> <td> <input type='checkbox' value='15' name='day' />15 </td> <td> <input type='checkbox' value='16' name='day' />16 </td> <td> <input type='checkbox' value='17' name='day' />17 </td> <td> <input type='checkbox' value='18' name='day' />18 </td> <td> <input type='checkbox' value='19' name='day' />19 </td> <td> <input type='checkbox' value='20' name='day' />20 </td> <td> <input type='checkbox' value='21' name='day' />21 </td> </tr> <tr> <td> <input type='checkbox' value='22' name='day' />22 </td> <td> <input type='checkbox' value='23' name='day' />23 </td> <td> <input type='checkbox' value='24' name='day' />24 </td> <td> <input type='checkbox' value='25' name='day' />25 </td> <td> <input type='checkbox' value='26' name='day' />26 </td> <td> <input type='checkbox' value='27' name='day' />27 </td> <td> <input type='checkbox' value='28' name='day' />28 </td> </tr> <tr> <td> <input type='checkbox' value='29' name='day' />29 </td> <td> <input type='checkbox' value='30' name='day' />30 </td> <td> <input type='checkbox' value='31' name='day' />31 </td> </tr> </table><br /> <table border='1'> <tr> <td> <input type='checkbox' value='0' name='wday' />Воскресенье </td> <td> <input type='checkbox' value='1' name='wday' />Понедельник </td> <td> <input type='checkbox' value='2' name='wday' />Вторник </td> <td> <input type='checkbox' value='3' name='wday' />Среда </td> <td> <input type='checkbox' value='4' name='wday' />Четверг </td> <td> <input type='checkbox' value='5' name='wday' />Пятница </td> <td> <input type='checkbox' value='6' name='wday' />Суббота </td> </tr></table> <br /><table border='1'> <tr> <td> <input type='checkbox' value='1' name='month' />Январь </td> <td> <input type='checkbox' value='2' name='month' />Февраль </td> <td> <input type='checkbox' value='3' name='month' />Март </td> <td> <input type='checkbox' value='4' name='month' />Апрель </td> <td> <input type='checkbox' value='5' name='month' />Май </td> <td> <input type='checkbox' value='6' name='month' />Июнь </td></tr><tr> <td> <input type='checkbox' value='7' name='month' />Июль </td><td> <input type='checkbox' value='8' name='month' />Август </td> <td> <input type='checkbox' value='9' name='month' />Сентябрь </td> <td> <input type='checkbox' value='10' name='month' />Окнябрь </td> <td> <input type='checkbox' value='11' name='month' />Ноябрь </td> <td> <input type='checkbox' value='11' name='month' />Декабрь </td></tr> </tr></table>"
                     break
                 case 'Hardcore-style':
-                    html = "<p title='Каждое поле, отделённое табуляцеией - отдельное поле ввода для удобства: минуты часы день месяц день_недели'>Формат ввода как в crontab.</p><input type='text' size='7' name='crontab' value=''/> <input type='text' size='7' name='crontab' value=''/> <input type='text' size='7' name='crontab' value=''/><input type='text' size='7' name='crontab' value=''/><input type='text' size='7' name='crontab' value=''/>"
+                    html =
+                            "<p title='Каждое поле, отделённое табуляцеией - отдельное поле ввода для удобства: минуты часы день месяц день_недели'>Формат ввода как в crontab.</p><input type='text' size='7' name='crontab' value='"+mins+"'/> <input type='text' size='7' name='crontab' value='"+hours+"'/> <input type='text' size='7' name='crontab' value=''/><input type='text' size='7' name='crontab' value=''/><input type='text' size='7' name='crontab' value=''/>"
                     break
             }
             document.getElementById(div_id).innerHTML = html;
