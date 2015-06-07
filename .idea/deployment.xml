@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PublishConfigData" uploadOnCheckin="049036e8-9922-4650-829c-2e121fe94200">
+  <component name="PublishConfigData">
     <serverData>
       <paths name="MJCC_TASK">
         <serverdata>
@@ -19,7 +19,5 @@
         </serverdata>
       </paths>
     </serverData>
-    <option name="myUploadOnCheckinName" value="MJCC_TASK" />
   </component>
 </project>
-

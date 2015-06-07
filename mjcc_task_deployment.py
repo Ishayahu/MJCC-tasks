@@ -1,6 +1,8 @@
 # -*- coding:utf-8 -*-
 # coding=<utf8>
 
+__version__ = '0.0.1'
+
 """
 start_deploy_server(branch='', directory='',github='', project=''):
 change_server_test_to_master(directory='', project='', github=''):
