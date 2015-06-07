@@ -1,0 +1,56 @@
+[cashless]
+section_description=Настрйки, относящиеся к счетам по безналичному расчёту
+
+stages=Песелев;Мотя;Борода;Бухгалтерия
+stages_description=Этапы, которые должен пройти счёт
+stages_name=Этапы счёта
+
+stage_for_budget_description=Этап, по которому будет считаться, к какому месяцу относится
+stage_for_budget_name=Этап для бюджета
+stage_for_budget = 1
+stage_for_budget_help = Этап, по которому будет считаться, к какому месяцу относится
+
+text: В приёмную господина Вайсберга
+    Прошу Вас разрешить оплату счёта {0[number]} от {0[date]}
+    На сумму {0[price]} руб
+    Целевое назначение - {0[what]}
+    Объект - {0[where]}
+    Своевременное предоставление документов гарантирую
+    Ответственное лица - {0[who]}
+    Контактные телефоны {0[phones]}
+    Дата {0[date2]}
+    Расписка в приёму документов по произведённой оплате:
+    Оригинал счёта
+    Договор
+    Акт
+    Накладная
+    Счёт-фактура
+text_description=Текст для сопроводительной записки к счёту
+text_name=Сопроводительная записка
+
+show_text=True
+show_text_description=Показывать выводить ли сопроводительную записку при вводе счёта
+show_text_name=Отображение сопроводительной записки
+
+
+__bd__name__default_place = Место по умолчанию
+__bd__option__default_place = 1
+__bd__app__default_place = assets
+__bd__model__default_place = Place
+__bd__field__default_place = place
+__bd__description__default_place = Место, которое выставляется по умолчанию для нового актива при создании счёта
+
+
+__bd__name__default_status = Статус добавления по умолчанию
+__bd__option__default_status = 2
+__bd__app__default_status = assets
+__bd__model__default_status = Status
+__bd__field__default_status = status
+__bd__description__default_status = Статус, который выставляется по умолчанию для нового актива при создании счёта
+
+__bd__name__status_after_closing_bill = Статус ввода по умолчанию
+__bd__option__status_after_closing_bill = 3
+__bd__app__status_after_closing_bill = assets
+__bd__model__status_after_closing_bill = Status
+__bd__field__status_after_closing_bill = status
+__bd__description__status_after_closing_bill = Статус, который выставляется по умолчанию для нового актива при закрытии счёта

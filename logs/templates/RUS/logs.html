@@ -1,0 +1,30 @@
+{% extends "RUS/base_assets.html" %}
+{% block title %}
+    Последние {{log_number}} логов
+{% endblock %}
+{% block style %}
+    
+{% endblock %}
+
+{% block content %}
+    <table border=1>
+        <tr>
+            <th>№№</th>
+            <th>Дата</th>
+            <th>Пользователь</th>
+            <th>Цель</th>
+            <th>Запрос</th>
+            <th>Выполнен</th>
+        </tr>
+        {% for item in logs %}
+            <tr>
+                <th>{{item.id}}</th>
+                <th>{{item.datetime}}</th>
+                <th>{{item.user}}</th>
+                <th>{{item.goal}}</th>
+                <th>{{item.request}}</th>
+                <th>{{item.done}}</th>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

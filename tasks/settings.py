@@ -33,7 +33,16 @@ TIME_ZONE = 'Europe/Moscow'
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
-LANGUAGE_CODE = 'en-us'
+
+LANGUAGE_CODE = 'ru'
+# LANGUAGE_CODE = 'en-us'
+gettext = lambda s: s
+
+LANGUAGES = (
+    ('ru', gettext('Russian')),
+    ('en', gettext('English')),
+)
+
 
 SITE_ID = 1
 
@@ -52,7 +61,7 @@ MEDIA_ROOT = '/usr/home/ishayahu/tasks/todoes/files/'
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
 # Examples: "http://media.lawrence.com/media/", "http://example.com/media/"
-MEDIA_URL = 'http://192.168.1.25:8080/media/'
+MEDIA_URL = 'http://172.22.0.124:8080/media/'
 
 # Absolute path to the directory static files should be collected to.
 # Don't put anything in this directory yourself; store your static files
@@ -131,6 +140,9 @@ INSTALLED_APPS = (
     # 'django.contrib.staticfiles',
     #'tasks.todoes', # Django 1.3
     'todoes', # Django 1.4
+    'assets', # assets bd
+    'logs', # Logging
+    'user_settings', # Settings
     # Uncomment the next line to enable the admin:
     'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
@@ -146,11 +158,25 @@ INSTALLED_APPS = (
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
+
+    # 'filters': {
+        # 'require_debug_false': {
+            # '()': 'django.utils.log.RequireDebugFalse'
+        # }
+    # },
+
     'handlers': {
         'mail_admins': {
             'level': 'ERROR',
             'class': 'django.utils.log.AdminEmailHandler'
-        }
+
+        },
+        # 'console':{
+            # 'level':'DEBUG',
+            # 'filters': ['require_debug_false'],
+            # 'class':'logging.StreamHandler',
+        # },
+
     },
     'loggers': {
         'django.request': {
@@ -158,6 +184,12 @@ LOGGING = {
             'level': 'ERROR',
             'propagate': True,
         },
+
+        # 'django.db.backends' : {
+            # 'handlers': ['console'],
+            # 'level': 'DEBUG',
+            # 'propagate': True,
+        # }
     }
 }
 
@@ -171,8 +203,10 @@ LOGGING = {
 EMAIL_USE_TLS = True
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 25
+
 EMAIL_HOST_USER = "mjcc.sms@gmail.com"
 EMAIL_HOST_PASSWORD = 'JnghfdrfCvcVRJWXXX'
+
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 

@@ -1,0 +1,60 @@
+{# 'models':asset_type_models,'statuses':statuses,'garantys':garantys,'places':places,'asset_id':id,'item':a #}
+    <td>{{item.id}}</td>
+    <td>
+        <input type="text" name="{{item.id}}_model" id="{{item.id}}_model" value="{{model.model_name}}" onclick="list_down2('{{item.id}}_models_dropdown')" onkeyup="model_{{item.id}}_autohelper()" onkeydown="return CheckTab(event);"/>
+        <input type="hidden" name="{{item.id}}_model_id" id="{{item.id}}_model_id" value="">
+        
+        <ul style="display:none" id="{{item.id}}_models_dropdown" class="dropdown_list">
+            {% for model in models %}
+                {# <li value="{{model.id}}" onclick="select_contractor({{c.id}},'{{c.name}}')">{{model.model_name}}</li> #}
+                <li value="{{model.id}}" onclick="select_element('{{model.id}}', '{{model.model_name}}', '{{item.id}}_model', '{{item.id}}_model_id','{{item.id}}_model_error','{{item.id}}_models_dropdown')">{{model.model_name}}</li>
+                
+                
+                
+            {% endfor %}            
+        </ul>
+        {% comment %}
+            <select name="model_{{item.id}}">
+                {% for model in models %}
+                    <option value="{{model.id}}">{{model.model_name}}</option>
+                {% endfor %}
+            </select>
+        {% endcomment %}
+    </td>
+    <td><input type="text" name="price_{{item.id}}" value="{{item.price}}" /></td>
+    <td>
+        <select name="status_{{item.id}}">
+            {% for status in statuses %}
+                {% if status.selected %}
+                    <option value="{{status.id}}" selected="selected">{{status.status}}</option>
+                {% else %}
+                    <option value="{{status.id}}">{{status.status}}</option>
+                {% endif %}
+            {% endfor %}
+        </select>
+    </td>
+    <td>
+        <select name="garanty_{{item.id}}">
+            {% for garanty in garantys %}
+                {% if garanty.selected %}
+                    <option value="{{garanty.id}}" selected="selected">{{garanty.number}}</option>
+                {% else %}
+                    <option value="{{garanty.id}}">{{garanty.number}}</option>
+                {% endif %}
+            {% endfor %}
+        </select>    
+    </td>
+    <td id="table_cell_with_place_for_{{item.id}}">
+        <select name="place_{{item.id}}" id="place_{{item.id}}" onchange="changing_place({{item.id}})">
+            {% for place in places %}
+                {% if place.selected %}
+                    <option value="{{place.id}}" selected="selected">{{place.place}}</option>
+                {% else %}
+                    <option value="{{place.id}}">{{place.place}}</option>
+                {% endif %}
+            {% endfor %}
+        </select>
+    </td>
+    <td>
+    <input type="button" value="Сохранить" onClick="send('/api/asset/save_edited/{{asset_id}}/','asset_edition_form','asset_id_{{asset_id}}','message');" />
+    </td>

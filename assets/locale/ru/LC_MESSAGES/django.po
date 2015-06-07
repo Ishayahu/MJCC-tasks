@@ -1,0 +1,79 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2013-10-28 21:13+0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)\n"
+
+#: forms_rus.py:74
+msgid "Check/Buy/Input date"
+msgstr "Дата чека/покупки/внесения"
+
+#: forms_rus.py:75
+msgid "Garanty number"
+msgstr "Номер гарантии"
+
+#: forms_rus.py:76
+msgid "Check number"
+msgstr "Номер чека"
+
+#: models.py:213
+msgid "Model name"
+msgstr "Название модели"
+
+#: models.py:214
+msgid "WiFi connection"
+msgstr "Может подключаться по WiFi"
+
+#: models.py:215
+msgid "Ethernet connection"
+msgstr "Может подключаться по ethernet"
+
+#: models.py:216
+msgid "Laser printing"
+msgstr "Лазерный?"
+
+#: models.py:217
+msgid "Firm"
+msgstr "Фирма производитель"
+
+#: models.py:218
+msgid "Colored?"
+msgstr "Цветной?"
+
+#: models.py:219
+msgid "Monochrome printing speed"
+msgstr "Скорость чёрно-белой печати"
+
+#: models.py:220
+msgid "Color printing speed"
+msgstr "Скорость цветной печати"
+
+#. Translators: This message appears on the home page only
+#: test_view.py:109 tets_view.py:107
+msgid "Message"
+msgstr "Сообщение"
+
+#: test_view.py:160
+msgid "Welcome to my site."
+msgstr "Добро пожаловать на мой сайт"
+
+#~ msgid "Russian"
+#~ msgstr "Русский"
+
+#~ msgid "English"
+#~ msgstr "Английский"

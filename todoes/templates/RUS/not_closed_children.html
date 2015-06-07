@@ -1,0 +1,45 @@
+{% extends "RUS/base.html" %}
+{% block title %}
+    Список тикетов
+{% endblock %}
+{% block style %}
+    <style>
+       .leftstr, .rightstr {
+        float: left; /* Обтекание справа */ 
+        width: 50%; /* Ширина текстового блока */ 
+       }
+       .rightstr {
+        text-align: right; /* Выравнивание по правому краю */ 
+       }
+        .center {
+        text-align: center; 
+        width: 100%; /* Ширина текстового блока */ 
+
+       }
+       .high_prior {
+       background-color: red;
+       }
+
+    </style>
+    <meta http-equiv="refresh" content="60">
+{% endblock %}
+
+{% block content %}
+    <p class="leftstr"><a href="/tasks/">К списку задач</a></p>
+    <p class="rightstr">Привет, {{ fio.fio }}!</p>
+
+    {% if my_error %}
+        {% for error in my_error %}
+            <h2>{{error}}</h2><br />
+        {% endfor %}
+    {% endif %}
+    У задачи <a href="../../task/one_time/{{task_to_close.id}}">{{task_to_close.name}}</a> есть незакрытые подзадачи. Закройте их сперва!
+    <ol>
+        {% for task in not_closed_children_tasks %}
+            <li>
+            <a href="../../task/one_time/{{task.id}}">
+                {{task.name}}
+            </a></li>
+        {% endfor %}
+    </ol>
+{% endblock %}

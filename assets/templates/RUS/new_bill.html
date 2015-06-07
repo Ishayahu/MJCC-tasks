@@ -1,0 +1,78 @@
+﻿{% extends "RUS/base_assets.html" %}
+{% block title %}
+    Новый счёт
+{% endblock %}
+{% block style %}
+    {# Для выпадающего списка с возможность ввода #}
+        <script type="text/javascript" src="/media/js/dropdown.js"></script>
+        <link rel="stylesheet" type="text/css" href="/media/css/dropdown.css" />
+        <script type="text/javascript" src="/media/js/sending.js"></script>
+    {# нужно для добавления нового поставщика. Проверка изменения значения поля и обработка ввода нового поставщика проводится в скрипте в get_contractor_list.html #}
+    <script type="text/javascript" src="/media/js/bill_contractor.js"></script>
+    {# нужно для работы с активами #}
+    <script type="text/javascript" src="/media/js/bill_assets.js"></script>
+    <style>
+    </style>
+{% endblock %}
+{% block content %}
+    <div id="message">
+        </div>
+    <div id="content_to_hide">
+        {# Если безнал #}
+        {% if stages %}
+            Счёт будет записан со следующими этапами оплаты: {{stages}}
+        {% endif %}
+        {% if form.errors %}
+        {#    {{form.errors}} #}
+        {% endif %}
+        {{message}}
+        <form action="" method="post" id="bill_form">
+            {% csrf_token %}
+            <input type="hidden" id="max_asset_form_number" name="max_asset_form_number" value=0 />
+            <table border=1>
+                <tr>
+                    <th>
+                        <label for="contractor">Поставщик:</label>
+                    </th>
+                    <td>
+                        <ul class="errorlist" id="contractor_error">
+                            <li>Обязательное поле.</li>
+                        </ul>
+                        <div id="contractors_list">
+                            {{contractors_list|safe}}
+                        </div>
+                    </td>
+                </tr>
+                {{ NewCashBillForm.as_table }}
+            </table>
+            {# сюда мы будем бросать кости - активы в чеке/счёте #}
+            <div id="bill_assets">
+            </div>
+            {# Список формируется через api get_asset_type_list с id=asset_type_id #}
+            {{asset_types_list|safe}}
+            <input type="button" value="+" onclick="add_asset($('#asset_type_id option:selected').val())" />
+            # TODO: Надо проверять валидность посылаемых данных
+            <input type="submit" />
+        </form>
+    </div>
+    <div id="additional_content">
+    </div>
+    <script>
+        function isNumber(n) {
+            return !isNaN(parseFloat(n)) && isFinite(n) && parseFloat(n)>=0;
+        }
+        // Проверяем, что номер счёта и поставщик указаны
+        $(document).ready(function(){
+            $('#bill_form').bind('submit', function(event) {
+                    if(!$("#id_bill_number").val()) {
+                        event.preventDefault();
+                        $("#id_bill_number").css('border', '2px solid red');
+                    }
+                    if(!$("#contractor").val()) {
+                        event.preventDefault();
+                        $("#contractor").css('border', '2px solid red');
+                    }
+                });
+            });
+    </script>
+    {% endblock %}

@@ -1,0 +1,48 @@
+{% extends "RUS/base.html" %}
+{% block title %}
+    Удалённые задачи
+{% endblock %}
+{% block style %}
+    <style>
+       .leftstr, .rightstr {
+        float: left; /* Обтекание справа */ 
+        width: 50%; /* Ширина текстового блока */ 
+       }
+       .rightstr {
+        text-align: right; /* Выравнивание по правому краю */ 
+       }
+        .center {
+        text-align: center; 
+        width: 100%; /* Ширина текстового блока */ 
+
+       }
+
+    </style>
+    <meta http-equiv="refresh" content="60">
+{% endblock %}
+{% block content %}
+    <p><a href="/tasks/">К списку задач</a></p>
+        {% if tasks %}
+            <ol>
+                {% for task in tasks %}
+                    <li>
+			{% ifequal task.task_type 'one_time' %}
+			    <a href="../task/one_time/{{task.id}}">{{task.name}}
+			{% endifequal %}
+			{% ifequal task.task_type 'regular' %}
+			     <a href="../task/regular/{{task.id}}">{{task.name}}
+			{% endifequal %}
+                    </a>
+                    {% ifequal task.task_type 'one_time' %}
+                        <a href="../completle_delete/one_time/{{task.id}}" title="Удалить задачу окончательно" onclick="if (confirm('Хотите удалить задачу?')) {return true} else {return false};">&#10008;</a><a href="../undelete/one_time/{{task.id}}" title="Отменить удаление задачи" onclick="if (confirm('Хотите восстановить задачу?')) {return true} else {return false};"> &#9788;;</a></li>
+                    {% endifequal %}
+                    {% ifequal task.task_type 'regular' %}
+                        <a href="../completle_delete/regular/{{task.id}}" title="Удалить задачу окончательно" onclick="if (confirm('Хотите удалить задачу?')) {return true} else {return false};">&#10008;</a></li><a href="../undelete/regular/{{task.id}}" title="Отменить удаление задачи" onclick="if (confirm('Хотите восстановить задачу?')) {return true} else {return false};"> &#9788;;</a>
+                    {% endifequal %}
+                {% endfor %}
+            </ol>
+        {% endif %}
+        
+        <a href="../completle_delete_all/" title="Удалить все задачи окончательно" onclick="if (confirm('Хотите удалить задачу?')) {return true} else {return false};">Удалить все задачи окончательно</a>
+        
+{% endblock %}

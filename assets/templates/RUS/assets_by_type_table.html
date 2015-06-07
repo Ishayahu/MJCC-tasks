@@ -1,0 +1,29 @@
+<form method="post" id="asset_edition_form">
+    {% csrf_token %}
+    <table border=1>
+        <tr>
+            <th>ID</th>
+            <th>Модель</th>
+            <th>Цена</th>
+            <th>Статус</th>
+            <th>Номер гарантии</th>
+            <th>Место</th>
+        </tr>
+        {% for item in assets %}
+            <tr id="asset_id_{{item.id}}"  class="{% cycle 'row1' 'row2' %}">
+                <td>{{item.id}}</td>
+                <td><a href="/asset/{{item.id}}/">{{item.model}}</a></td>
+                <td>{{item.price}}</td>
+                <td>{{item.status.status}}</td>
+                <td>{{item.garanty.number}}</td>
+                <td id="table_cell_with_place_for_{{item.id}}">{{item.place}}</td>
+                <td>
+                    <input type="button" value="✎" title="Редактировать актив" name="edit_asset" onclick="f_edit_asset('{{item.id}}')" />
+                    {% if admin %}
+                        <input type="button" value="✕" title="Удалить актив" name="del_asset" onclick="f_del_asset('{{item.id}}')" />
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+</form>

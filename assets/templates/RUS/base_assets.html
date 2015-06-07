@@ -1,0 +1,25 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 5//EN>
+<html lang="ru">
+<head>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery.min.js"></script>
+    {# Для выпадающего списка #}
+    <script type="text/javascript" src="/media/js/dropdown.js"></script>
+    <link rel="stylesheet" type="text/css" href="/media/css/dropdown.css" />
+    
+    <title>{% block title %}{% endblock %}</title>
+    {% block style %}{% endblock %}
+</head>
+<body>
+<!--Меню выбора языка-->
+<div class="setting_link"><a href="/settings/">Настройки</a></div>
+<div class ="rightstr"><p><a href="/language/ru">ru</a>|<a href="/language/eng">eng</a></p>
+    {% if my_error %}
+        {% for error in my_error %}
+            <h2>{{error}}</h2><br />
+        {% endfor %}
+    {% endif %}
+{% block content %}
+
+{% endblock %}
+</body>
+</html>

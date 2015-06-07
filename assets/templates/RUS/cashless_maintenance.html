@@ -1,0 +1,18 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 5//EN>
+<html lang="ru">
+<head>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery.min.js"></script>
+    <style>
+        p {
+            margin-top: 0.1em;
+            margin-bottom: 0.1em;
+        }
+    </style>
+    <title>Сопроводительная записка к счёту {{cashless.bill_number}} от {{cashless.date_of_invoice}}</title>
+</head>
+<body>
+    <script>
+        document.body.innerHTML=window.localStorage.getItem('text')        
+    </script>
+</body>
+</html>

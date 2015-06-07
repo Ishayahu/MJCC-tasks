@@ -1,0 +1,26 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 5//EN>
+<html lang="ru">
+<head>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery.min.js"></script>
+    <style>
+        p {
+            margin-top: 0.1em;
+            margin-bottom: 0.1em;
+        }
+    </style>
+    <title>Подождите...</title>
+</head>
+<body>
+    <script>
+        $(document).ready(function(){
+            // сохраняем текст для сопроводительной штуки
+            window.localStorage.setItem('text','{{text|safe}}')
+            // document.body.innerHTML=window.localStorage.getItem('text') 
+            // открываем новое окно, где штука появится
+            window.open("/test/cashless_maintenance/", "windowName");
+            // загружаем сюда список счетов
+            window.location = "/all_bills/"
+        })
+    </script>
+</body>
+</html>

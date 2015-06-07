@@ -1,0 +1,47 @@
+<html>
+<head>
+<style>
+#dropdown{
+list-style: none;
+position:absolute; 
+background:#ffffaa; 
+cursor: default; 
+margin: -20px 0px 0px 229px; 
+padding: 2px 0px 2px 0px;
+width:155px
+}
+#dropdown li{
+padding: 3px 3px 3px 3px;
+}
+#dropdown li:hover{
+color:#fff;
+padding: 3px 3px 3px 3px;
+background:#0000FF; 
+}
+</style>
+<script type="text/javascript">
+function down()
+{
+  var a = document.getElementById('dropdown');
+  if ( a.style.display == 'none' )
+    a.style.display = 'block'
+  else
+    if ( a.style.display == 'block' )
+    a.style.display = 'none';
+};
+function select_date(val_date){
+        var b = document.getElementById('date_input');
+        b.value=val_date;
+        down();
+}
+</script>
+</head>
+<body>
+                <h3>выберите/введите время &ndash;<input id="date_input" type="text" size="20" maxlength="50" name ="delivery_period_time" onclick="down()" ></h3>      
+                <ul id="dropdown" style="display:none;">
+                   <li class="facebook" onclick="select_date('с 11:00 до 14:00')">с 11:00 до 14:00</li>
+                   <li class="twitter" onclick="select_date('с 14:00 до 18:00')">с 14:00 до 18:00</li>
+                   <li class="gplus" onclick="select_date('с 18:00 до 21:00')">с 18:00 до 21:00</li>
+                </ul>
+</body>  
+</html>       

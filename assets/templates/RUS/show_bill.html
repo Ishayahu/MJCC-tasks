@@ -1,0 +1,75 @@
+{% extends "RUS/base_assets.html" %}
+{% block title %}
+    Просмотр чека №{{item.bill_number}} от {{item.date}} от {{item.contractor}} (id={{item.id}})
+{% endblock %}
+{% block style %}
+
+{% endblock %}
+
+{% block content %}
+    {% if cashles %}
+    <div id="stage_table">
+        <table border=1>
+            <tr>
+                <th>
+                    Этап
+                </th>
+                <th>
+                    Дата прохождения
+                </th>
+            </tr>
+            {% for stage in stages_info.items %}
+            <tr>
+                <td>
+                    {{stage.name}}
+                </td>
+                <td>
+                    {{stage.date}}
+                    {% if stage.date %}
+                        <input type="checkbox" id="{{stage.id_name}}" onclick="send_new_stage('{{stage.id_name}}')" checked />
+                    {% else %}
+                        <input type="checkbox" id="{{stage.id_name}}" onclick="send_new_stage('{{stage.id_name}}')" />
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+    {% endif %}
+    {% if assets %}
+        <table border=1>
+            <tr>
+                <th>ID</th>
+                <th>Модель</th>
+                <th>Цена</th>
+                <th>Статус</th>
+                <th>Номер гарантии</th>
+                <th>Место</th>
+            </tr>
+            {% for item in assets %}
+                <tr>
+                    <th>{{item.id}}</th>
+                    <th>{{item.model}}</th>
+                    <th>{{item.price}}</th>
+                    <th>{{item.status.status}}</th>
+                    <th>{{item.garanty.number}}</th>
+                    <th>{{item.place}}</th>
+                </tr>
+            {% endfor %}
+    {% endif %}
+<script>
+function send_new_stage(stage_name) { // оно же id поля
+    var field = $("#"+stage_name);
+    var value=0;
+    if (field.is(':checked')) {
+        value=1;
+    }
+    var pathname = window.location.pathname;
+    var bill_number = pathname.split("/")[pathname.split("/").length-2]
+    var url="/api/bill/cashless/edit/stages/"+bill_number+"/"+stage_name+"/"+value+"/1";
+    // отправляем данные и перезагружаем таблицу с этапами.
+    // На мой взгляд, так удобнее
+    $("#stage_table").load(url);
+}
+</script>
+{% endblock %}

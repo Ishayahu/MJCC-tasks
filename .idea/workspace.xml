@@ -2,13 +2,42 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="4b5549e5-02bd-42d7-a98f-72fdd6afcf44" name="Default" comment="fixing bug #48&#10;https://github.com/Ishayahu/MJCC-tasks/issues/48">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/deployment.xml" afterPath="$PROJECT_DIR$/.idea/deployment.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/mjcc_task_deployment.py" afterPath="$PROJECT_DIR$/mjcc_task_deployment.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/assets/migrations/0004_auto__chg_field_payment_cashless__chg_field_payment_cash.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/assets/migrations/0007_auto__add_field_cash_bill_number__add_field_cashless_bill_number.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/assets/migrations/0008_auto__add_field_payment_deleted.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/assets/migrations/0005_auto__del_field_asset_current_place__chg_field_place_asset_reason_of_d.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/assets/migrations/0003_auto__add_field_asset_price__del_field_cash_price__del_field_cashless_.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/encodings.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/assets/migrations/0006_auto__chg_field_asset_claim.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/deployment.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/MJCC-tasks.iml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/assets/migrations/0005_auto__add_delivery.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/scopes/scope_settings.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/codeStyleSettings.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/assets/migrations/0002_auto__chg_field_asset_note.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/assets/migrations/0001_initial.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/vcs.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/.name" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/assets/migrations/__init__.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/modules.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/todoes/views.py" afterPath="$PROJECT_DIR$/todoes/views.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/todoes/templates/RUS/new_regular_task.html" afterPath="$PROJECT_DIR$/todoes/templates/RUS/new_regular_task.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/todoes/templates/RUS/tasks.html" afterPath="$PROJECT_DIR$/todoes/templates/RUS/tasks.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/tasks/settings.py" afterPath="$PROJECT_DIR$/tasks/settings.py" />
     </list>
     <ignored path="MJCC-tasks.iws" />
     <ignored path=".idea/workspace.xml" />
     <ignored path=".idea/dataSources.local.xml" />
+    <ignored path="../../../Yandex/Sites/djlib/.idea/misc.xml" />
+    <ignored path="../../../Yandex/Sites/djlib/.idea/.name" />
+    <ignored path="../../../Yandex/Sites/djlib/.idea/modules.xml" />
+    <ignored path="../../../Yandex/Sites/djlib/.idea/workspace.xml" />
+    <ignored path="../../../Yandex/Sites/djlib/.idea/vcs.xml" />
+    <ignored path="../../../Yandex/Sites/djlib/.idea/djlib.iml" />
+    <ignored path="../../../Yandex/Sites/djlib/.idea/encodings.xml" />
+    <ignored path="../../../Yandex/Sites/djlib/.idea/scopes/scope_settings.xml" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -35,91 +64,20 @@
     <favorites_list name="MJCC-tasks" />
   </component>
   <component name="FileEditorManager">
-    <splitter split-orientation="horizontal" split-proportion="0.47819063">
-      <split-first>
-        <leaf>
-          <file leaf-file-name="tasks.html" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/todoes/templates/tasks.html">
-              <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.0">
-                  <caret line="80" column="68" selection-start-line="80" selection-start-column="68" selection-end-line="80" selection-end-column="68" />
-                  <folding>
-                    <element signature="n#block#1;n#!!top" expanded="false" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="views.py" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/todoes/views.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.0">
-                  <caret line="1139" column="44" selection-start-line="1139" selection-start-column="44" selection-end-line="1139" selection-end-column="44" />
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="htmlize_test.py" pinned="false" current-in-tab="true">
-            <entry file="file://E:/Yandex/Sites/djlib/test/htmlize_test.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.0">
-                  <caret line="3" column="23" selection-start-line="3" selection-start-column="23" selection-end-line="3" selection-end-column="23" />
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-        </leaf>
-      </split-first>
-      <split-second>
-        <leaf>
-          <file leaf-file-name="views.py" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/todoes/views.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.0">
-                  <caret line="3" column="0" selection-start-line="3" selection-start-column="0" selection-end-line="3" selection-end-column="22" />
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="text_utils.py" pinned="false" current-in-tab="false">
-            <entry file="file://E:/Yandex/Sites/djlib/text_utils.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.0">
-                  <caret line="7" column="15" selection-start-line="7" selection-start-column="15" selection-end-line="7" selection-end-column="15" />
-                  <folding>
-                    <element signature="e#4004#4353#0" expanded="false" />
-                    <element signature="e#4476#5689#0" expanded="false" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="mjcc_task_deployment.py" pinned="false" current-in-tab="true">
-            <entry file="file://$PROJECT_DIR$/mjcc_task_deployment.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.15">
-                  <caret line="3" column="21" selection-start-line="3" selection-start-column="21" selection-end-line="3" selection-end-column="21" />
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="ize.py" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/todoes/ize.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.0">
-                  <caret line="212" column="0" selection-start-line="121" selection-start-column="0" selection-end-line="212" selection-end-column="0" />
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-        </leaf>
-      </split-second>
-    </splitter>
+    <leaf>
+      <file leaf-file-name="views.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/todoes/views.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.38646287">
+              <caret line="1101" column="0" selection-start-line="1101" selection-start-column="0" selection-end-line="1101" selection-end-column="0" />
+              <folding>
+                <element signature="e#110#177#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -146,7 +104,7 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="bug5" />
+        <entry key="$PROJECT_DIR$" value="master" />
       </map>
     </option>
     <option name="PUSH_TAGS">
@@ -167,11 +125,12 @@
         <option value="$PROJECT_DIR$/todoes/templates/tasks.html" />
         <option value="E:/TEMP/Новый тикет.html" />
         <option value="E:/Yandex/Sites/djlib/cron_utils.py" />
-        <option value="$PROJECT_DIR$/todoes/views.py" />
         <option value="$PROJECT_DIR$/todoes/ize.py" />
         <option value="E:/Yandex/Sites/djlib/text_utils.py" />
         <option value="E:/Yandex/Sites/djlib/test/htmlize_test.py" />
-        <option value="$PROJECT_DIR$/mjcc_task_deployment.py" />
+        <option value="$PROJECT_DIR$/todoes/templates/RUS/new_regular_task.html" />
+        <option value="$PROJECT_DIR$/tasks/settings.py" />
+        <option value="$PROJECT_DIR$/todoes/views.py" />
       </list>
     </option>
   </component>
@@ -233,8 +192,6 @@
       <sortByType />
     </navigator>
     <panes>
-      <pane id="Scope" />
-      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -267,8 +224,94 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="MJCC-tasks" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="MJCC-tasks" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewModuleNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="MJCC-tasks" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="todoes" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="MJCC-tasks" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="MJCC-tasks" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewModuleNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="MJCC-tasks" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="todoes" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="templates" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="MJCC-tasks" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="MJCC-tasks" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewModuleNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="MJCC-tasks" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="todoes" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="templates" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="RUS" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="MJCC-tasks" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="MJCC-tasks" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewModuleNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="MJCC-tasks" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="tasks" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
         </subPane>
       </pane>
+      <pane id="Scratches" />
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -652,7 +695,19 @@
       <option name="project" value="LOCAL" />
       <updated>1432908182412</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="fixing bug #48&#10;https://github.com/Ishayahu/MJCC-tasks/issues/48">
+      <created>1433687048507</created>
+      <option name="number" value="00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1433687048507</updated>
+    </task>
+    <task id="LOCAL-00004" summary="fixing bug #48&#10;https://github.com/Ishayahu/MJCC-tasks/issues/48">
+      <created>1433687116136</created>
+      <option name="number" value="00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1433687116136</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers>
       <GitHub shared="false" url="http://github.com">
         <commitMessageFormat>{id} {summary}</commitMessageFormat>
@@ -676,13 +731,13 @@
     <frame x="-8" y="-8" width="1296" height="916" extended-state="6" />
     <editor active="false" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2253635" sideWeight="0.66842103" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.28836834" sideWeight="0.66842103" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="left" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.36790925" sideWeight="0.33026317" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32585752" sideWeight="0.5" order="9" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.34168866" sideWeight="0.503231" order="9" side_tool="true" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.20259319" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" x="684" y="96" width="407" height="760" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24670185" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.5171504" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3631579" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.22051696" sideWeight="0.66973686" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.47894737" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25688818" sideWeight="0.33026317" order="3" side_tool="false" content_ui="tabs" />
@@ -725,12 +780,12 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/todoes/templates/tasks.html">
+    <entry file="file://$PROJECT_DIR$/todoes/views.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="80" column="68" selection-start-line="80" selection-start-column="68" selection-end-line="80" selection-end-column="68" />
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="n#block#1;n#!!top" expanded="false" />
+            <element signature="e#110#177#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -747,7 +802,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="3" column="0" selection-start-line="3" selection-start-column="0" selection-end-line="3" selection-end-column="22" />
-          <folding />
+          <folding>
+            <element signature="e#110#177#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -758,24 +815,6 @@
           <folding>
             <element signature="e#4004#4353#0" expanded="false" />
             <element signature="e#4476#5689#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/todoes/ize.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="212" column="0" selection-start-line="121" selection-start-column="0" selection-end-line="212" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/todoes/templates/tasks.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="80" column="68" selection-start-line="80" selection-start-column="68" selection-end-line="80" selection-end-column="68" />
-          <folding>
-            <element signature="n#block#1;n#!!top" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -792,7 +831,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="3" column="0" selection-start-line="3" selection-start-column="0" selection-end-line="3" selection-end-column="22" />
-          <folding />
+          <folding>
+            <element signature="e#110#177#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -803,24 +844,6 @@
           <folding>
             <element signature="e#4004#4353#0" expanded="false" />
             <element signature="e#4476#5689#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/todoes/ize.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/todoes/templates/tasks.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="80" column="68" selection-start-line="80" selection-start-column="68" selection-end-line="80" selection-end-column="68" />
-          <folding>
-            <element signature="n#block#1;n#!!top" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -837,7 +860,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="3" column="0" selection-start-line="3" selection-start-column="0" selection-end-line="3" selection-end-column="22" />
-          <folding />
+          <folding>
+            <element signature="e#110#177#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -848,24 +873,6 @@
           <folding>
             <element signature="e#4004#4353#0" expanded="false" />
             <element signature="e#4476#5689#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/todoes/ize.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/todoes/templates/tasks.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="80" column="68" selection-start-line="80" selection-start-column="68" selection-end-line="80" selection-end-column="68" />
-          <folding>
-            <element signature="n#block#1;n#!!top" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -882,7 +889,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="3" column="0" selection-start-line="3" selection-start-column="0" selection-end-line="3" selection-end-column="22" />
-          <folding />
+          <folding>
+            <element signature="e#110#177#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -894,14 +903,6 @@
             <element signature="e#4004#4353#0" expanded="false" />
             <element signature="e#4476#5689#0" expanded="false" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/todoes/ize.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -909,16 +910,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="126" column="46" selection-start-line="126" selection-start-column="46" selection-end-line="126" selection-end-column="46" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/todoes/templates/tasks.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="71" column="13" selection-start-line="71" selection-start-column="13" selection-end-line="71" selection-end-column="13" />
-          <folding>
-            <element signature="n#block#1;n#!!top" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -933,14 +924,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="168" column="51" selection-start-line="168" selection-start-column="43" selection-end-line="168" selection-end-column="51" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/todoes/templates/new_regular_task.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#110#177#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -1119,20 +1105,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/todoes/templates/new_regular_task.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="11" selection-start-line="0" selection-start-column="11" selection-end-line="0" selection-end-column="11" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/todoes/templates/base.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://E:/TEMP/Новая повторяющаяся задача.html">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="4.0282607">
@@ -1154,16 +1126,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/todoes/templates/tasks.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="80" column="68" selection-start-line="80" selection-start-column="68" selection-end-line="80" selection-end-column="68" />
-          <folding>
-            <element signature="n#block#1;n#!!top" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://E:/Yandex/Sites/djlib/cron_utils.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="1.6621622">
@@ -1171,25 +1133,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/todoes/views.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="3" column="0" selection-start-line="3" selection-start-column="0" selection-end-line="3" selection-end-column="22" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/todoes/ize.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="212" column="0" selection-start-line="121" selection-start-column="0" selection-end-line="212" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://E:/Yandex/Sites/djlib/text_utils.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
+        <state vertical-scroll-proportion="0.24791667">
           <caret line="7" column="15" selection-start-line="7" selection-start-column="15" selection-end-line="7" selection-end-column="15" />
           <folding>
             <element signature="e#4004#4353#0" expanded="false" />
@@ -1206,11 +1152,36 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/todoes/templates/RUS/new_regular_task.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.6255507">
+          <caret line="186" column="33" selection-start-line="186" selection-start-column="33" selection-end-line="186" selection-end-column="33" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tasks/settings.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.49322492">
+          <caret line="208" column="0" selection-start-line="208" selection-start-column="0" selection-end-line="208" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/mjcc_task_deployment.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.15">
           <caret line="3" column="21" selection-start-line="3" selection-start-column="21" selection-end-line="3" selection-end-column="21" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/todoes/views.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.38646287">
+          <caret line="1101" column="0" selection-start-line="1101" selection-start-column="0" selection-end-line="1101" selection-end-column="0" />
+          <folding>
+            <element signature="e#110#177#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

@@ -1,0 +1,40 @@
+{% extends "RUS/base_assets.html" %}
+{% block title %}
+    {{title}}
+{% endblock %}
+{% block style %}
+
+{% endblock %}
+
+{% block content %}
+    {% if admin %}
+       <p> <a href="/all_deleted_bills/">Удалённые счета</a></p>
+    {% endif %}
+    <p><a href="/bill/cash/add/">Новый чек</a></p>
+    <p><a href="/bill/cashless/add/">Новый счёт</a></p>
+    <h1>Чеки</h1>
+    <ol>
+        {% for item in cashs %}
+            <li><a href="/bill/show/cash/{{item.bill.id}}/" title="{{item.title}}" target="_blank">id={{item.bill.id}}; №{{item.bill.bill_number}} от {{item.bill.date}} от {{item.bill.contractor}}</a> <a href="/bill/delete/cash/{{item.bill.id}}/" title="Пометить как удалённый" onclick="if (confirm('Уверены?')) {return true} else {return false};">X</a></li>
+        {% endfor %}
+    </ol>
+    <h1>Счета</h1>
+        {% for bs in cashlesss %}
+            {% if bs.set %}
+                <h2>{{bs.name}}</h2>
+                    <ol>
+                        {% for item in bs.set %}
+                            <li><a href="/bill/show/cashless/{{item.bill.id}}/" title="{{item.title}}" target="_blank">id={{item.bill.id}}; №{{item.bill.bill_number}} от {{item.bill.date_of_invoice}} от {{item.bill.contractor}}</a> <a href="/bill/delete/cashless/{{item.bill.id}}/" title="Пометить как удалённый" onclick="if (confirm('Уверены?')) {return true} else {return false};">X</a> <input type="checkbox" onclick="send_new_stage('{{item.bill.id}}', '{{bs.id_name}}')" /></li>
+                        {% endfor %}
+                    </ol>
+            {% endif %}
+        {% endfor %}
+    <script>
+        function send_new_stage(bill_id, stage_name) { // оно же id поля
+            var url="/api/bill/cashless/edit/stages/"+bill_id+"/"+stage_name+"/1/0";
+            // отправляем данные и перезагружаем таблицу с этапами.
+            // На мой взгляд, так удобнее
+            window.location.pathname=url;
+        }
+    </script>
+{% endblock %}

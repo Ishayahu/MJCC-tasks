@@ -1,0 +1,137 @@
+{% extends "RUS/base_assets.html" %}
+{% block title %}
+    Список активов по типу {{type_name}}
+{% endblock %}
+{% block style %}
+    <script type="text/javascript" src="/media/js/dropdown.js"></script>
+    <script type="text/javascript" src="/media/js/sending.js"></script>
+    <link rel="stylesheet" type="text/css" href="/media/css/dropdown.css" />
+    <link rel="stylesheet" type="text/css" href="/media/css/main.css" />
+    <script>
+    jQuery.fn.exists = function() {
+       return $(this).length;
+    }
+    function f_del_asset(id){
+        if (confirm('Уверены?')) {
+            $("#asset_id_"+id).load("/api/asset/delete/"+id+"/"+$('#asset_type option:selected').val()+"/",function(result){
+                //console.log(result);
+                $("#message").html("Актив id="+id+"успешно удалён из базы!");
+                $("#asset_id_"+id).remove();
+                }
+            )
+        } else {
+            return false
+        };
+    }
+    // "словарь" для хранения мест активов до их изменения
+    cur_place_dict={}
+    //cur_model_dict={}
+    test = ""
+    function f_edit_asset(id){
+        // сохраняем исходное значение
+        //cur_model_dict[id] = $("#asset_id_"+id).children()[1].innerText
+        var cur_model_dict = $("#asset_id_"+id).children()[1].innerText
+        $("#asset_id_"+id).load("/api/asset/edit/"+id+"/", function(result){
+            // заносим в словарь мест имеющееся значение (то есть текущее в базе)
+            // берём его из загрузки, чтобы получить id, а не просто значение
+            // хотя, конечно, можно изменить шаблон, чтобы и при просто отображении
+            // можно было получить id места
+            if (!cur_place_dict[id]){
+                cur_place_dict[id]=$("#place_"+id).val()
+            }
+            // записываем то значение модели, которое было
+            $("#"+id+"_model").val(cur_model_dict)
+            // подгружаем скрипт autohelper для возможности ввода новой модели, как в F:\Dropbox\scripts\MJCC-tasks\todoes\files\js\bill_assets.js
+            asset_type_id = $("#asset_type").val()
+            asset_form_number = id
+            var url2 = "/api/get_asset_add_form_script/"+asset_type_id+"/"+asset_form_number+"/";
+            $("#script_for_form").load(url2,function(result){
+                                                //$("#script_for_form").append(result)
+                                                //console.log(result)
+                                                test = result
+                                                $("#script_for_form").append(test.slice(9).slice(0,-11))
+                                            })
+        })
+    }
+    function send(url,form_id,result_div,error_div) {
+        // Отсылаем паметры
+        $.ajax({
+                type: "POST",
+                url:  url,
+                data: $("#"+form_id).serialize(),
+                // Выводим то что вернул PHP
+                success: function(html)
+                {
+                        $("#"+result_div).empty();
+                        $("#"+result_div).append(html);
+                },
+                error: function()
+                {
+                    $("#"+error_div).empty();
+                    $("#"+error_div).append("Ошибка!");
+                }
+                }); 
+    }
+    // функция, вызываемая при изменении места актива
+    function changing_place(item_id) {
+        // если место уже есть, то есть, меняется не первый раз
+        // проверяем, не совпадает ли место с тем, которое было до этого
+        if (cur_place_dict[item_id]==$("#place_"+item_id).val()) {
+            // если поменялось на исходное - убираем поле ввода причины изменения места
+            $("#table_cell_with_place_for_"+item_id).remove()
+        } else {
+            // если поменялось на другое, то
+            //если если нет поля для ввода причины изменения места- добавляем
+            if (!$("#reason_of_drawdown_"+item_id).exists()) {
+                // добавляется поле с серым текстом подсказки, текст убирается при клике на него + меняем цвет текста на чёрный
+                $("#table_cell_with_place_for_"+item_id).append('<textarea id="reason_of_drawdown_'+item_id+'" rows="10" cols="20" name="reason_of_drawdown_'+item_id+'" class="grey_text">Укажите причину смены места</textarea>')
+                $("#reason_of_drawdown_"+item_id).bind('click',function(){
+                    $("#reason_of_drawdown_"+item_id).text("");
+                    $("#reason_of_drawdown_"+item_id).css({color:"black"});
+                    $("#reason_of_drawdown_"+item_id).unbind('click');
+                })
+            }
+        }
+    }
+    </script>
+{% endblock %}
+
+{% block content %}
+    {% if admin %}
+        
+    {% endif %}
+    <div id="message"></div>
+    <select id="asset_type">
+        {% for item in asset_types %}
+            {% ifequal item.id type_id %}
+                <option value="{{item.id}}" selected="selected">{{item.asset_type}}</option>
+            {% endifequal %}
+            {% ifnotequal item.id type_id %}
+                <option value="{{item.id}}">{{item.asset_type}}</option>
+            {% endifnotequal %}
+        {% endfor %}
+    </select>
+    <input type="button" onclick="add_asset_type()" value="+" text="Добавить тип актива" />
+    <div id="content_to_hide"> {# Скрывается при добавлении новой модели #}
+        <div id="asset_table">
+            {# Сюда грузится таблица с активами #}
+        </div>
+    </div>
+    <div id="additional_content">
+        {# Сюда грузится форма добаления новой модели #}
+    </div>
+    <div>
+        {# Сюда грузятся скрипты для добавления новых активов #}
+    </div>
+        <script id="script_for_form">
+        $("#asset_type").change(function () {
+            var str = $('#asset_type option:selected').val();
+            $("#asset_table").load("/api/assets_by_type/"+str+"/");
+        });
+        $('#asset_type').change();
+        function add_asset_type(){
+            $("#asset_table").load("/api/asset_types/type/add/");
+        }
+    </script>
+
+{% endblock %}
