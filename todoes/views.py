@@ -1,7 +1,10 @@
 # -*- coding:utf-8 -*-
 # coding=<utf8>
 
+
 #TODO: сделать возможность изменения языков
+__version__ = '0.2.3d'
+
 
 from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.shortcuts import render_to_response
@@ -260,7 +263,15 @@ def set_reminder(request,task_type,task_id):
         set_last_activity(user,request.path)
         return HttpResponseRedirect('/tasks/')
     else:
-        after_hour = str(datetime.datetime.now().hour+1)+":"+str(datetime.datetime.now().minute)
+        # fixing bug #38
+        # https://github.com/Ishayahu/MJCC-tasks/issues/38
+        # минуты должны быть с 0 в начале, иначе <input type="time" value="11:7"> не отображается
+        # должно быть <input type="time" value="11:07">
+        minutes = str(datetime.datetime.now().minute)
+        if len(minutes)==1:
+            minutes = "0"+minutes
+        # end fixing bug #38
+        after_hour = str(datetime.datetime.now().hour+1)+":"+minutes
         today = str(datetime.datetime.now().day)+"/"+str(datetime.datetime.now().month)+"/"+str(datetime.datetime.now().year)
     set_last_activity(user,request.path)
     return render_to_response(languages[lang]+'set_reminder.html', {'method':method,'today':today,'after_hour':after_hour},RequestContext(request))
@@ -1088,6 +1099,7 @@ def add_children_task(request,parent_task_type,parent_task_id):
         form = l_forms[lang]['NewTicketForm'] ({'percentage':0,'start_date':datetime.datetime.now(),'due_date':datetime.datetime.now(),'priority':parent_task.priority,'category':parent_task.category})
     set_last_activity(user,request.path)
     return render_to_response(languages[lang]+'new_ticket.html', {'form':form, 'method':method},RequestContext(request))
+
 @login_required
 def regular_task_done(request,task_id):
     lang=select_language(request)
@@ -1097,10 +1109,12 @@ def regular_task_done(request,task_id):
         # находим задачу
         task = RegularTask.objects.get(id=task_id)
     except:
-        my_error=request.session.get('my_error')# если задач нет - вывести это в шаблон
+        # если задач нет - вывести это в шаблон
+        my_error=request.session.get('my_error')
         my_error.append('Не найдена задача?!')
         return HttpResponseRedirect('/tasks/')
-    task.next_date = generate_next_reminder(decronize(task.period), task.stop_date)
+    task.next_date = generate_next_reminder(decronize(task.period),
+                                            task.stop_date)
     task.when_to_reminder = task.next_date
     task.save()
     set_last_activity(user,request.path)

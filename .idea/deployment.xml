@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="PublishConfigData" uploadOnCheckin="049036e8-9922-4650-829c-2e121fe94200">
+    <serverData>
+      <paths name="MJCC_TASK">
+        <serverdata>
+          <mappings>
+            <mapping local="$PROJECT_DIR$" web="/" />
+            <mapping local="E:/Yandex/Sites/djlib" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="TEST_tasks">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/" local="$PROJECT_DIR$" web="/" />
+            <mapping deploy="/djlib" local="E:/Yandex/Sites/djlib" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+    </serverData>
+    <option name="myUploadOnCheckinName" value="MJCC_TASK" />
+  </component>
+</project>
+

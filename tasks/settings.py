@@ -16,7 +16,7 @@ DATABASES = {
         'NAME': 'tasks',                      # Or path to database file if using sqlite3.
         'USER': 'puser',                      # Not used with sqlite3.
         'PASSWORD': 'planrabot',                  # Not used with sqlite3.
-        'HOST': '192.168.1.253',                      # Set to empty string for localhost. Not used with sqlite3.
+        'HOST': '172.22.0.123',                      # Set to empty string for localhost. Not used with sqlite3.
         'PORT': '5432',                      # Set to empty string for default. Not used with sqlite3.
     }
 }
@@ -33,6 +33,7 @@ TIME_ZONE = 'Europe/Moscow'
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
+
 LANGUAGE_CODE = 'ru'
 # LANGUAGE_CODE = 'en-us'
 gettext = lambda s: s
@@ -41,6 +42,7 @@ LANGUAGES = (
     ('ru', gettext('Russian')),
     ('en', gettext('English')),
 )
+
 
 SITE_ID = 1
 
@@ -59,7 +61,7 @@ MEDIA_ROOT = '/usr/home/ishayahu/tasks/todoes/files/'
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
 # Examples: "http://media.lawrence.com/media/", "http://example.com/media/"
-MEDIA_URL = 'http://192.168.56.100:8080/media/'
+MEDIA_URL = 'http://172.22.0.124:8080/media/'
 
 # Absolute path to the directory static files should be collected to.
 # Don't put anything in this directory yourself; store your static files
@@ -156,21 +158,25 @@ INSTALLED_APPS = (
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
+
     # 'filters': {
         # 'require_debug_false': {
             # '()': 'django.utils.log.RequireDebugFalse'
         # }
     # },
+
     'handlers': {
         'mail_admins': {
             'level': 'ERROR',
             'class': 'django.utils.log.AdminEmailHandler'
+
         },
         # 'console':{
             # 'level':'DEBUG',
             # 'filters': ['require_debug_false'],
             # 'class':'logging.StreamHandler',
         # },
+
     },
     'loggers': {
         'django.request': {
@@ -178,6 +184,7 @@ LOGGING = {
             'level': 'ERROR',
             'propagate': True,
         },
+
         # 'django.db.backends' : {
             # 'handlers': ['console'],
             # 'level': 'DEBUG',
@@ -185,6 +192,7 @@ LOGGING = {
         # }
     }
 }
+
 # For e-mails
 # EMAIL_USE_TLS = True
 # EMAIL_HOST = 'smtp.mail.ru'
@@ -195,8 +203,10 @@ LOGGING = {
 EMAIL_USE_TLS = True
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 25
-EMAIL_HOST_USER = ""
-EMAIL_HOST_PASSWORD = ""
+
+EMAIL_HOST_USER = "mjcc.sms@gmail.com"
+EMAIL_HOST_PASSWORD = 'JnghfdrfCvcVRJWXXX'
+
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
