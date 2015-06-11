@@ -21,8 +21,8 @@ admin.autodiscover()
 urlpatterns = patterns('',
     # просмотр задач
     url(r'^tasks/$', todoes.views.tasks),
-    # просмотр всех задач
-    url(r'^all_task/$', todoes.views.all_tasks),
+    # просмотр всех задач по страницам
+    url(r'^all_task/([^/]+)/$', todoes.views.all_tasks),
 
 # обычные задачи
     url(r'^new_ticket/$', todoes.views.new_ticket),

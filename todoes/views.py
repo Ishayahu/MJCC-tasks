@@ -1072,7 +1072,7 @@ def deleted_tasks(request):
     return render_to_response(languages[lang]+'deleted_tasks.html', {'tasks':tasks,},RequestContext(request))
 
 @login_required
-def all_tasks(request):
+def all_tasks(request,page_number):
     lang=select_language(request)
     def find_parent_task(note,task_type):
         """
@@ -1087,6 +1087,25 @@ def all_tasks(request):
             else:
                 return RegularTask.objects.filter(note = note)
     user = request.user.username
+
+    # admin = False
+    # enhancement #31
+    # page_number=-1 показываем все
+    try:
+        page_number = int(page_number)
+    except:
+        page_number = -1
+    if user in admins:
+        admin = True
+    else:
+        admin = False
+        page_number = 0
+    # end #31
+
+    try:
+        fio = Person.objects.get(login=user)
+    except Person.DoesNotExist:
+        fio = FioError()
     not_finded = False
     finded_tasks = False
     method = request.method
@@ -1095,7 +1114,7 @@ def all_tasks(request):
         if form.is_valid():
             data = form.cleaned_data
             # какая-то фигня - поиск должен не зависеть от регистра. Если ищем ascii - работает, если кирилицу - нет(
-            
+
             try:
                 finded_tasks_names = Task.objects.filter(name__icontains = data['name'])
                 finded_tasks_desc = Task.objects.filter(description__icontains = data['name'])
@@ -1122,29 +1141,81 @@ def all_tasks(request):
         else:
             my_error=[]
         request.session['my_error'] = ''
+
+        # enhancement #31
+        # Для изменения количества выводимых элементов будем
+        # хранить их в словаре
+        result = dict()
+        # end #31
+
         try:
             # отображаем все НЕ закрытые заявки, т.е. процент выполнения которых меньше 100
-            tasks = Task.objects.filter(deleted = False).filter(percentage__lt=100)
+            result['tasks'] = Task.objects.filter(deleted =
+                                                  False).filter(percentage__lt=100)
         except:
-            tasks = ''# если задач нет - вывести это в шаблон
+            result['tasks'] = ''# если задач нет - вывести это в
+            # шаблон
         try:
             # отображаем все повторяющиеся задачи
-            regular_tasks = RegularTask.objects.filter(deleted = False)
+            result['regular_tasks'] = RegularTask.objects.filter(
+                deleted = False)
         except:
-            regular_tasks = ''# если задач нет - вывести это в шаблон
+            result['regular_tasks'] = ''# если задач нет - вывести
+            # это в шаблон
         try:
             # отображаем все закрытые заявки не подтверждённые
-            closed_tasks = Task.objects.filter(deleted = False).filter(percentage__exact=100).filter(confirmed__exact=False)
+            result['closed_tasks'] = Task.objects.filter(deleted =
+                                                         False).filter(percentage__exact=100).filter(confirmed__exact=False)
         except:
-            closed_tasks = ''# если задач нет - вывести это в шаблон
+            result['closed_tasks'] = ''# если задач нет - вывести
+            # это в шаблон
             # my_error.append('Для Вас нет задач')
         try:
             # отображаем все подтверждённые заявки
-            confirmed_tasks = Task.objects.filter(deleted = False).filter(confirmed__exact=True)
+            result['confirmed_tasks'] = Task.objects.filter(deleted = False).filter(confirmed__exact=True)
         except:
-            confirmed_tasks = ''# если задач нет - вывести это в шаблон
+            result['confirmed_tasks'] = ''# если задач нет -
+            # вывести это в шаблон
+
+    # enhancement #31
+    # https://github.com/Ishayahu/MJCC-tasks/issues/31
+    tasks_per_page = 50
+    total_tasks_count = 0
+    for k,v in result.items():
+        total_tasks_count += len(v)
+    max_page_number = total_tasks_count / tasks_per_page
+    if page_number>=0:
+        start = page_number*tasks_per_page
+        end = (page_number+1)*tasks_per_page
+        # порядок: задачи, регулярные, закрытые, подтверждённые
+        for x in ('tasks', 'regular_tasks', 'closed_tasks',
+                  'confirmed_tasks'):
+            len_x = len(result[x]) # так как меням похожу
+            # print x[0],start,end
+            result[x] = result[x][start:end]
+            start -= len_x
+            end -= len_x
+            if start<0:
+                start = 0
+            if end<0:
+                end = 0
+                # print len(x)
+    # end #31
+
     set_last_activity(user,request.path)
-    return render_to_response(languages[lang]+'all_tasks.html', {'my_error':my_error,'tasks':tasks,'closed_tasks':closed_tasks,'confirmed_tasks':confirmed_tasks,'regular_tasks':regular_tasks,'form':form, 'method':method},RequestContext(request))
+    return render_to_response(languages[lang]+'all_tasks.html',
+                              {'my_error':my_error,'tasks':result[
+                                  'tasks'],
+                               'closed_tasks':result['closed_tasks'],
+                               'confirmed_tasks':result[
+                                   'confirmed_tasks'],
+                               'regular_tasks':result[
+                                   'regular_tasks'],
+                               'form':form, 'method':method,
+                               'admin':admin,'worker':fio,
+                               'page_number':page_number,
+                               'max_page_number':max_page_number,},
+                              RequestContext(request))
 @login_required
 def add_children_task(request,parent_task_type,parent_task_id):
     lang=select_language(request)

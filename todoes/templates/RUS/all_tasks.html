@@ -87,4 +87,10 @@
         </ul>
     {% endif %}
 
+{% if page_number >= 1 %}
+    <a href="/all_task/{{ page_number|add:"-1" }}/">Пред. страница</a>
+{% endif %}
+{% if page_number < max_page_number %}
+    <a href="/all_task/{{ page_number|add:"1" }}/">След. страница</a>
+{% endif %}
 {% endblock %}
