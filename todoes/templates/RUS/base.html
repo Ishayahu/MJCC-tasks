@@ -44,12 +44,12 @@
 <!-- Конец Меню -->
 
 
+{% if my_error %}
+    {% for error in my_error %}
+        <h2>{{error}}</h2><br />
+    {% endfor %}
+{% endif %}
 {% block content %}
-    {% if my_error %}
-        {% for error in my_error %}
-            <h2>{{error}}</h2><br />
-        {% endfor %}
-    {% endif %}
 {% endblock %}
 </body>
 </html>

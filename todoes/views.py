@@ -243,14 +243,28 @@ def set_reminder(request,task_type,task_id):
     if not acl(request,task_type,task_id):
         request.session['my_error'] = u'Нет права доступа к этой задаче!'
         return HttpResponseRedirect("/tasks/")
+
+    # fix #52
+    if request.session.get('my_error'):
+        my_error = [request.session.get('my_error'),]
+    else:
+        my_error=[]
+    request.session['my_error'] = ''
+    # end fix #52
+
     user = request.user.username
+    admin = False
+    if user in admins:
+        admin = True
     method = request.method
     data = 0
     time = 0
     try:
         task_full = task_types[task_type].objects.get(id = task_id)
     except:
-        request.session['my_error'] = u'Задача почему-то не найдена. Номер ошибки set_reminder_125!'
+        request.session['my_error'] = u'Задача почему-то не ' \
+                                      u'найдена. Номер ошибки ' \
+                                      u'set_reminder_253!'
         return HttpResponseRedirect('/tasks/')
     if request.method == 'POST':
         if 'datepicker' in request.POST:
@@ -258,11 +272,29 @@ def set_reminder(request,task_type,task_id):
         if 'time' in request.POST:
             time = request.POST['time']
         dtt = datetime.datetime(*map(int,([data.strip().split('/')[2],data.strip().split('/')[1],data.strip().split('/')[0]]+time.strip().split(':'))))
+
+        # fix #52
+        # https://github.com/Ishayahu/MJCC-tasks/issues/52
+        # Напоминание не может встать позже, чем дата завершения
+        # в таком случае надо выдать ошибку
+        if dtt>task_full.due_date:
+            request.session['my_error'] = u'Невозможно установить ' \
+                                          u'напоминане на дату ' \
+                                          u'позже, чем срок ' \
+                                          u'завершения!'
+            # return HttpResponseRedirect('/tasks/')
+            return HttpResponseRedirect('/set_reminder/one_time/'+
+                                        task_id+
+                                        '/')
+        # конец 52
+
+
         task_full.when_to_reminder = dtt
         task_full.save()
         set_last_activity(user,request.path)
         return HttpResponseRedirect('/tasks/')
     else:
+
         # fixing bug #38
         # https://github.com/Ishayahu/MJCC-tasks/issues/38
         # минуты должны быть с 0 в начале, иначе <input type="time" value="11:7"> не отображается
@@ -271,10 +303,16 @@ def set_reminder(request,task_type,task_id):
         if len(minutes)==1:
             minutes = "0"+minutes
         # end fixing bug #38
+
         after_hour = str(datetime.datetime.now().hour+1)+":"+minutes
         today = str(datetime.datetime.now().day)+"/"+str(datetime.datetime.now().month)+"/"+str(datetime.datetime.now().year)
     set_last_activity(user,request.path)
-    return render_to_response(languages[lang]+'set_reminder.html', {'method':method,'today':today,'after_hour':after_hour},RequestContext(request))
+    return render_to_response(languages[lang]+'set_reminder.html',
+                              {'my_error':my_error, 'admin':admin,
+                                               'method':method,
+                               'today':today,'after_hour':after_hour},
+                              RequestContext(request))
+
 @login_required
 def move_to_call(request,task_type,task_id):
     lang=select_language(request)
@@ -380,6 +418,7 @@ def tasks(request):
         my_error = [request.session.get('my_error'),]
     else:
         my_error=[]
+    # print my_error.encode('utf8')
     request.session['my_error'] = ''
     user = request.user.username
     # method = request.method
