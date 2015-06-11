@@ -997,6 +997,7 @@ def delete_task(request,task_type,task_to_delete_id):
 @login_required
 def undelete_task(request,task_type,task_id):
     lang=select_language(request)
+    user = request.user.username
     task = task_types[task_type].objects.get(id=task_id)
     task.deleted = False
     task.save()
@@ -1110,7 +1111,8 @@ def all_tasks(request,page_number):
     finded_tasks = False
     method = request.method
     if request.method == 'POST':
-        form = TicketSearchForm(request.POST)
+        # form = TicketSearchForm(request.POST)
+        form = l_forms[lang]['TicketSearchForm'](request.POST)
         if form.is_valid():
             data = form.cleaned_data
             # какая-то фигня - поиск должен не зависеть от регистра. Если ищем ascii - работает, если кирилицу - нет(
@@ -1126,14 +1128,39 @@ def all_tasks(request,page_number):
                 for note in notes:
                     finded_tasks_notes = find_parent_task(note = note,task_type='one_time')
                     finded_rtasks_notes = find_parent_task(note = note,task_type='regular')
-                finded_tasks = list(set(chain(finded_tasks_names, finded_tasks_desc, finded_rtasks_names,finded_rtasks_desc,finded_tasks_notes,finded_rtasks_notes)))
+
+                # fix 42
+                # https://github.com/Ishayahu/MJCC-tasks/issues/42
+                task_list = list(set(chain(finded_tasks_names,
+                                           finded_tasks_desc,
+                                           finded_tasks_notes)))
+                rtask_list = list(set(chain(finded_rtasks_names,
+                                           finded_rtasks_desc,
+                                           finded_rtasks_notes)))
+                for task in task_list:
+                    task.in_link_type = 'one_time'
+
+                for task in rtask_list:
+                    task.in_link_type = 'regular'
+
+                finded_tasks = list(set(chain(task_list,
+                                              rtask_list,)))
+                # end fix 42
+
                 if not finded_tasks:
                     not_finded = True
+
+
             except:
                 print 'exception'
                 not_finded = True
             set_last_activity(user,request.path)
-            return render_to_response(languages[lang]+'all_tasks.html', {'not_finded':not_finded,'finded_tasks':finded_tasks,'form':form, 'method':method},RequestContext(request))
+            return render_to_response(languages[lang]+'all_tasks.html',
+                                      {'not_finded':not_finded,
+                                       'finded_tasks':finded_tasks,
+                                       'form':form, 'method':method,
+                                       'admin':admin,'worker':fio},
+                                      RequestContext(request))
     else:
         form = l_forms[lang]['TicketSearchForm']()
         if request.session.get('my_error'):

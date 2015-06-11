@@ -82,7 +82,7 @@
     {% if not not_finded and finded_tasks %}
         <ul>
             {% for task in finded_tasks %}
-                <li><a href="../../task/one_time/{{task.id}}">{{task.id}};{{task.name}}</a></li>
+                <li><a href="/task/{{ task.in_link_type }}/{{task.id}}">{{task.id}};{{task.name}}</a></li>
             {% endfor %}
         </ul>
     {% endif %}
