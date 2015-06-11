@@ -94,48 +94,60 @@ class NewAssetTypeForm(forms.Form):
 class NewModel_Printer(ModelForm):
     class Meta:
         model = Printer
+        fields = '__all__' # for 1.8
         localized_fields = '__all__'
 class NewModel_Cartridge_Model_General_Model(ModelForm):
     class Meta:
         model = Cartridge_Model_General_Model
+        fields = '__all__'
         localized_fields = '__all__'
 class NewModel_CKC(ModelForm):
     class Meta:
         model = CKC
+        fields = '__all__'
         localized_fields = '__all__'
 class NewModel_Telephone_Works(ModelForm):
     class Meta:
         model = Telephone_Works
+        fields = '__all__'
         localized_fields = '__all__'
 class NewModel_UPS(ModelForm):
     class Meta:
         model = UPS
+        fields = '__all__'
         localized_fields = '__all__'
 class NewModel_Storage(ModelForm):
     class Meta:
         model = Storage
+        fields = '__all__'
         localized_fields = '__all__'
 class NewModel_Cooler(ModelForm):
     class Meta:
         model = Cooler
+        fields = '__all__'
         localized_fields = '__all__'
 class NewModel_ROM(ModelForm):
     class Meta:
         model = ROM
+        fields = '__all__'
         localized_fields = '__all__'
 class NewModel_Power_suply(ModelForm):
     class Meta:
         model = Power_suply
+        fields = '__all__'
         localized_fields = '__all__'
 class NewModel_Motherboard(ModelForm):
     class Meta:
         model = Motherboard
+        fields = '__all__'
         localized_fields = '__all__'
 class NewModel_CPU(ModelForm):
     class Meta:
         model = CPU
+        fields = '__all__'
         localized_fields = '__all__'
 class NewModel_Case(ModelForm):
     class Meta:
         model = Case
+        fields = '__all__'
         localized_fields = '__all__'

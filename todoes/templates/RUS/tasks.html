@@ -76,21 +76,15 @@
 {% endblock %}
 
 {% block content %}
-    <div class ="leftstr"><p>Привет, {{ worker.fio }}</p></div>
-    <div class ="rightstr"><p><a target="_new"
-                                 href="/media/versions.html">v0.2.3c</a></p></div>
-    {% if admin %}
-        <ul style="clear:left">
-            <li><a href="to/Мотя/">Вопросы к Моте</a></li>
-            <li><a href="to/Звонки/">Звонки</a></li>
-            <li><a href="to/БД/">Вопросы по БД</a></li>
-            <li><a href="/users/" target="_new">Активность пользователей</a></li>
-        </ul>
-    {% endif %}
-    <br />
+{#    <br />#}
     {% if alert %}
         <script>alert("Появились новые задачи!")</script>
     {% endif %}
+    {% if nearest_count %}
+        <script>alert("Обратите внимание на {{nearest_count}} задач!")
+        </script>
+    {% endif %}
+
 
     {% if regular_tasks %}
         <p>Повторяющиеся задачи</p>
@@ -211,7 +205,12 @@
                             {% ifequal task.category.name 'Звонки' %}
                                 &#9743;
                             {% endifequal %}                            
-                            <a href="../task/one_time/{{task.id}}" title="{{task.description}}" target="_blank">{{task.name}} - Сделать до: {{task.due_date}}</a> <a href="../set_reminder/one_time/{{task.id}}" title="Установить напоминалку">&#8986;</a> 
+                            <a href="../task/one_time/{{task.id}}" title="{{task.description}}" target="_blank"
+                                    {% if task.nearest%}
+                                    class="blink_me"
+                                    {% endif %}
+
+                                    >{{task.name}} - Сделать до: {{task.due_date}}</a> <a href="../set_reminder/one_time/{{task.id}}" title="Установить напоминалку">&#8986;</a>
                             {% ifnotequal task.category.name 'Звонки' %}
                                 <a href="../move_to_call/one_time/{{task.id}}" title="Переместить в звонки">&#9742;</a>
                             {% endifnotequal %}

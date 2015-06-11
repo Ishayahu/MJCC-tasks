@@ -274,6 +274,8 @@ class UPS(models.Model):
     type = models.CharField(max_length=30, choices = catalogue.UPS_types)
 class Delivery(models.Model):
     model_name = models.CharField(max_length=50)
+# class Delivery(models.Model):
+#     model_name = models.CharField(max_length=50)
 class Motherboard(models.Model):
     model_name = models.CharField(max_length=50, verbose_name=_("Model name"))
     firm = models.CharField(max_length=20, choices = catalogue.Motherboard_firm)
@@ -343,8 +345,7 @@ class Case(models.Model):
     number_of_extension_slot = models.IntegerField()
     number_of_fan_places = models.IntegerField()
     size = models.CharField(max_length=50)
-class Delivery(models.Model):
-    model_name = models.CharField(max_length=50)
+
 class CKC(models.Model):
     model_name = models.CharField(max_length=150,verbose_name=_("Model name"))
     def __unicode__(self):

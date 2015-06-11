@@ -1,7 +1,8 @@
 # -*- coding:utf-8 -*-
 # coding=<utf8>
 
-from django.conf.urls.defaults import patterns, include, url
+#from django.conf.urls.defaults import patterns, include, url
+from django.conf.urls import patterns, url, include
 import todoes.views
 import assets.views
 import assets.test_view

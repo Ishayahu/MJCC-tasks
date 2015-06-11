@@ -1,13 +1,49 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 5//EN>
 <html lang="ru">
 <head>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery.min.js"></script>
+    {# Для выпадающего списка #}
+    <script type="text/javascript" src="/media/js/dropdown.js"></script>
+    <link rel="stylesheet" type="text/css" href="/media/css/dropdown.css" />
+    <link rel="stylesheet" type="text/css" href="/media/css/blink.css" />
+
     <title>{% block title %}{% endblock %}</title>
     {% block style %}{% endblock %}
 </head>
 <body>
-<!--Меню выбора языка-->
-<div class ="rightstr"><p><a href="/language/ru">ru</a>|<a href="/language/eng">eng</a></p></div>
-<div style="clear:left"></div>
+<!--Меню -->
+         <table border="1" width="100%">
+            <tr>
+                <td>Привет, {{ worker.fio }}</td>
+                <td><a href="/tasks/">К списку задач</a></td>
+                <td><a href="/language/ru">ru</a>|<a href="/language/eng">eng</a></td>
+                <td><a target="_new" href="/media/versions.html">v0
+                .2.3d</a></td>
+            <tr>
+        </table>
+{# <div class ="rightstr"><p><a href="/language/ru">ru</a>|<a#}
+{#href="/language/eng">eng</a></p></div> #}
+{#<div style="clear:left"></div>#}
+{#    <div class ="leftstr"><p>Привет, {{ worker.fio }}</p></div>#}
+{#    <div class ="rightstr"><p><a target="_new"#}
+{#         href="/media/versions.html">v0.2.3d</a></p></div>#}
+    {% if admin %}
+        <table border="1" width="100%">
+            <tr>
+                <td><a href="/tasks/to/Мотя/">Вопросы к Моте</a></td>
+                <td><a href="/tasks/to/Звонки/">Звонки</a></td>
+                <td><a href="/tasks/to/БД/">Вопросы по БД</a></td>
+                <td><a href="/users/" target="_new">Активность пользователей</a></td>
+                <td><a href="/all_bills/" target="_new">Счета</a></td>
+                <td><a href="/assets_by_type/0/" target="_new">Активы по
+                    категориям
+                </a></td>
+            </tr>
+        </table>
+    {% endif %}
+<!-- Конец Меню -->
+
+
 {% block content %}
     {% if my_error %}
         {% for error in my_error %}

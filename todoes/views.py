@@ -336,6 +336,9 @@ def profile(request):
 def tasks(request):
     lang=select_language(request)
     def tasks_separation(tasks):
+        """
+        Деление задач на исполнителей для отображения исходящих задач
+        """
         class group():
             def __init__(self,person,tasks):
                 self.person = person
@@ -381,7 +384,7 @@ def tasks(request):
     user = request.user.username
     # method = request.method
     # Если подтверждаются задачи с главной страницы
-    if  request.method == 'POST':
+    if request.method == 'POST':
         for task_to_confirm_id in request.POST.getlist('task_to_confirm_id'):
             task_to_confirm = Task.objects.get(id=int(task_to_confirm_id))
             task_to_confirm.confirmed = True
@@ -429,15 +432,32 @@ def tasks(request):
             tasks_future = Task.objects.filter(deleted = False).filter(worker=worker,percentage__lt=100).filter(due_date__gt=datetime.datetime.now()).filter(start_date__lt=datetime.datetime.now()).filter(when_to_reminder__lt=datetime.datetime.now())
         except:
             tasks_future = ''# если задач нет - вывести это в шаблон
-        # 
+
+        # https://github.com/Ishayahu/MJCC-tasks/issues/63
+        # срок исполнения которых меньше 3-х дней, для выделения
+        # оповещение должно выдаваться только раз за сессию!
+        # и раз за день
+        was_nearest_remining = request.session.get('nearest_remining',False)
+        today = str(datetime.datetime.now().date())
+        last_nearest_remining_date = request.session.get(
+            'nearest_remining_date','1900-01-01')
+        if last_nearest_remining_date!=today:
+            was_nearest_remining = False
+        # print request.session.get('nearest_remining_date',False)
+        nearest_count = 0
+        for task in tasks_future:
+            if task.due_date <= datetime.datetime.now() \
+                    + datetime.timedelta(days=3):
+                task.nearest = True
+                if not was_nearest_remining:
+                    request.session['nearest_remining'] = True
+                    request.session['nearest_remining_date'] = today
+                    nearest_count+=1
+        #
+
         # получаем заявки ОТ человека
         #
         try:
-            # отображаем только НЕ закрытые заявки, т.е. процент выполнения которых меньше 100
-            #try:
-            #    client = Person.objects.get(login=user)
-            #except Person.DoesNotExist:
-            #    client = 'Нет такого пользователя'
             my_tasks = Task.objects.filter(deleted = False).filter(client=worker,percentage__lt=100).order_by('worker','due_date')
             # Теперь их надо разбить по тому, кому они адресованы и выделять цветом их просроченность/нет
             my_tasks = tasks_separation(my_tasks)
@@ -480,10 +500,18 @@ def tasks(request):
             except:
                 tasks_to_confirm = ''# если задач нет - вывести это в шаблон
                 my_error.append('Нет неподтверждённых заявок')
-            set_last_activity(user,request.path)
-            return render_to_response(languages[lang]+'tasks.html',{'my_error':my_error,'user':user,'worker':worker,'tasks_overdue':tasks_overdue,'tasks_for_today':tasks_for_today,'tasks_future':tasks_future,'my_tasks':my_tasks,'tasks_to_confirm':tasks_to_confirm,'all_tasks':all_tasks,'alert':alert,'admin':admin,'regular_tasks':regular_tasks},RequestContext(request))
     set_last_activity(user,request.path)
-    return render_to_response(languages[lang]+'tasks.html',{'my_error':my_error,'user':user,'worker':worker,'tasks_overdue':tasks_overdue,'tasks_for_today':tasks_for_today,'tasks_future':tasks_future,'my_tasks':my_tasks,'alert':alert,'regular_tasks':regular_tasks},RequestContext(request))
+    return render_to_response(languages[lang]+'tasks.html',
+        {'my_error':my_error,'user':user,'worker':worker,
+        'tasks_overdue':tasks_overdue,
+        'tasks_for_today':tasks_for_today,
+        'tasks_future':tasks_future,'my_tasks':my_tasks,
+        'tasks_to_confirm':tasks_to_confirm,'all_tasks':all_tasks,
+        'alert':alert,'admin':admin,'regular_tasks':regular_tasks,
+         'nearest_count':nearest_count,
+        },RequestContext(request))
+    # set_last_activity(user,request.path)
+    # return render_to_response(languages[lang]+'tasks.html',{'my_error':my_error,'user':user,'worker':worker,'tasks_overdue':tasks_overdue,'tasks_for_today':tasks_for_today,'tasks_future':tasks_future,'my_tasks':my_tasks,'alert':alert,'regular_tasks':regular_tasks},RequestContext(request))
 @login_required
 def task(request,task_type,task_id):
     lang=select_language(request)
@@ -608,10 +636,17 @@ def task(request,task_type,task_id):
             form = l_forms[lang]['NoteToTicketAddForm'](defaults = (task_full.worker.fio, task_full.client.fio),exclude = (fio,))
             for note in notes:
                 note.note = htmlize(note.note)
-            files=task_full.files.all()
+            files=task_full.file.all()
             # files[0].file.url
             set_last_activity(user,request.path)
-            return render_to_response(languages[lang]+'task.html',{'files':files,'user':user,'fio':fio,'task':task_full,'notes':notes, 'form':form,'task_type':task_type,'admin':admin},RequestContext(request))
+            return render_to_response(languages[lang]+'task.html',
+                                      {'files':files,'user':user,
+                                       'worker':fio,'task':task_full,
+                                       'notes':notes, 'form':form,
+                                       'task_type':task_type,
+                                       'admin':admin},
+                                      RequestContext(request))
+            # return render_to_response(languages[lang]+'task.html',{'files':files,'user':user,'fio':fio,'task':task_full,'notes':notes, 'form':form,'task_type':task_type,'admin':admin},RequestContext(request))
     # если задачи нет - возвращаем к списку с ошибкой
     except Task.DoesNotExist:
         # print 'here'
@@ -698,6 +733,12 @@ def to(request, to_who):
     lang=select_language(request)
     user = request.user.username
     method = request.method
+    if user in admins:
+        admin = True
+    try:
+        fio = Person.objects.get(login=user)
+    except Person.DoesNotExist:
+        fio = FioError()
     if request.session.get('my_error'):
         my_error = [request.session.get('my_error'),]
     else:
@@ -727,7 +768,11 @@ def to(request, to_who):
         for note in notes[note_to_id]:
             note.note = htmlize(note.note)
     set_last_activity(user,request.path)
-    return render_to_response(languages[lang]+'tasks_to.html', {'tasks':tasks_to,'notes':notes,'to_who':to_who, 'method':method},RequestContext(request))
+    return render_to_response(languages[lang]+'tasks_to.html',
+                              {'worker':fio,'tasks':tasks_to,
+                               'notes':notes,'to_who':to_who,
+                               'method':method, 'admin':admin},
+                              RequestContext(request))
 @login_required
 def confirm_task(request,task_to_confirm_id):
     lang=select_language(request)
@@ -782,6 +827,8 @@ def edit_task(request,task_to_edit_id):
     method = request.method
     
     user = request.user.username
+    if user in admins:
+        admin = True
     try:
         fio = Person.objects.get(login=user)
     except Person.DoesNotExist:
@@ -807,9 +854,9 @@ def edit_task(request,task_to_edit_id):
                                 description = 'TEST',)
                 instanse.save()
                 return instanse
-
-            task_to_edit.files.add(save_file(request.FILES))
-            task_to_edit.save()
+            if request.FILES:
+                task_to_edit.file.add(save_file(request.FILES))
+                task_to_edit.save()
             # raise TabError
             data = form.cleaned_data
             task_to_edit.name=data['name']
@@ -894,7 +941,11 @@ def edit_task(request,task_to_edit_id):
         # Creating a form to change an existing task.
         # form = TaskEditForm(instance=task_to_edit)
     set_last_activity(user,request.path)
-    return render_to_response(languages[lang]+'new_ticket.html', {'form':form, 'method':method},RequestContext(request))
+    return render_to_response(languages[lang]+'new_ticket.html',
+                              {'worker':fio,'form':form,
+                               'admin':admin,
+                               'method':method},
+    RequestContext(request))
 @login_required
 def delete_task(request,task_type,task_to_delete_id):
     lang=select_language(request)

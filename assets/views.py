@@ -103,7 +103,11 @@ def bill_cash_add(request):
                     cur_place.save()
         return (False,HttpResponseRedirect('/all_bills/'))
     # Создаём новый счёт, значит теперь надо номер новой гарантии
-    garanty_number = int(Garanty.objects.all().order_by('-number')[0].number)+1
+    try:
+        garanty_number = int(Garanty.objects.all().order_by('-number')[0].number)+1
+    except IndexError:
+        # значит, гарантий ещё в базе нет
+        garanty_number = 0
     contractors_list = assets.api.get_contractors_list(request,internal=True)
     asset_types_list = assets.api.get_asset_type_list(request,internal=True)
     return (True,('new_bill.html', {'NewCashBillForm':{'garanty':garanty_number}},{'contractors_list':contractors_list,'asset_types_list':asset_types_list, 'method':method},request,app))
@@ -202,7 +206,12 @@ def bill_cashless_add(request):
             return (True,('cashless_redirect.html', {},{'text':text,'cashless':cashless},request,app))
         return (False,HttpResponseRedirect('/all_bills/'))
     # Создаём новый счёт, значит теперь надо номер новой гарантии
-    garanty_number = int(Garanty.objects.all().order_by('-number')[0].number)+1
+    try:
+        garanty_number = int(Garanty.objects.all().order_by('-number')[0].number)+1
+    except IndexError:
+        # значит, гарантий ещё в базе нет
+        garanty_number = 0
+
     contractors_list = assets.api.get_contractors_list(request,internal=True)
     asset_types_list = assets.api.get_asset_type_list(request,internal=True)
     return (True,('new_bill.html', {'NewCashBillForm':{'garanty':garanty_number}},{'stages':stages,'contractors_list':contractors_list,'asset_types_list':asset_types_list, 'method':method},request,app))

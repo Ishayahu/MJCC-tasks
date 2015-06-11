@@ -32,7 +32,7 @@ class Note(models.Model):
     timestamp = models.DateTimeField()
     note = models.TextField()
     author = models.ForeignKey('Person',blank = True, null = True)
-    children_note = models.ManyToManyField('Note',related_name = "parent_note",blank = True, null = True)
+    children_note = models.ManyToManyField('Note',related_name = "parent_note",blank = True)#, null = True)
     def __unicode__(self):
         return self.note
 
@@ -78,14 +78,15 @@ class Task(models.Model):
     worker = models.ForeignKey(Person, related_name = "worker_for_task")
     client = models.ForeignKey(Person, related_name = "client_for_task")
     resource = models.ForeignKey(Resource, blank = True, null = True)
-    note = models.ManyToManyField(Note, related_name = "for_task",blank = True, null = True)
-    files = models.ManyToManyField(File, related_name = "for_task", blank = True, null = True)
+    note = models.ManyToManyField(Note, related_name = "for_task",blank = True)#, null = True)
+    file = models.ManyToManyField(File, related_name = "for_task",
+                                   blank = True)#, null = True)
     percentage = models.PositiveSmallIntegerField()
     pbu = models.ForeignKey(ProblemByUser)
     pbw = models.ForeignKey(ProblemByWorker,blank = True, null = True)
     confirmed = models.BooleanField(default=False)
     confirmed_date = models.DateTimeField(blank = True, null = True)
-    children_task = models.ManyToManyField('Task',related_name = "parent_task",blank = True, null = True)
+    children_task = models.ManyToManyField('Task',related_name = "parent_task",blank = True)#, null = True)
     deleted = models.BooleanField(default=False)
     acl = models.TextField(default=False)
     def __unicode__(self):
@@ -105,9 +106,9 @@ class RegularTask(models.Model):
     worker = models.ForeignKey(Person, related_name = "worker_for_regular_task",blank = True, null = True)
     client = models.ForeignKey(Person, related_name = "client_for_regular_task",blank = True, null = True)
     resource = models.ForeignKey(Resource, blank = True, null = True)
-    note = models.ManyToManyField(Note, related_name = "for_regular_task",blank = True, null = True)
-    file = models.ForeignKey(File,related_name = "for_regular_task", blank = True, null = True)
-    children_task = models.ManyToManyField('Task',related_name = "parent_regular_task",blank = True, null = True)
+    note = models.ManyToManyField(Note, related_name = "for_regular_task",blank = True)#, null = True)
+    file = models.ManyToManyField(File,related_name = "for_regular_task", blank = True)#, null = True)
+    children_task = models.ManyToManyField('Task',related_name = "parent_regular_task",blank = True)#, null = True)
     deleted = models.BooleanField(default=False)
     acl = models.TextField(default=False)
     period = models.TextField()

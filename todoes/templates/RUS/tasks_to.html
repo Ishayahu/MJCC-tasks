@@ -1,6 +1,6 @@
 {% extends "RUS/base.html" %}
 {% block title %}
-    Задачи для обсуждения с {{to_who}}
+    Задачи для категории {{to_who}}
 {% endblock %}
 {% block style %}
     <style>
@@ -22,8 +22,8 @@
     </style>
 {% endblock %}
 {% block content %}
-    <p class="leftstr"><a href="/tasks/">К списку задач</a></p>
-    <p class="rightstr"><a href="#" onclick="window.print();">Напечатать</a></p>
+{#    <p class="leftstr"><a href="/tasks/">К списку задач</a></p>#}
+    <p><a href="#" onclick="window.print();">Напечатать</a></p>
     <hr />
     {% if my_error %}
         {% for error in my_error %}
