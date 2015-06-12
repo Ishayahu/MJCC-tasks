@@ -163,9 +163,9 @@
     </style>
 {% endblock %}
 {% block content %}
-    {% if form.errors %}
-       {{form.errors}} 
-    {% endif %}
+{#    {% if form.errors %}#}
+{#       {{form.errors}} #}
+{#    {% endif %}#}
     <form action="" method="post">
         {% csrf_token %}
         <table border=1>

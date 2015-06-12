@@ -72,6 +72,9 @@ def set_last_activity(login,url):
 def new_ticket(request):
     lang=select_language(request)
     user = request.user.username
+    admin = False
+    if user in admins:
+        admin = True
     try:
         fio = Person.objects.get(login=user)
     except Person.DoesNotExist:
@@ -100,12 +103,18 @@ def new_ticket(request):
     else:
         form =l_forms[lang]['NewTicketForm']({'percentage':0,'start_date':datetime.datetime.now(),'due_date':datetime.datetime.now(),'priority':3})
     set_last_activity(user,request.path)
-    return render_to_response(languages[lang]+'new_ticket.html', {'form':form, 'method':method},RequestContext(request))
+    return render_to_response(languages[lang]+'new_ticket.html',
+                              {'form':form, 'method':method,
+                               'admin':admin, 'worker':fio},
+                              RequestContext(request))
 
 @login_required
 def new_regular_ticket(request):
     lang=select_language(request)
     user = request.user.username
+    admin = False
+    if user in admins:
+        admin=True
     try:
         fio = Person.objects.get(login=user)
     except Person.DoesNotExist:
@@ -134,9 +143,16 @@ def new_regular_ticket(request):
             set_last_activity(user,request.path)
             return HttpResponseRedirect('/tasks/')
     else:
-        form =l_forms[lang]['NewRegularTicketForm'] ({'start_date':datetime.datetime.now(),'due_date':datetime.datetime.now(),'priority':3})
+        form =l_forms[lang]['NewRegularTicketForm'](
+            {'start_date':datetime.datetime.now(),
+             'due_date':datetime.datetime.now(),'priority':3})
     set_last_activity(user,request.path)
-    return render_to_response(languages[lang]+'new_regular_task.html', {'page_title':u'Новая повторяющаяся задача','form':form, 'method':method},RequestContext(request))
+    return render_to_response(languages[lang]+'new_regular_task.html',
+                              {'page_title': u'Новая повторяющаяся '
+                                             u'задача',
+                               'form':form, 'method':method,
+                               'admin':admin, 'worker':fio},
+                              RequestContext(request))
 @login_required
 def edit_regular_task(request,task_to_edit_id):
     lang=select_language(request)
@@ -451,6 +467,17 @@ def tasks(request):
         #
         # получаем заявки ДЛЯ человека
         #
+        # для оповещения о новых заявках со ссылками на них
+        tasks_id_list=[]
+        rtasks_id_list=[]
+        # получаем активные регулярные задачи
+        try:
+            # фильтр filter(start_date__lt=datetime.datetime.now()) удялет заявки, которые ещё не наступили
+            # фильтр filter(when_to_reminder__lt=datetime.datetime.now()) удялет заявки, которые ещё не наступили
+            regular_tasks = RegularTask.objects.filter(deleted = False).filter(worker=worker).filter(next_date__lt=datetime.datetime.now()).filter(when_to_reminder__lt=datetime.datetime.now())
+        except:
+            regular_tasks = ''# если задач нет - вывести это в шаблон
+
         # просроченные
         try:
             # отображаем только НЕ закрытые заявки, т.е. процент выполнения которых меньше 100
@@ -475,6 +502,16 @@ def tasks(request):
             tasks_future = Task.objects.filter(deleted = False).filter(worker=worker,percentage__lt=100).filter(due_date__gt=datetime.datetime.now()).filter(start_date__lt=datetime.datetime.now()).filter(when_to_reminder__lt=datetime.datetime.now())
         except:
             tasks_future = ''# если задач нет - вывести это в шаблон
+
+        # enhancement #47
+        for task in list(set(chain(tasks_overdue,
+                                   tasks_for_today,
+                                   tasks_future))):
+            tasks_id_list.append(task.id)
+        for task in regular_tasks:
+            rtasks_id_list.append(task.id)
+        # end #47
+
 
         # https://github.com/Ishayahu/MJCC-tasks/issues/63
         # срок исполнения которых меньше 3-х дней, для выделения
@@ -508,14 +545,7 @@ def tasks(request):
             # если задач нет - вывести это в шаблон
             my_tasks = ''# если задач нет - вывести это в шаблон
             my_error.append('От Вас нет задач')
-        try:
-            # получаем активные регулярные задачи
-            # фильтр filter(start_date__lt=datetime.datetime.now()) удялет заявки, которые ещё не наступили
-            # фильтр filter(when_to_reminder__lt=datetime.datetime.now()) удялет заявки, которые ещё не наступили
-            regular_tasks = RegularTask.objects.filter(deleted = False).filter(worker=worker).filter(next_date__lt=datetime.datetime.now()).filter(when_to_reminder__lt=datetime.datetime.now())
-        except:
-            regular_tasks = ''# если задач нет - вывести это в шаблон
-        
+
         # получаем кол-во заявок в этот раз и сравниваем с тем, что было для уведомления всплывающим окном или ещё какой фигней
         alert = False
         if request.session.get('tasks_number'):
@@ -552,6 +582,8 @@ def tasks(request):
         'tasks_to_confirm':tasks_to_confirm,'all_tasks':all_tasks,
         'alert':alert,'admin':admin,'regular_tasks':regular_tasks,
          'nearest_count':nearest_count,
+         'tasks_id_string': ','.join(map(str,tasks_id_list)),
+         'rtasks_id_string': ','.join(map(str,rtasks_id_list)),
         },RequestContext(request))
     # set_last_activity(user,request.path)
     # return render_to_response(languages[lang]+'tasks.html',{'my_error':my_error,'user':user,'worker':worker,'tasks_overdue':tasks_overdue,'tasks_for_today':tasks_for_today,'tasks_future':tasks_future,'my_tasks':my_tasks,'alert':alert,'regular_tasks':regular_tasks},RequestContext(request))

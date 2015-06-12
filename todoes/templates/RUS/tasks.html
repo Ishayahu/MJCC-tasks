@@ -38,7 +38,8 @@
 		cancel();
 		return false;
 	    }
-	    if ((e.ctrlKey && e.altKey && e.keyCode == 'N'.charCodeAt(0))) {
+	    if ((e.ctrlKey && e.shiftKey && e.altKey && e.keyCode == 'N'
+                        .charCodeAt(0))) {
 		window.open("/new_ticket/",'_blank');
 		return false;
 	    }
@@ -77,14 +78,23 @@
 
 {% block content %}
 {#    <br />#}
-    {% if alert %}
-        <script>alert("Появились новые задачи!")</script>
-    {% endif %}
+    {#    Для звуковых оповещений#}
+    <div id="sound"></div>
+
+{#    {% if alert %}#}
+{#        <script>alert("Появились новые задачи!")</script>#}
+{#        <script>#}
+{#            SoundNotify('/media/img/yago.jpg',#}
+{#                    'Появились новые задачи!',#}
+{#                    'http://stackoverflow.com/a/13328397/1269037',#}
+{#                    '/media/audio/aladdin_problem.wav')#}
+{#        </script>#}
+{#    {% endif %}#}
+
     {% if nearest_count %}
         <script>alert("Обратите внимание на {{nearest_count}} задач!")
         </script>
     {% endif %}
-
 
     {% if regular_tasks %}
         <p>Повторяющиеся задачи</p>
@@ -108,9 +118,13 @@
                 {% ifequal task.category.name 'Звонки' %}
                     &#9743;
                 {% endifequal %}                            
-                <a href="../task/regular/{{task.id}}" title="{{task.description}}" target="_blank">{{task.name}}</a> <a href="../set_reminder/regular/{{task.id}}" title="Установить напоминалку">&#8986;</a> <a href="../regular_task_done/{{task.id}}" title="Отметить как выполненую" onclick="if (confirm('Уверены?')) {return true} else {return false};">&#9790;</a> 
+                <a id="rtask_{{ task.id }}"
+                   href="/task/regular/{{task.id}}"
+                    title="{{task.description}}" target="_blank">{{task.name}}</a> <a href="../set_reminder/regular/{{task.id}}" title="Установить напоминалку">&#8986;</a> <a href="../regular_task_done/{{task.id}}" title="Отметить как выполненую" onclick="if (confirm('Уверены?')) {return true} else {return false};">&#9790;</a>
                 {% ifnotequal task.category.name 'Звонки' %}
-                    <a href="../move_to_call/regular/{{task.id}}" title="Переместить в звонки">&#9742;</a>
+                    <a href="/move_to_call/regular/{{task.id}}"
+                       id="rtask_{{ task.id }}" title="Переместить в
+                       звонки">&#9742;</a>
                 {% endifnotequal %}
                 </li>
             {% endfor %}
@@ -145,9 +159,11 @@
                             {% ifequal task.category.name 'Звонки' %}
                                 &#9743;
                             {% endifequal %}                            
-                            <a href="../task/one_time/{{task.id}}" title="{{task.description}}" target="_blank">{{task.name}} - Сделать до: {{task.due_date}}</a> <a href="../set_reminder/one_time/{{task.id}}" title="Установить напоминалку">&#8986;</a> 
+                            <a href="/task/one_time/{{task.id}}"
+                               id="task_{{ task.id }}" title="{{task.description}}" target="_blank">{{task.name}} - Сделать до: {{task.due_date}}</a> <a href="../set_reminder/one_time/{{task.id}}" title="Установить напоминалку">&#8986;</a>
                             {% ifnotequal task.category.name 'Звонки' %}
-                                <a href="../move_to_call/one_time/{{task.id}}" title="Переместить в звонки">&#9742;</a>
+                                <a href="/move_to_call/one_time/{{task.id}}"
+                                   id="task_{{ task.id }}" title="Переместить в звонки">&#9742;</a>
                             {% endifnotequal %}
                             </li>
                         {% endfor %}
@@ -175,9 +191,12 @@
                             {% ifequal task.category.name 'Звонки' %}
                                 &#9743;
                             {% endifequal %}                            
-                            <a href="../task/one_time/{{task.id}}" title="{{task.description}}" target="_blank">{{task.name}} - Сделать до: {{task.due_date}}</a> <a href="../set_reminder/one_time/{{task.id}}" title="Установить напоминалку">&#8986;</a> 
+                            <a href="../task/one_time/{{task.id}}"
+                               id="task_{{ task.id }}" title="{{task.description}}" target="_blank">{{task.name}} - Сделать до: {{task.due_date}}</a> <a href="../set_reminder/one_time/{{task.id}}" title="Установить напоминалку">&#8986;</a>
                             {% ifnotequal task.category.name 'Звонки' %}
-                                <a href="../move_to_call/one_time/{{task.id}}" title="Переместить в звонки">&#9742;</a>
+                                <a href="/move_to_call/one_time/{{task.id}}"
+                                   id="task_{{ task.id }}"
+                                   title="Переместить в звонки">&#9742;</a>
                             {% endifnotequal %}
                             </li>
                         {% endfor %}
@@ -205,14 +224,17 @@
                             {% ifequal task.category.name 'Звонки' %}
                                 &#9743;
                             {% endifequal %}                            
-                            <a href="../task/one_time/{{task.id}}" title="{{task.description}}" target="_blank"
+                            <a href="../task/one_time/{{task.id}}"
+                               id="task_{{ task.id }}"
+                               title="{{task.description}}" target="_blank"
                                     {% if task.nearest%}
                                     class="blink_me"
                                     {% endif %}
 
                                     >{{task.name}} - Сделать до: {{task.due_date}}</a> <a href="../set_reminder/one_time/{{task.id}}" title="Установить напоминалку">&#8986;</a>
                             {% ifnotequal task.category.name 'Звонки' %}
-                                <a href="../move_to_call/one_time/{{task.id}}" title="Переместить в звонки">&#9742;</a>
+                                <a href="/move_to_call/one_time/{{task.id}}"
+                                   id="task_{{ task.id }}" title="Переместить в звонки">&#9742;</a>
                             {% endifnotequal %}
                             </li>
                         {% endfor %}
@@ -281,4 +303,89 @@
         </tr>
     </table>
     <a href="/all_task/0/">Просмотреть все задачи (архив)</a>
+
+    <script>
+        // enhancement #47
+        // https://github.com/Ishayahu/MJCC-tasks/issues/47
+        // обрабатываем списки задач чтобы выдать по ним оповещение
+        var new_tasks = "{{ tasks_id_string }}".split(',');
+        var old_tasks_str = localStorage.getItem('tasks');
+        var new_rtasks = "{{ rtasks_id_string }}".split(',');
+        var old_rtasks_str = localStorage.getItem('rtasks');
+        if (!old_tasks_str )
+        {
+            var old_tasks = [];
+        }
+        else
+        {
+            var old_tasks = old_tasks_str.split(',')
+        }
+        if (!old_rtasks_str )
+        {
+            var old_rtasks = [];
+        }
+        else
+        {
+            var old_rtasks = old_rtasks_str.split(',')
+        }
+        var diff = [];
+        var rdiff = [];
+        new_tasks.forEach(function (item, i, arr){
+            if(old_tasks.indexOf(item)==-1)
+                {diff.push(item)};
+        })
+        new_rtasks.forEach(function (item, i, arr){
+            if(old_rtasks.indexOf(item)==-1)
+                {rdiff.push(item)};
+        })
+        if (diff.length+rdiff.length>5)
+        {
+            SoundNotify('/media/img/yago.jpg',
+                    'Появилось много новых задач!',
+                    0,
+                    '/media/audio/aladdin_problem.wav')
+        }
+        else
+        {
+            var first = true;
+            diff.forEach(function(item,i,arr){
+                if (first)
+                {
+                    SoundNotify('/media/img/yago.jpg',
+                    document.getElementById('task_'+item).innerText,
+                    '/task/one_time/'+item,
+                    '/media/audio/aladdin_problem.wav');
+                    first = false;
+                }
+                else
+                {
+                    SoundNotify('/media/img/yago.jpg',
+                    document.getElementById('task_'+item).innerText,
+                    '/task/one_time/'+item,
+                    0)
+                }
+            })
+            rdiff.forEach(function(item,i,arr){
+                if (first)
+                {
+                    SoundNotify('/media/img/yago.jpg',
+                    document.getElementById('rtask_'+item).innerText,
+                    '/task/regular/'+item,
+                    '/media/audio/aladdin_problem.wav');
+                    first = false;
+                }
+                else
+                {
+                    SoundNotify('/media/img/yago.jpg',
+                    document.getElementById('rtask_'+item).innerText,
+                    '/task/regular/'+item,
+                    0)
+                }
+            })
+        }
+        localStorage.setItem('tasks',new_tasks)
+        localStorage.setItem('rtasks',new_rtasks)
+    </script>
+
+
 {% endblock %}
