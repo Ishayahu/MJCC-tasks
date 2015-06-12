@@ -43,14 +43,50 @@
                 <input type="submit" value="Подтвердить закрытие задачу" name="confirm_task" onclick="if (confirm('Уверены?')) {return true} else {return false};"/>
             </form>
 
+{#            <table border=1>#}
+{#                <tr><th colspan="2">Комментарии</th></tr>#}
+{#                    {% for note in notes %}#}
+{#                        <tr>#}
+{#                            <form action="" method="post">#}
+{#                         {% csrf_token %}#}
+{#                        <td>{# {{note.id}}; #}
+{#                            {{note.note|safe}}#}
+{#                        </td>#}
+{#                        <td>#}
+{#                            <input type="hidden" name="num" value="{{note.id}}" />#}
+{#                            <input type="submit" value="Удалить комментарий" name="del_comment" />#}
+{#                        </td>#}
+{#                            </form>#}
+{#                    </tr>#}
+{#                    {% endfor %}#}
+{#            </table>#}
+
+            {# Вывод таблицы с комментариями #}
+
             <table border=1>
-                <tr><th colspan="2">Комментарии</th></tr>
-                    {% for note in notes %}
-                        <tr><form action="" method="post">
-                        {% csrf_token %}
-                        <td>{# {{note.id}}; #}{{note.note|safe}}</td><td><input type="hidden" name="num" value="{{note.id}}" /><input type="submit" value="Удалить комментарий" name="del_comment" /></td></form></tr>
-                    {% endfor %}
+                <tr>
+                    <td>
+                        Комментарии
+                    </td>
+                </tr>
+                {% for note in notes %}
+                    <tr>
+                        <td style="padding: 0px 0px 0px {{note.indent_pix}}%;">
+                            {# Текст комментария #}
+                            {{note.note|safe}}<br />
+                            <div class="author">
+                                <i>
+                                    {{note.timestamp}}
+                                    {% if note.author %}
+                                        {{note.author.fio}}
+                                    {% endif %}
+                                </i></div>
+                        </td>
+                    </tr>
+                {% endfor %}
             </table>
+
+
         </td>
     </table>
     

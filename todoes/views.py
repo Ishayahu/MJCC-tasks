@@ -26,6 +26,7 @@ from djlib.acl_utils import acl, for_admins, admins_only
 from djlib.user_tracking import set_last_activity_model, get_last_activities
 from djlib.mail_utils import send_email_alternative
 from djlib.error_utils import FioError, ErrorMessage, add_error, shows_errors
+from utils import *
 
 from user_settings.settings import server_ip, admins, admins_mail
 try:
@@ -111,7 +112,8 @@ def new_regular_ticket(request):
         fio = FioError()
     method = request.method
     if request.method == 'POST':
-        form = NewRegularTicketForm(request.POST)
+        form = l_forms[lang]['NewRegularTicketForm'](request.POST)
+        # form = NewRegularTicketForm(request.POST)
         if form.is_valid():
             data = form.cleaned_data
             t=RegularTask(name=data['name'], 
@@ -149,7 +151,8 @@ def edit_regular_task(request,task_to_edit_id):
     task_to_edit = RegularTask.objects.get(id=task_to_edit_id)
     method = request.method
     if request.method == 'POST':
-        form = EditRegularTicketForm(request.POST)
+        form = l_forms[lang]['EditRegularTicketForm'](request.POST)
+        # form = EditRegularTicketForm(request.POST)
         # если меняется исполнитель - чтобы оповестить
         old_worker = task_to_edit.worker
         old_period = task_to_edit.period
@@ -349,7 +352,8 @@ def move_to_call(request,task_type,task_id):
 def register(request):
     lang=select_language(request)
     if request.method == 'POST':
-        form = UserCreationFormMY(request.POST)
+        form = l_forms[lang]['UserCreationFormMY'](request.POST)
+        # form = UserCreationFormMY(request.POST)
         if form.is_valid():
             data = form.cleaned_data
             new_user = form.save()
@@ -585,7 +589,8 @@ def task(request,task_type,task_id):
             task_full.russian_period = crontab_to_russian(task_full.period)
         method = request.method
         if request.method == 'POST':
-            form = NoteToTicketAddForm(request.POST)
+            form = l_forms[lang]['NoteToTicketAddForm'](request.POST)
+            # form = NoteToTicketAddForm(request.POST)
             if form.is_valid():
                 data = form.cleaned_data
                 if request.POST.get('add_comment'):
@@ -719,7 +724,8 @@ def close_task(request,task_to_close_id):
 	build_note_tree(note,notes,1)
     # если закрываем заявку
     if request.method == 'POST':
-        form = TicketClosingForm(request.POST)
+        form = l_forms[lang]['TicketClosingForm'](request.POST)
+        # form = TicketClosingForm(request.POST)
         if form.is_valid():
             data = form.cleaned_data
             task_to_close.pbw=data['pbw']
@@ -819,7 +825,7 @@ def confirm_task(request,task_to_confirm_id):
     if user not in admins:
         request.session['my_error'] = u'Нет права подтвердить закрытие задачи!'
         return HttpResponseRedirect("/tasks/")
-
+    admin = True
     task_to_confirm = Task.objects.get(id=task_to_confirm_id)
     method = request.method
     try:
@@ -827,7 +833,8 @@ def confirm_task(request,task_to_confirm_id):
     except Person.DoesNotExist:
         fio = FioError()
     if request.method == 'POST':
-        form = TicketConfirmingForm(request.POST)
+        # form = TicketConfirmingForm(request.POST)
+        form = l_forms[lang]['TicketConfirmingForm'](request.POST)
         if form.is_valid():
             data = form.cleaned_data
             if request.POST.get('confirm_task'):
@@ -845,16 +852,36 @@ def confirm_task(request,task_to_confirm_id):
                 set_last_activity(user,request.path)
                 return HttpResponseRedirect(request.get_full_path())
     else:
-        try:
-            notes = Note.objects.filter(for_task=task_to_confirm).order_by('-timestamp')
-        except Note.DoesNotExist:
-            notes = ('Нет подходящих заметок',)
         form = l_forms[lang]['TicketConfirmingForm']({'confirmed':True, 'confirmed_date':datetime.datetime.now()})
+        # try:
+        #     notes = Note.objects.filter(for_task=task_to_confirm).order_by('-timestamp')
+        # except Note.DoesNotExist:
+        #     notes = ('Нет подходящих заметок',)
+        # for note in notes:
+        #     note.note = htmlize(note.note)
+
+        # fixing #29
+        # https://github.com/Ishayahu/MJCC-tasks/issues/29
+        try:
+            tmp_notes = Note.objects.filter(for_task=task_to_confirm).order_by('-timestamp')
+        except Note.DoesNotExist:
+            tmp_notes = ('Нет подходящих заметок',)
+        notes=[]
+        for note in tmp_notes:
+            notes.append(note_with_indent(note,0))
+            build_note_tree(note,notes,1)
         for note in notes:
             note.note = htmlize(note.note)
+        # end fixing #29
+
     task_to_confirm.description = htmlize(task_to_confirm.description)
     set_last_activity(user,request.path)
-    return render_to_response(languages[lang]+'confirm_ticket.html', {'form':form,'task':task_to_confirm,'notes':notes,'method':method,'fio':fio},RequestContext(request))    
+    return render_to_response(languages[lang]+'confirm_ticket.html',
+                              {'form':form,'task':task_to_confirm,
+                               'notes':notes,'method':method,
+                               'fio':fio,'admin':admin,
+                               'worker':fio,},
+                              RequestContext(request))
 @login_required
 def edit_task(request,task_to_edit_id):
     lang=select_language(request)
@@ -1256,7 +1283,8 @@ def add_children_task(request,parent_task_type,parent_task_id):
         my_error.append('Не найдена родительская задача?!')
         return HttpResponseRedirect('/tasks/')
     if request.method == 'POST':
-        form = NewTicketForm(request.POST)
+        form = l_forms[lang]['NewTicketForm'](request.POST)
+        # form = NewTicketForm(request.POST)
         if form.is_valid():
             data = form.cleaned_data
             t=Task(name=data['name'], 
