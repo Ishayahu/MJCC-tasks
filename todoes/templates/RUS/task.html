@@ -173,7 +173,27 @@
             </form>
         </td>
     </table>
-    
+
+    {# дочерние задачи #}
+    <table border=1>
+        <tr>
+            <th>
+                дочерние задачи
+            </th>
+        </tr>
+        {% for task in children_tasks %}
+            <tr>
+                <td style="padding: 0px 0px 0px {{task.indent_pix}}%;">
+                     <a href="/task/one_time/{{task.id}}"
+                       title="{{task.description}}" target="_blank">
+                         {{task.name}} - Сделать до: {{task.due_date}}
+                     </a>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+    {# дочерние задачи конец#}
+
     <ul>
         {% for file in files %}
             <li> <a href="{{file.get_absolute_url}}">{{file.name}}</a>

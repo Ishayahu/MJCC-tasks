@@ -713,6 +713,8 @@ def task(request,task_type,task_id):
             for note in notes:
                 note.note = htmlize(note.note)
             files=task_full.file.all()
+            children_tasks = []
+            build_tasks_tree(task_full,children_tasks,0)
             # files[0].file.url
             set_last_activity(user,request.path)
             return render_to_response(languages[lang]+'task.html',
@@ -720,7 +722,8 @@ def task(request,task_type,task_id):
                                        'worker':fio,'task':task_full,
                                        'notes':notes, 'form':form,
                                        'task_type':task_type,
-                                       'admin':admin},
+                                       'admin':admin,
+                                       'children_tasks':children_tasks},
                                       RequestContext(request))
             # return render_to_response(languages[lang]+'task.html',{'files':files,'user':user,'fio':fio,'task':task_full,'notes':notes, 'form':form,'task_type':task_type,'admin':admin},RequestContext(request))
     # если задачи нет - возвращаем к списку с ошибкой
@@ -1307,6 +1310,13 @@ def add_children_task(request,parent_task_type,parent_task_id):
     lang=select_language(request)
     method = request.method
     user = request.user.username
+    admin = False
+    if user in admins:
+        admin=True
+    try:
+        fio = Person.objects.get(login=user)
+    except Person.DoesNotExist:
+        fio = FioError()
     try:
         # находим родительскую задачу
         parent_task = task_types[parent_task_type].objects.get(id=parent_task_id)
@@ -1346,7 +1356,10 @@ def add_children_task(request,parent_task_type,parent_task_id):
     else:
         form = l_forms[lang]['NewTicketForm'] ({'percentage':0,'start_date':datetime.datetime.now(),'due_date':datetime.datetime.now(),'priority':parent_task.priority,'category':parent_task.category})
     set_last_activity(user,request.path)
-    return render_to_response(languages[lang]+'new_ticket.html', {'form':form, 'method':method},RequestContext(request))
+    return render_to_response(languages[lang]+'new_ticket.html',
+                              {'form':form, 'method':method,
+                               'admin':admin, 'worker':fio},
+                              RequestContext(request))
 
 @login_required
 def regular_task_done(request,task_id):
