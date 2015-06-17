@@ -156,9 +156,14 @@
                                     {% endifequal %}
                                 </td>
                                 {# Если автор комментария - можно редактировать #}
-                                {% ifequal note.author.login fio.login %}
+                                {% ifequal note.author.login worker.login %}
                                     {% ifequal note.id note_to_edit_id %}
-                                        <td colspan=2><input type="hidden" name="num" value="{{note.id}}" /><input type="submit" value="Сохранить комментарий" name="save_edited_comment" /></td>
+                                        <td colspan=2>
+                                            <input type="hidden" name="num" value="{{note.id}}" />
+                                            <input type="submit" value="Сохранить комментарий"
+                                                   name="save_edited_comment"
+                                                   onclick='delete_draft("note_{{ note_to_edit_id }}")' />
+                                        </td>
                                     {% endifequal %}
                                     {% ifnotequal note.id note_to_edit_id %}
                                         <td><input type="submit" value="&#9998;" title="Редактировать комментарий" name="edit_comment" />
@@ -168,7 +173,7 @@
                                     {% endifnotequal %}
                                 {% endifequal %}
                                 {# Если не автор комментария - только отвечать &#9997; #}
-                                {% ifnotequal note.author.login fio.login %}
+                                {% ifnotequal note.author.login worker.login %}
 				    <td><div id="answer_to_note_{{note.id}}"><input type="button" value="Ответить" onclick="answer_to_note('answer_to_note_{{note.id}}',{{note.id}})" /></div>
                                         {% if admin %}
 					    <input type="hidden" name="num" value="{{note.id}}" />
@@ -237,7 +242,7 @@
         $(document).ready(function(){
             restore_draft({{task.id}},"id_note");
             {% if note_to_edit_id %}
-                restore_draft({{task.id}},"text_note_to_edit");
+                restore_draft("note_{{note_to_edit_id}}","text_note_to_edit");
             {% endif %}
        });
     </script>

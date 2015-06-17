@@ -702,14 +702,22 @@ def task(request,task_type,task_id):
                         if note.id != int(note_to_edit_id):
                             note.note = htmlize(note.note)
                     set_last_activity(user,request.path)
-                    return render_to_response(languages[lang]+'task.html',{'user':user,'fio':fio,'task':task_full,'notes':notes, 'form':form,'note_to_edit_id':int(note_to_edit_id),'task_type':task_type},RequestContext(request))
+                    return render_to_response(
+                        languages[lang]+'task.html',
+                        {'user':user,'worker':fio,'task':task_full,
+                         'admin':admin,
+                         'notes':notes, 'form':form,
+                         'note_to_edit_id':int(note_to_edit_id),
+                         'task_type':task_type},
+                        RequestContext(request))
                 elif request.POST.get('save_edited_comment'):
                     note_to_edit_id = request.POST.get('num')
                     note_to_edit = Note.objects.get(id=note_to_edit_id)
                     old_comment = note_to_edit.note
                     note_to_edit.note = request.POST.get('text_note_to_edit')
                     note_to_edit.save()
-                    send_email_alternative(u"Отредактирован комментарий к задаче: "+task_full.name,u"\<table cellpadding='5' border='1'\>\<tr\>\<td\>Старый комментарий\</td\>\<td\>"+old_comment+u"\</td\>\</tr\>\<tr\>\<td\>Новый комментарий\</td\>\<td\>"+note_to_edit.note+u"\</td\>\</tr\>\</table\>\n\n*Посмотреть задачу можно тут*:\nhttp://"+server_ip+"/task/"+task_addr[task_type]+"/"+str(task_full.id),[task_full.worker.mail,task_full.client.mail],fio)
+                    send_email_alternative(u"Отредактирован комментарий к задаче: "+task_full.name,u"\<table cellpadding='5' border='1'\>\<tr\>\<td\>Старый комментарий\</td\>\<td\>"+old_comment+u"\</td\>\</tr\>\<tr\>\<td\>Новый комментарий\</td\>\<td\>"+note_to_edit.note+u"\</td\>\</tr\>\</table\>\n\n*Посмотреть задачу можно тут*:\nhttp://"+server_ip+"/task/"+task_addr[task_type]+"/"+str(task_full.id),[task_full.worker.mail,task_full.client.mail])
+                    # send_email_alternative(u"Отредактирован комментарий к задаче: "+task_full.name,u"\<table cellpadding='5' border='1'\>\<tr\>\<td\>Старый комментарий\</td\>\<td\>"+old_comment+u"\</td\>\</tr\>\<tr\>\<td\>Новый комментарий\</td\>\<td\>"+note_to_edit.note+u"\</td\>\</tr\>\</table\>\n\n*Посмотреть задачу можно тут*:\nhttp://"+server_ip+"/task/"+task_addr[task_type]+"/"+str(task_full.id),[task_full.worker.mail,task_full.client.mail],fio)
                     set_last_activity(user,request.path)
                     return HttpResponseRedirect(request.get_full_path())
 

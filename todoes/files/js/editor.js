@@ -29,7 +29,9 @@ function delete_draft(id){
  */
 function restore_draft(id,elem_id){
     var text = localStorage.getItem("draft_"+id);
-    document.getElementById(elem_id).value = text;
+    if (text!=null) {
+        document.getElementById(elem_id).value = text;
+    }
 
 }
 
