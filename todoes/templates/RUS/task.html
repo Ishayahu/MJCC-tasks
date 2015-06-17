@@ -16,6 +16,8 @@
         width: 100%;
        }
       </style>
+        <script type="text/javascript" src="/media/js/editor.js"></script>
+
       <script>
         var was_selected = []
         var notice = true
@@ -44,7 +46,22 @@
             window.notice = ! window.notice
         }
         function answer_to_note(div_id,note_id){
-            document.getElementById(div_id).outerHTML = "<form action='' method='post'>{% csrf_token %}<textarea id='id_note' rows='10' cols='40' name='answer'></textarea><input type='hidden' name='to_note' value='"+note_id+"' /><input type='submit' value='Ответить на комментарий' name='answer_to_comment' /></form>";
+            document.getElementById(div_id).outerHTML =
+                    "<form action='' id='answer_to_note' " +
+                    "method='post'" +
+                    ">{% csrf_token %}<textarea " +
+                    "id='answer_to_note_"+note_id+"' " +
+                    "rows='10' cols='40' " +
+                    "name='answer'></textarea><input type='hidden' " +
+                    "name='to_note' value='"+note_id+"' />" +
+                    "<input type='submit' value='Ответить на комментарий' " +
+                    "onclick='delete_draft" +
+                    "(\"answer_to_note_"+note_id+"\")' " +
+                    "name='answer_to_comment' /></form>";
+            register_draft_saver("answer_to_note_"+note_id,"answer_to_note_"+note_id);
+{#            register_draft_cleaner("answer_to_note_"+note_id,"answer_to_note");#}
+            restore_draft("answer_to_note_"+note_id,"answer_to_note_"+note_id);
+
         }
 
       </script>
@@ -111,7 +128,8 @@
                 <tr><th colspan="3">Комментарии</th></tr>
                     {% for note in notes %}
                         <tr>
-                            <form action="" method="post">
+                            <form id="answer_to_note" action=""
+                                  method="post">
                                 {% csrf_token %}
                                 <td style="padding: 0px 0px 0px {{note.indent_pix}}%;"> 
                                     {# {{note.indent|safe}} #}
@@ -129,7 +147,12 @@
                                     {% endifnotequal %}
                                     {# Поле для редактирования коммента #}
                                     {% ifequal note.id note_to_edit_id %}
-                                        <textarea rows="10" cols="40" name="text_note_to_edit" >{{note.note}}</textarea>
+                                        <textarea rows="10"
+                                                  cols="40"
+                                                  name="text_note_to_edit"
+                                                  id="text_note_to_edit">
+                                            {{note.note}}
+                                        </textarea>
                                     {% endifequal %}
                                 </td>
                                 {# Если автор комментария - можно редактировать #}
@@ -161,7 +184,7 @@
             {% if form.is_multipart %}
                 <form enctype="multipart/form-data" method="post" action="">
             {% else %}
-                <form method="post" action="">
+                <form method="post" id="new_comment" action="">
             {% endif %}
             {# <form action="" method="post" enctype="multipart/form-data" > #}
                 {% csrf_token %}
@@ -200,7 +223,25 @@
         {% endfor %}
     </ul>
     
-    
+
+    <script>
+        {# Ставим обработчики сохранения черновиков и восстановления их #}
+        register_draft_saver({{task.id}},"id_note");
+        {% if note_to_edit_id %}
+            register_draft_saver("note_"+{{ note_to_edit_id}},
+                    "text_note_to_edit");
+        {% endif %}
+        register_draft_saver("answer_to_note_{{note.id}}",
+                "answer_to_note_{{note.id}}");
+        register_draft_cleaner({{task.id}},"new_comment");
+        $(document).ready(function(){
+            restore_draft({{task.id}},"id_note");
+            {% if note_to_edit_id %}
+                restore_draft({{task.id}},"text_note_to_edit");
+            {% endif %}
+       });
+    </script>
+
 {% comment %}
     class Task(models.Model):
         name = models.CharField(max_length=140)
@@ -223,7 +264,5 @@
         def __unicode__(self):
             return u"\t".join((self.name,self.description,self.worker.fio,str(self.percentage)))
 {% endcomment %}            
-
-
 
 {% endblock %}

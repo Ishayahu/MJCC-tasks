@@ -319,11 +319,14 @@ def set_reminder(request,task_type,task_id):
         # минуты должны быть с 0 в начале, иначе <input type="time" value="11:7"> не отображается
         # должно быть <input type="time" value="11:07">
         minutes = str(datetime.datetime.now().minute)
+        hours = str(datetime.datetime.now().hour+1)
         if len(minutes)==1:
             minutes = "0"+minutes
+        if len(hours)==1:
+            hours = "0"+hours
         # end fixing bug #38
 
-        after_hour = str(datetime.datetime.now().hour+1)+":"+minutes
+        after_hour = hours+":"+minutes
         today = str(datetime.datetime.now().day)+"/"+str(datetime.datetime.now().month)+"/"+str(datetime.datetime.now().year)
     set_last_activity(user,request.path)
     return render_to_response(languages[lang]+'set_reminder.html',
@@ -644,7 +647,8 @@ def task(request,task_type,task_id):
                             acl_list.append(person.login)
                     task_full.acl = ';'.join(acl_list)
                     task_full.save()
-                    send_email_alternative(u"Новый комментарий к задаче: "+task_full.name,u"*Комментарий*\<table cellpadding='5' border='1'\>\<tr\>\<td\>"+note.note+u"\</td\>\</tr\>\</table\>\n\n*Описание задачи*\<table cellpadding='5' border='1'\>\<tr\>\<td\>"+task_full.description+u"\</td\>\</tr\>\</table\>\n*Посмотреть задачу можно тут*:\nhttp://"+server_ip+"/task/"+task_addr[task_type]+"/"+str(task_full.id),mails,fio)
+                    # send_email_alternative(u"Новый комментарий к задаче: "+task_full.name,u"*Комментарий*\<table cellpadding='5' border='1'\>\<tr\>\<td\>"+note.note+u"\</td\>\</tr\>\</table\>\n\n*Описание задачи*\<table cellpadding='5' border='1'\>\<tr\>\<td\>"+task_full.description+u"\</td\>\</tr\>\</table\>\n*Посмотреть задачу можно тут*:\nhttp://"+server_ip+"/task/"+task_addr[task_type]+"/"+str(task_full.id),mails,fio)
+                    send_email_alternative(u"Новый комментарий к задаче: "+task_full.name,u"*Комментарий*\<table cellpadding='5' border='1'\>\<tr\>\<td\>"+note.note+u"\</td\>\</tr\>\</table\>\n\n*Описание задачи*\<table cellpadding='5' border='1'\>\<tr\>\<td\>"+task_full.description+u"\</td\>\</tr\>\</table\>\n*Посмотреть задачу можно тут*:\nhttp://"+server_ip+"/task/"+task_addr[task_type]+"/"+str(task_full.id),mails)
                     set_last_activity(user,request.path)
                     return HttpResponseRedirect(request.get_full_path())
                 elif request.POST.get('answer_to_comment'):
@@ -658,7 +662,8 @@ def task(request,task_type,task_id):
                     note.parent_note.add(parent_note)
                     note.save()
                     mails = (parent_note.author.mail if parent_note.author.mail else '' ,)
-                    send_email_alternative(u"Ответ на ваш комментарий к задаче: "+task_full.name,u"\<table cellpadding='5' border='1'\>\<tr\>\<td\>Ваш комментарий\</td\>\<td\>"+parent_note.note+u"\</td\>\</tr\>\<tr\>\<td\>Ответ\</td\>\<td\>\<table cellpadding='20'\>\<tr\>\<td\> "+note.note+u"\</td\>\</tr\>\</table\>\</td\>\</tr\>\</table\>\n\n*Описание задачи*:\<table border='1'\>\<tr\>\<td\>"+task_full.description+u"\</td\>\</tr\>\</table\>\n*Посмотреть задачу можно тут*:\nhttp://"+server_ip+"/task/"+task_addr[task_type]+"/"+str(task_full.id),mails,fio)
+                    send_email_alternative(u"Ответ на ваш комментарий к задаче: "+task_full.name,u"\<table cellpadding='5' border='1'\>\<tr\>\<td\>Ваш комментарий\</td\>\<td\>"+parent_note.note+u"\</td\>\</tr\>\<tr\>\<td\>Ответ\</td\>\<td\>\<table cellpadding='20'\>\<tr\>\<td\> "+note.note+u"\</td\>\</tr\>\</table\>\</td\>\</tr\>\</table\>\n\n*Описание задачи*:\<table border='1'\>\<tr\>\<td\>"+task_full.description+u"\</td\>\</tr\>\</table\>\n*Посмотреть задачу можно тут*:\nhttp://"+server_ip+"/task/"+task_addr[task_type]+"/"+str(task_full.id),mails)
+                    # send_email_alternative(u"Ответ на ваш комментарий к задаче: "+task_full.name,u"\<table cellpadding='5' border='1'\>\<tr\>\<td\>Ваш комментарий\</td\>\<td\>"+parent_note.note+u"\</td\>\</tr\>\<tr\>\<td\>Ответ\</td\>\<td\>\<table cellpadding='20'\>\<tr\>\<td\> "+note.note+u"\</td\>\</tr\>\</table\>\</td\>\</tr\>\</table\>\n\n*Описание задачи*:\<table border='1'\>\<tr\>\<td\>"+task_full.description+u"\</td\>\</tr\>\</table\>\n*Посмотреть задачу можно тут*:\nhttp://"+server_ip+"/task/"+task_addr[task_type]+"/"+str(task_full.id),mails,fio)
                     set_last_activity(user,request.path)
                     return HttpResponseRedirect(request.get_full_path())
                 elif request.POST.get('del_comment'):
