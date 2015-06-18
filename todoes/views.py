@@ -414,6 +414,7 @@ def tasks(request):
             Для определения того, просроченная задача, сегодняшнаяя
             или в будущем
             """
+            now = datetime.datetime.now()
             state=-9
             if task.due_date < now:
                 state = -1
@@ -423,56 +424,57 @@ def tasks(request):
                 state = 1
             return state
 
-        my_tasks=[]
-        tmp_group=[]
-        worker=tasks[0].worker
-        now = datetime.datetime.now()
+        # my_tasks=[]
+        # tmp_group=[]
+        # worker=tasks[0].worker
+        # now = datetime.datetime.now()
+        # # Проходимся по всем задачам
+        # for task in tasks:
+        #     # была ли задача уже добавлена - нет
+        #     appended = False
+        #     if task.worker != worker:
+        #         # Проверяем, нет ли уже подходящей группы
+        #         for x in my_tasks:
+        #             if x.person == task.worker:
+        #                 x.tasks.append(state_task(get_state(task),
+        #                                                    task))
+        #                 appended = True
+        #         if not appended:
+        #             my_tasks.append(group(worker,tmp_group))
+        #             tmp_group=[]
+        #             worker = task.worker
+        #         tmp_group.append(state_task(get_state(task),task))
+        #     else:
+        #         tmp_group.append(state_task(get_state(task),task))
+        # my_tasks.append(group(worker,tmp_group))
+        my_tasks = dict()
         for task in tasks:
-            appended = False
-            if task.worker != worker:
-                # Проверяем, нет ли уже подходящей группы
-                for x in my_tasks:
-                    if x.person == task.worker:
-                        print task.id
-                        x.tasks.append(state_task(get_state(task),
+            # пробуем, нет ли уже группы с этим исполнителем
+            try:
+                # если есть - то добавляем туда задачу
+                my_tasks[task.worker].tasks.append(state_task(get_state(task),
                                                            task))
-                        appended = True
-                if not appended:
-                    my_tasks.append(group(worker,tmp_group))
-                    tmp_group=[]
-                    worker = task.worker
-                # state=-9
-                # if task.due_date < now:
-                #     state = -1
-                # elif task.due_date.date() == now.date():
-                #     state = 0
-                # else:
-                #     state = 1
-                tmp_group.append(state_task(get_state(task),task))
-            else:
-                # state=-9
-                # if task.due_date < now:
-                #     state = -1
-                # elif task.due_date.date() == now.date():
-                #     state = 0
-                # else:
-                #     state = 1
-                tmp_group.append(state_task(get_state(task),task))
-        my_tasks.append(group(worker,tmp_group))
-
-        for x in my_tasks:
+            except KeyError:
+                # значит, ещё нет. создаём
+                my_tasks[task.worker] = group(task.worker,[])
+                my_tasks[task.worker].tasks.append(state_task(get_state(task),
+                                                           task))
+        for k,v in my_tasks.items():
             over = []
             now = []
             futures = []
-            for t in x.tasks:
+            for t in my_tasks[k].tasks:
                 if t.state == -1:
                     over.append(t)
                 elif t.state == 0:
                     now.append(t)
                 else:
                     futures.append(t)
-                x.tasks = over+now+futures
-        return my_tasks
+                my_tasks[k].tasks = over+now+futures
+        result = []
+        for k,v in my_tasks.items():
+            result.append(v)
+        return result
     # получаем ошибку, если она установлена и сбрасываем её в запросах
     if request.session.get('my_error'):
         my_error = [request.session.get('my_error'),]
