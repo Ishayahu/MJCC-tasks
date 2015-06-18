@@ -257,7 +257,7 @@
                                     {% ifequal task.state 1 %}
                                         <li class="future">
                                     {% endifequal %}
-                                    <a href="../task/one_time/{{task.task.id}}" title="{{task.task.description}}" target="_blank">{{task.task.name}}</a></li>
+                                    <a href="../task/{{ task.task.task_type }}/{{task.task.id}}" title="{{task.task.description}}" target="_blank">{{task.task.name}}</a></li>
                                 {% endfor %}
                             </ol>
                         </div>

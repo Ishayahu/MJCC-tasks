@@ -393,6 +393,7 @@ def profile(request):
     user = request.user.username
     set_last_activity(user,request.path)
     return HttpResponseRedirect("/tasks/")
+
 @login_required
 def tasks(request):
     lang=select_language(request)
@@ -408,33 +409,69 @@ def tasks(request):
             def __init__(self,state,task):
                 self.state = state
                 self.task = task
+        def get_state(task):
+            """
+            Для определения того, просроченная задача, сегодняшнаяя
+            или в будущем
+            """
+            state=-9
+            if task.due_date < now:
+                state = -1
+            elif task.due_date.date() == now.date():
+                state = 0
+            else:
+                state = 1
+            return state
+
         my_tasks=[]
         tmp_group=[]
         worker=tasks[0].worker
         now = datetime.datetime.now()
         for task in tasks:
+            appended = False
             if task.worker != worker:
-                my_tasks.append(group(worker,tmp_group))
-                tmp_group=[]
-                worker = task.worker
-                state=-9
-                if task.due_date < now:
-                    state = -1
-                elif task.due_date.date() == now.date():
-                    state = 0
-                else:
-                    state = 1
-                tmp_group.append(state_task(state,task))
+                # Проверяем, нет ли уже подходящей группы
+                for x in my_tasks:
+                    if x.person == task.worker:
+                        print task.id
+                        x.tasks.append(state_task(get_state(task),
+                                                           task))
+                        appended = True
+                if not appended:
+                    my_tasks.append(group(worker,tmp_group))
+                    tmp_group=[]
+                    worker = task.worker
+                # state=-9
+                # if task.due_date < now:
+                #     state = -1
+                # elif task.due_date.date() == now.date():
+                #     state = 0
+                # else:
+                #     state = 1
+                tmp_group.append(state_task(get_state(task),task))
             else:
-                state=-9
-                if task.due_date < now:
-                    state = -1
-                elif task.due_date.date() == now.date():
-                    state = 0
-                else:
-                    state = 1
-                tmp_group.append(state_task(state,task))
+                # state=-9
+                # if task.due_date < now:
+                #     state = -1
+                # elif task.due_date.date() == now.date():
+                #     state = 0
+                # else:
+                #     state = 1
+                tmp_group.append(state_task(get_state(task),task))
         my_tasks.append(group(worker,tmp_group))
+
+        for x in my_tasks:
+            over = []
+            now = []
+            futures = []
+            for t in x.tasks:
+                if t.state == -1:
+                    over.append(t)
+                elif t.state == 0:
+                    now.append(t)
+                else:
+                    futures.append(t)
+                x.tasks = over+now+futures
         return my_tasks
     # получаем ошибку, если она установлена и сбрасываем её в запросах
     if request.session.get('my_error'):
@@ -543,12 +580,43 @@ def tasks(request):
         try:
             my_tasks = Task.objects.filter(deleted = False).filter(client=worker,percentage__lt=100).order_by('worker','due_date')
             # Теперь их надо разбить по тому, кому они адресованы и выделять цветом их просроченность/нет
-            my_tasks = tasks_separation(my_tasks)
+            # my_tasks = tasks_separation(my_tasks)
         except:
             # если задач нет - вывести это в шаблон
             my_tasks = ''# если задач нет - вывести это в шаблон
             my_error.append('От Вас нет задач')
+        # получаем регулярные заявки ОТ человека
+        #
+        try:
+            my_regular_tasks = RegularTask.objects.filter(deleted =
+                                            False).filter(
+                client=worker,
+                next_date__lt=datetime.datetime.now()).order_by(
+                'worker')
+            # Теперь их надо разбить по тому, кому они адресованы и выделять цветом их просроченность/нет
+            # my_tasks = tasks_separation(my_tasks)
+        except:
+            # если задач нет - вывести это в шаблон
+            my_regular_tasks = ''# если задач нет - вывести это в шаблон
+            my_error.append('От Вас нет постоянных задач')
+        all_my_tasks = []
+        class SimpleTask():
+            def __init__(self,task,task_type):
+                self.id = task.id
+                self.description = task.description
+                self.name = task.name
+                self.worker = task.worker
+                try:
+                    self.due_date = task.due_date
+                except:
+                    self.due_date = task.next_date
+                self.task_type = task_type
+        for t in my_tasks:
+            all_my_tasks.append(SimpleTask(t,'one_time'))
+        for t in my_regular_tasks:
+            all_my_tasks.append(SimpleTask(t,'regular'))
 
+        all_my_tasks = tasks_separation(all_my_tasks)
         # получаем кол-во заявок в этот раз и сравниваем с тем, что было для уведомления всплывающим окном или ещё какой фигней
         alert = False
         if request.session.get('tasks_number'):
@@ -581,7 +649,7 @@ def tasks(request):
         {'my_error':my_error,'user':user,'worker':worker,
         'tasks_overdue':tasks_overdue,
         'tasks_for_today':tasks_for_today,
-        'tasks_future':tasks_future,'my_tasks':my_tasks,
+        'tasks_future':tasks_future,'my_tasks':all_my_tasks,
         'tasks_to_confirm':tasks_to_confirm,'all_tasks':all_tasks,
         'alert':alert,'admin':admin,'regular_tasks':regular_tasks,
          'nearest_count':nearest_count,
