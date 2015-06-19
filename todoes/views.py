@@ -424,29 +424,6 @@ def tasks(request):
                 state = 1
             return state
 
-        # my_tasks=[]
-        # tmp_group=[]
-        # worker=tasks[0].worker
-        # now = datetime.datetime.now()
-        # # Проходимся по всем задачам
-        # for task in tasks:
-        #     # была ли задача уже добавлена - нет
-        #     appended = False
-        #     if task.worker != worker:
-        #         # Проверяем, нет ли уже подходящей группы
-        #         for x in my_tasks:
-        #             if x.person == task.worker:
-        #                 x.tasks.append(state_task(get_state(task),
-        #                                                    task))
-        #                 appended = True
-        #         if not appended:
-        #             my_tasks.append(group(worker,tmp_group))
-        #             tmp_group=[]
-        #             worker = task.worker
-        #         tmp_group.append(state_task(get_state(task),task))
-        #     else:
-        #         tmp_group.append(state_task(get_state(task),task))
-        # my_tasks.append(group(worker,tmp_group))
         my_tasks = dict()
         for task in tasks:
             # пробуем, нет ли уже группы с этим исполнителем
@@ -459,6 +436,8 @@ def tasks(request):
                 my_tasks[task.worker] = group(task.worker,[])
                 my_tasks[task.worker].tasks.append(state_task(get_state(task),
                                                            task))
+        # сортируем задачи по состоянию: просроченные, сегодня, \
+        #                                на будущее
         for k,v in my_tasks.items():
             over = []
             now = []
@@ -471,6 +450,7 @@ def tasks(request):
                 else:
                     futures.append(t)
                 my_tasks[k].tasks = over+now+futures
+        # делаем из задач список для отображения
         result = []
         for k,v in my_tasks.items():
             result.append(v)
@@ -580,7 +560,9 @@ def tasks(request):
         # получаем заявки ОТ человека
         #
         try:
-            my_tasks = Task.objects.filter(deleted = False).filter(client=worker,percentage__lt=100).order_by('worker','due_date')
+            my_tasks = Task.objects.filter(deleted = False).\
+                filter(client=worker,percentage__lt=100).\
+                order_by('worker','due_date')
             # Теперь их надо разбить по тому, кому они адресованы и выделять цветом их просроченность/нет
             # my_tasks = tasks_separation(my_tasks)
         except:
@@ -601,6 +583,9 @@ def tasks(request):
             # если задач нет - вывести это в шаблон
             my_regular_tasks = ''# если задач нет - вывести это в шаблон
             my_error.append('От Вас нет постоянных задач')
+
+        # соединяем все исходящие задачи в один список и сортируем
+        # его по исполнителю и по состоянию
         all_my_tasks = []
         class SimpleTask():
             def __init__(self,task,task_type):
@@ -658,8 +643,7 @@ def tasks(request):
          'tasks_id_string': ','.join(map(str,tasks_id_list)),
          'rtasks_id_string': ','.join(map(str,rtasks_id_list)),
         },RequestContext(request))
-    # set_last_activity(user,request.path)
-    # return render_to_response(languages[lang]+'tasks.html',{'my_error':my_error,'user':user,'worker':worker,'tasks_overdue':tasks_overdue,'tasks_for_today':tasks_for_today,'tasks_future':tasks_future,'my_tasks':my_tasks,'alert':alert,'regular_tasks':regular_tasks},RequestContext(request))
+
 @login_required
 def task(request,task_type,task_id):
     lang=select_language(request)
@@ -822,18 +806,23 @@ def task(request,task_type,task_id):
 def close_task(request,task_to_close_id):
     lang=select_language(request)
     if not acl(request,'one_time',task_to_close_id):
-        request.session['my_error'] = u'Нет права доступа к этой задаче!'
+        request.session['my_error'] = u'Нет права доступа к этой' \
+                                      u' задаче!'
         return HttpResponseRedirect("/tasks/")
 
     task_to_close = Task.objects.get(id=task_to_close_id)
     method = request.method
     user = request.user.username
+    admin = False
+    if user in admins:
+        admin = True
     try:
         fio = Person.objects.get(login=user)
     except Person.DoesNotExist:
         fio = FioError()
     try:
-        tmp_notes = Note.objects.filter(for_task=task_to_close).order_by('-timestamp')
+        tmp_notes = Note.objects.filter(for_task=task_to_close).\
+            order_by('-timestamp')
     except Note.DoesNotExist:
         tmp_notes = ('Нет подходящих заметок',)
     notes=[]
@@ -850,25 +839,76 @@ def close_task(request,task_to_close_id):
             task_to_close.done_date=data['done_date']
             task_to_close.percentage=100
             task_to_close.save()
-            request.session['my_error'] = u'Задача благополучно закрыта! Ещё одну? ;)'
-            send_email_alternative(u"Задача закрыта и требует подтверждения: "+task_to_close.name,u"*Описание задачи*\<table cellpadding='5' border='1'\>\<tr\>\<td\>"+task_to_close.description+u"\</td\>\</tr\>\</table\>\n\n*Посмотреть задачу можно тут*:\nhttp://"+server_ip+"/task/one_time/"+str(task_to_close.id),[task_to_close.client.mail,]+admins_mail,fio)
+            request.session['my_error'] = u'Задача благополучно' \
+                                          u' закрыта! Ещё одну? ;)'
+            send_email_alternative(u"Задача закрыта и требует"
+                                   u" подтверждения: "+
+                                   task_to_close.name,
+                                   u"*Описание задачи*\<table "
+                                   u"cellpadding='5' border='1'\>"
+                                   u"\<tr\>\<td\>"+
+                                   task_to_close.description+
+                                   u"\</td\>\</tr\>\</table\>"
+                                   u"\n\n*Посмотреть задачу можно"
+                                   u" тут*:\nhttp://"+server_ip+
+                                   "/task/one_time/"+
+                                   str(task_to_close.id),
+                                   [task_to_close.client.mail,]+
+                                   admins_mail)#,fio)
             return HttpResponseRedirect('/tasks/')
     # если хотим закрыть заявку
     else: 
         # проверяем, есть ли незакрытые дочерние заявки. Если есть - выводим их список на новой странице
         try:
-            not_closed_children_tasks = Task.objects.filter(deleted = False).filter(parent_task = task_to_close).exclude(percentage__exact=100)
+            not_closed_children_tasks = Task.objects.\
+                filter(deleted = False).\
+                filter(parent_task = task_to_close).\
+                exclude(percentage__exact=100)
         except:
             not_closed_children_tasks = ''
         if not_closed_children_tasks:
             set_last_activity(user,request.path)
-            return render_to_response(languages[lang]+'not_closed_children.html', {'user':user,'fio':fio,'task_to_close':task_to_close,'not_closed_children_tasks':not_closed_children_tasks},RequestContext(request))
-        form = l_forms[lang]['TicketClosingForm']({'done_date' : datetime.datetime.now(),})
+            return render_to_response(
+                languages[lang]+'not_closed_children.html',
+                {'user':user,'fio':fio,'task_to_close':task_to_close,
+                 'not_closed_children_tasks':not_closed_children_tasks},
+                RequestContext(request))
+        form = l_forms[lang]['TicketClosingForm']\
+            ({'done_date' : datetime.datetime.now(),})
     task_to_close.description = htmlize(task_to_close.description)
     for note in notes:
         note.note = htmlize(note.note)
     set_last_activity(user,request.path)
-    return render_to_response(languages[lang]+'close_ticket.html', {'user':user,'fio':fio,'form':form, 'task':task_to_close,'notes':notes},RequestContext(request))
+
+    # fix #11
+    pwds = ProblemByWorker.objects.all()
+    # font_size_min = 14
+    # font_size_max = 60
+    # нормируем размер шрифта, чтобы он не вылизал за эти границы
+    # Для начала получим разборс весов, дальше смотрим сколько
+    # "веса" надо для перехода в следующий размер и на основании
+    # этого вычисляем размер шрифта
+    sizes = [float(x.weight) for x in pwds]
+    min_weight = min(sizes)
+    max_weight = max(sizes)
+    print min_weight,max_weight
+    # font_size_step = (max_weight-min_weight)/\
+    #                  (font_size_max-font_size_min)
+    # print font_size_step
+    for pwd in pwds:
+        # normalized_size = (pwd.weight-min_weight)/font_size_step +\
+        #                   font_size_min
+        # pwd.font_size = str(normalized_size).replace(',','.')
+        pwd.weight = str(pwd.weight).replace(',','.')
+        # pwd.link = "http://google.com"
+
+    # end fix #11
+    return render_to_response(languages[lang]+'close_ticket.html',
+                              {'user':user,'fio':fio,'form':form,
+                               'task':task_to_close,'notes':notes,
+                               'pwds':pwds,'worker':fio,
+                               'admin':admin},
+                              RequestContext(request))
 @login_required
 def unclose_task(request,task_to_unclose_id):
     lang=select_language(request)

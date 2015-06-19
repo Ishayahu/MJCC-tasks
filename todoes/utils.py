@@ -1,7 +1,7 @@
 # -*- coding:utf-8 -*-
 # coding=<utf8>
 
-from todoes.models import Note, Task,RegularTask
+from todoes.models import Note, Task, RegularTask, ProblemByWorker
 # метод постороения дерева заметок
 def build_note_tree(root_note,notes,current_indent):
     childrens = Note.objects.filter(parent_note=root_note).\
@@ -36,3 +36,20 @@ def build_tasks_tree(root_task,tasks,current_indent):
         task.indent_pix = 4*current_indent
         tasks.append(task)
         build_tasks_tree(task,tasks,current_indent+1)
+def update_weigth():
+    all_task = Task.objects.exclude(pbw__isnull=True)
+    counts = dict()
+    total_count = len(all_task)
+    for task in all_task:
+        try:
+            counts[task.pbw.id]+=1
+        except:
+            counts[task.pbw.id]=1
+    for k,v in counts.items():
+        # counts[k]=v/float(total_count)
+        pbw = ProblemByWorker.objects.get(id=k)
+        pbw.weight = v/float(total_count)
+        pbw.save()
+    # print counts
+
+update_weigth()

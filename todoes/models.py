@@ -16,6 +16,7 @@ class ProblemByUser(models.Model):
 
 class ProblemByWorker(models.Model):
     name = models.TextField()
+    weight = models.FloatField(default=0)
     def __unicode__(self):
         return self.name
     class Meta:
