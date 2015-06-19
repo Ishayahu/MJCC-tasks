@@ -139,7 +139,16 @@ def new_regular_ticket(request):
                 period = request.POST.get('cronized'))                
             t.save()
             # отправляем уведомление исполнителю по мылу
-            send_email_alternative(u"Новая повторяющаяся задача: "+t.name,u"*Описание*:\n\<table cellpadding='5' border='1'\>\<tr\>\<td\>"+t.description+u"\</tr\>\</td\>\</table\>\n\n*Посмотреть задачу можно тут*:\nhttp://"+server_ip+"/task/regular/"+str(t.id),[data['workers'].mail,data['clients'].mail],fio)
+            send_email_alternative(u"Новая повторяющаяся задача: "+
+                                   t.name,
+                                   u"*Описание*:\n\<table cellpadding="
+                                   u"'5' border='1'\>\<tr\>\<td\>"+
+                                   t.description+u"\</tr\>\</td\>\
+                                   </table\>\n\n*Посмотреть задачу "
+                                 u"можно тут*:\nhttp://"+server_ip+
+                                   "/task/regular/"+str(t.id),
+                                   [data['workers'].mail,
+                                    data['clients'].mail])
             set_last_activity(user,request.path)
             return HttpResponseRedirect('/tasks/')
     else:

@@ -116,8 +116,9 @@
                     //hardcore-style
                     var crontabs = document.getElementsByName('crontab');
                     for (x = 0; x < crontabs.length; x++) {
-                        cronized = cronized + crontabs.item(x)
-                                .value+'\t';
+                        var temp = crontabs.item(x).value;
+                        if (temp==''){temp="*"}
+                        cronized = cronized + temp + '\t';
                     }
                     cronized = cronized.slice(0,-1);
                     break
@@ -153,19 +154,28 @@
                     break
                 case 'Hardcore-style':
                     html =
-                            "<p title='Каждое поле, отделённое табуляцеией - отдельное поле ввода для удобства: минуты часы день месяц день_недели'>Формат ввода как в crontab.</p><input type='text' size='7' name='crontab' value='"+mins+"'/> <input type='text' size='7' name='crontab' value='"+hours+"'/> <input type='text' size='7' name='crontab' value=''/><input type='text' size='7' name='crontab' value=''/><input type='text' size='7' name='crontab' value=''/>"
+                            "<p title='Каждое поле, отделённое табуляцеией - отдельное поле ввода для удобства: минуты часы день месяц день_недели'>Формат ввода как в crontab.</p><input onkeyup='cronize_to_human()' type='text' size='7' name='crontab' value='"+mins+"'/> <input onkeyup='cronize_to_human()' type='text' size='7' name='crontab' value='"+hours+"'/> <input onkeyup='cronize_to_human()' type='text' size='7' name='crontab' value=''/><input onkeyup='cronize_to_human()' type='text' size='7' name='crontab' value=''/><input onkeyup='cronize_to_human()' type='text' size='7' name='crontab' value=''/><div id='ctr'></div>"
                     break
             }
             document.getElementById(div_id).innerHTML = html;
+        }
+        function cronize_to_human(){
+            cronize();
+            var cron = $("#cron").children().val();
+            var encoded = encodeURIComponent(cron);
+            var url = "/api/crontab_to_russian/"+encoded+"/"
+
+            $.getJSON(url, function(data) {
+                //alert(data.message);
+                $("#ctr").text(data.message);
+                });
+
         }
     </script>
     <style>
     </style>
 {% endblock %}
 {% block content %}
-{#    {% if form.errors %}#}
-{#       {{form.errors}} #}
-{#    {% endif %}#}
     <form action="" method="post">
         {% csrf_token %}
         <table border=1>

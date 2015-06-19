@@ -4,6 +4,7 @@
 #from django.conf.urls.defaults import patterns, include, url
 from django.conf.urls import patterns, url, include
 import todoes.views
+import todoes.api
 import assets.views
 import assets.test_view
 import assets.api
@@ -55,6 +56,10 @@ urlpatterns = patterns('',
 # Для администратора:
     url(r'^users/', todoes.views.get_all_logged_in_users),
     url(r'^tasks/to/([^/]+)/$', todoes.views.to),
+# APT для задач
+    # Получение человеческого представления hardcore-style при
+    # создании регулярной задачи
+    url(r'^api/crontab_to_russian/([^/]+)/$', todoes.api.crontab_to_human),
 
 
     url(r'^accounts/$', login),

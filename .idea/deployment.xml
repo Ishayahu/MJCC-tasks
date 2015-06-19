@@ -2,19 +2,19 @@
 <project version="4">
   <component name="PublishConfigData">
     <serverData>
+      <paths name="DEV_TASKS">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/" local="$PROJECT_DIR$" web="/" />
+            <mapping deploy="/djlib" local="E:/Yandex/Sites/djlib" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
       <paths name="MJCC_TASK">
         <serverdata>
           <mappings>
             <mapping local="$PROJECT_DIR$" web="/" />
             <mapping local="E:/Yandex/Sites/djlib" web="/" />
-          </mappings>
-        </serverdata>
-      </paths>
-      <paths name="TEST_tasks">
-        <serverdata>
-          <mappings>
-            <mapping deploy="/" local="$PROJECT_DIR$" web="/" />
-            <mapping deploy="/djlib" local="E:/Yandex/Sites/djlib" web="/" />
           </mappings>
         </serverdata>
       </paths>
