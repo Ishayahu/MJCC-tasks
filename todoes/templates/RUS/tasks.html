@@ -50,25 +50,61 @@
 	window.onload = function(e) {
             for (var x=0;x<window.localStorage.length;x++) {
                 if (document.getElementsByName(window.localStorage.key(x))) {
-                    collapse(window.localStorage.key(x));
+                    var worker = window.localStorage.key(x);
+                    collapse(worker,
+                        window.localStorage.getItem(worker+'_co'),
+                        window.localStorage.getItem(worker+'_ct'),
+                        window.localStorage.getItem(worker+'_cf'));
                 }
             }
 	}
 	
-        function collapse(name){
+        function collapse(name,count_overdue,count_today,
+                          count_future){
             var el = document.getElementsByName(name).item(0);
             if (el!=null) {
                 el.hidden = !el.hidden;
                 var el_btn = document.getElementsByName("button_" + name).item(0);
                 if (el_btn.title == "Свернуть") {
+                    // сворачиваем
                     el_btn.title = "Развернуть";
                     el_btn.innerHTML = "<b>+ Задачи для " + name + "</b>";
+                    el_btn.innerHTML = el_btn.innerHTML + '(<span ' +
+                            'class="overdue">'+ count_overdue +
+                            '</span>/'
+                    el_btn.innerHTML = el_btn.innerHTML + '<span ' +
+                    'class="today">' +
+                            count_today + '</span>/'
+                    el_btn.innerHTML = el_btn.innerHTML + '<span ' +
+                    'class="future">' +
+                    count_future + '</span>)'
                     window.localStorage.setItem(name, 'true');
+                    window.localStorage.setItem(name+'_co', count_overdue);
+                    window.localStorage.setItem(name+'_ct', count_today);
+                    window.localStorage.setItem(name+'_cf', count_future);
                 }
                 else {
                     el_btn.title = "Свернуть";
-                    el_btn.innerHTML = "<b>- Задачи для " + name + "</b>";
+                    count_future = window.localStorage.getItem
+                    (name+'_cf');
+                    count_today = window.localStorage.getItem
+                    (name+'_ct');
+                    count_overdue = window.localStorage.getItem
+                    (name+'_co');
+                    el_btn.innerHTML = "<b>+ Задачи для " + name + "</b>";
+                    el_btn.innerHTML = el_btn.innerHTML + '(<span ' +
+                            'class="overdue">'+ count_overdue +
+                            '</span>/'
+                    el_btn.innerHTML = el_btn.innerHTML + '<span ' +
+                    'class="today">' +
+                            count_today + '</span>/'
+                    el_btn.innerHTML = el_btn.innerHTML + '<span ' +
+                    'class="future">' +
+                    count_future + '</span>)'
                     window.localStorage.removeItem(name);
+                    window.localStorage.removeItem(name+'_co');
+                    window.localStorage.removeItem(name+'_ct');
+                    window.localStorage.removeItem(name+'_cf');
                 }
             }
         }
@@ -244,7 +280,19 @@
             <td>
                 {% if my_tasks %}
                     {% for group in my_tasks %}
-                        <div onclick='collapse("{{group.person.fio}}")' name="button_{{group.person.fio}}" title="Свернуть"><b>- Задачи для {{group.person.fio}}</b></div>
+                        <div onclick='collapse("{{group.person.fio}}",{{ group.count_overdue }},{{ group.count_today }},{{ group.count_future }})'
+                             name="button_{{group.person.fio}}"
+                             title="Свернуть"><b>- Задачи для
+                            {{group.person.fio}}</b>
+                        (<span class="overdue">
+                            {{ group.count_overdue }}
+                        </span>/
+                        <span class="today">
+                                {{ group.count_today }}
+                        </span>/
+                        <span class="future">
+                            {{ group.count_future }}
+                        </span>)</div>
                             <div name="{{group.person.fio}}">
                             <ol>
                                 {% for task in group.tasks %}

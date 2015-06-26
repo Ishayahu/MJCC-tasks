@@ -434,9 +434,35 @@ def tasks(request):
         Деление задач на исполнителей для отображения исходящих задач
         """
         class group():
-            def __init__(self,person,tasks):
+            def __init__(self,person):
+            # def __init__(self,person,tasks):
                 self.person = person
-                self.tasks = tasks
+                self.tasks = []
+                # self.tasks = tasks
+                self.count_overdue = 0
+                self.count_today = 0
+                self.count_future = 0
+                self.overdue = []
+                self.future = []
+                self.today = []
+
+            def add_task(self,task):
+                if task.state==-1:
+                    self.overdue.append(task)
+                elif task.state==0:
+                    self.today.append(task)
+                elif task.state==1:
+                    self.future.append(task)
+
+            def prepare(self):
+                self.count_future = len(self.future)
+                self.count_today = len(self.today)
+                self.count_overdue = len(self.overdue)
+                self.tasks = self.overdue + self.today + self.future
+                self.overdue=[]
+                self.future=[]
+                self.today=[]
+
         class state_task():
             def __init__(self,state,task):
                 self.state = state
@@ -461,27 +487,28 @@ def tasks(request):
             # пробуем, нет ли уже группы с этим исполнителем
             try:
                 # если есть - то добавляем туда задачу
-                my_tasks[task.worker].tasks.append(state_task(get_state(task),
-                                                           task))
+                my_tasks[task.worker].add_task(
+                    state_task(get_state(task),task))
             except KeyError:
                 # значит, ещё нет. создаём
-                my_tasks[task.worker] = group(task.worker,[])
-                my_tasks[task.worker].tasks.append(state_task(get_state(task),
-                                                           task))
+                my_tasks[task.worker] = group(task.worker)
+                my_tasks[task.worker].add_task(
+                    state_task(get_state(task),task))
         # сортируем задачи по состоянию: просроченные, сегодня, \
         #                                на будущее
         for k,v in my_tasks.items():
-            over = []
-            now = []
-            futures = []
-            for t in my_tasks[k].tasks:
-                if t.state == -1:
-                    over.append(t)
-                elif t.state == 0:
-                    now.append(t)
-                else:
-                    futures.append(t)
-                my_tasks[k].tasks = over+now+futures
+            my_tasks[k].prepare()
+            # over = []
+            # now = []
+            # futures = []
+            # for t in my_tasks[k].tasks:
+            #     if t.state == -1:
+            #         over.append(t)
+            #     elif t.state == 0:
+            #         now.append(t)
+            #     else:
+            #         futures.append(t)
+            #     my_tasks[k].tasks = over+now+futures
         # делаем из задач список для отображения
         result = []
         for k,v in my_tasks.items():
