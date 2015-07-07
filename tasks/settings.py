@@ -2,17 +2,12 @@
 # Django settings for tasks project.
 
 DEBUG = True
-MY_DEVELOP = True
-TEMPLATE_DEBUG = DEBUG
-
-ADMINS = (
-    # ('Your Name', 'your_email@example.com'),
-)
-
-MANAGERS = ADMINS
-
-if MY_DEVELOP:
-    DATABASES = {
+PRODACTION = 0
+DEVELOP = 1
+DEVELOP_TEST = 2
+SERVERS = {
+    DEVELOP:{
+        'DATABASES':{
             'default': {
                 'ENGINE': 'django.db.backends.postgresql_psycopg2', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
                 'NAME': 'tasks',                      # Or path to database file if using sqlite3.
@@ -21,18 +16,47 @@ if MY_DEVELOP:
                 'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
                 'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
             }
-        }
-else:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql_psycopg2', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-            'NAME': 'tasks',                      # Or path to database file if using sqlite3.
-            'USER': 'puser',                      # Not used with sqlite3.
-            'PASSWORD': 'planrabot',                  # Not used with sqlite3.
-            'HOST': '172.22.0.123',                      # Set to empty string for localhost. Not used with sqlite3.
-            'PORT': '5432',                      # Set to empty string for default. Not used with sqlite3.
-        }
-    }
+        },
+        'MEDIA_URL':'http://172.22.0.124:8080/media/',
+    },
+    PRODACTION:{
+         'DATABASES':{
+            'default': {
+                'ENGINE': 'django.db.backends.postgresql_psycopg2', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
+                'NAME': 'tasks',                      # Or path to database file if using sqlite3.
+                'USER': 'puser',                      # Not used with sqlite3.
+                'PASSWORD': 'planrabot',                  # Not used with sqlite3.
+                'HOST': '172.22.0.123',                      # Set to empty string for localhost. Not used with sqlite3.
+                'PORT': '5432',                      # Set to empty string for default. Not used with sqlite3.
+                }
+        },
+        'MEDIA_URL':'http://172.22.0.124:8080/media/',
+    },
+    DEVELOP_TEST:{
+        'DATABASES':{
+            'default': {
+                'ENGINE': 'django.db.backends.postgresql_psycopg2', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
+                'NAME': 'tasks',                      # Or path to database file if using sqlite3.
+                'USER': 'puser',                      # Not used with sqlite3.
+                'PASSWORD': 'planrabot',                  # Not used with sqlite3.
+                'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
+                'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
+            }
+        },
+        'MEDIA_URL':'http://172.22.0.154:8080/media/',
+    },
+}
+SERVER = DEVELOP
+
+TEMPLATE_DEBUG = DEBUG
+
+ADMINS = (
+    # ('Your Name', 'your_email@example.com'),
+)
+
+MANAGERS = ADMINS
+
+DATABASES = SERVERS[SERVER]['DATABASES']
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -74,7 +98,7 @@ MEDIA_ROOT = '/usr/home/ishayahu/tasks/todoes/files/'
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
 # Examples: "http://media.lawrence.com/media/", "http://example.com/media/"
-MEDIA_URL = 'http://172.22.0.124:8080/media/'
+MEDIA_URL = SERVERS[SERVER]['MEDIA_URL']
 
 # Absolute path to the directory static files should be collected to.
 # Don't put anything in this directory yourself; store your static files

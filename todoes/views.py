@@ -328,7 +328,7 @@ def set_reminder(request,task_type,task_id):
         # https://github.com/Ishayahu/MJCC-tasks/issues/52
         # Напоминание не может встать позже, чем дата завершения
         # в таком случае надо выдать ошибку
-        if dtt>task_full.due_date:
+        if task_type == 'one_time' and dtt>task_full.due_date:
             request.session['my_error'] = u'Невозможно установить ' \
                                           u'напоминане на дату ' \
                                           u'позже, чем срок ' \
@@ -970,20 +970,35 @@ def close_task(request,task_to_close_id):
             task_to_close.save()
             request.session['my_error'] = u'Задача благополучно' \
                                           u' закрыта! Ещё одну? ;)'
-            send_email_alternative(u"Задача закрыта и требует"
-                                   u" подтверждения: "+
-                                   task_to_close.name,
-                                   u"*Описание задачи*\<table "
-                                   u"cellpadding='5' border='1'\>"
-                                   u"\<tr\>\<td\>"+
-                                   task_to_close.description+
-                                   u"\</td\>\</tr\>\</table\>"
-                                   u"\n\n*Посмотреть задачу можно"
-                                   u" тут*:\nhttp://"+server_ip+
+            send_email_html(u"Задача закрыта и требует"
+                            u" подтверждения: " +
+                            task_to_close.name,
+                            u"<b>Описание задачи</b><table "
+                            u"cellpadding='5' border='1'>"
+                            u"<tr><td>" +
+                            htmlize(task_to_close.description) +
+                            u"</td></tr></table>"
+                            u"<b>Посмотреть задачу можно"
+                            u" тут</b>: " +
+                            htmlize("http://"+server_ip+
                                    "/task/one_time/"+
-                                   str(task_to_close.id),
+                                   str(task_to_close.id)),
                                    [task_to_close.client.mail,]+
                                    admins_mail)#,fio)
+            # send_email_alternative(u"Задача закрыта и требует"
+            #                        u" подтверждения: "+
+            #                        task_to_close.name,
+            #                        u"*Описание задачи*\<table "
+            #                        u"cellpadding='5' border='1'\>"
+            #                        u"\<tr\>\<td\>"+
+            #                        task_to_close.description+
+            #                        u"\</td\>\</tr\>\</table\>"
+            #                        u"\n\n*Посмотреть задачу можно"
+            #                        u" тут*:\nhttp://"+server_ip+
+            #                        "/task/one_time/"+
+            #                        str(task_to_close.id),
+            #                        [task_to_close.client.mail,]+
+            #                        admins_mail)#,fio)
             return HttpResponseRedirect('/tasks/')
     # если хотим закрыть заявку
     else: 
