@@ -13,8 +13,16 @@
       <paths name="MJCC_TASK">
         <serverdata>
           <mappings>
-            <mapping local="$PROJECT_DIR$" web="/" />
-            <mapping local="E:/Yandex/Sites/djlib" web="/" />
+            <mapping deploy="/tasks" local="$PROJECT_DIR$" web="/" />
+            <mapping deploy="/tasks/djlib" local="E:/Yandex/Sites/djlib" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="TEST_TASKS_BD">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/DEV/tasks" local="$PROJECT_DIR$" web="/" />
+            <mapping deploy="/DEV/tasks/djlib" local="E:/Yandex/Sites/djlib" />
           </mappings>
         </serverdata>
       </paths>
