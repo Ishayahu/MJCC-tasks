@@ -156,7 +156,7 @@
                 {% endifequal %}                            
                 <a id="rtask_{{ task.id }}"
                    href="/task/regular/{{task.id}}"
-                    title="{{task.description}}" target="_blank">{{task.name}}</a> <a href="../set_reminder/regular/{{task.id}}" title="Установить напоминалку">&#8986;</a> <a href="../regular_task_done/{{task.id}}" title="Отметить как выполненую" onclick="if (confirm('Уверены?')) {return true} else {return false};">&#9790;</a>
+                    title="{{task.description}}" target="_blank">{{task.name}}</a> <a href="/set_reminder/regular/{{task.id}}" title="Установить напоминалку">&#8986;</a> <a href="/regular_task_done/{{task.id}}" title="Отметить как выполненую" onclick="if (confirm('Уверены?')) {return true} else {return false};">&#9790;</a>
                 {% ifnotequal task.category.name 'Звонки' %}
                     <a href="/move_to_call/regular/{{task.id}}"
                        id="rtask_{{ task.id }}" title="Переместить в
@@ -196,7 +196,7 @@
                                 &#9743;
                             {% endifequal %}                            
                             <a href="/task/one_time/{{task.id}}"
-                               id="task_{{ task.id }}" title="{{task.description}}" target="_blank">{{task.name}} - Сделать до: {{task.due_date}}</a> <a href="../set_reminder/one_time/{{task.id}}" title="Установить напоминалку">&#8986;</a>
+                               id="task_{{ task.id }}" title="{{task.description}}" target="_blank">{{task.name}} - Сделать до: {{task.due_date}}</a> <a href="/set_reminder/one_time/{{task.id}}" title="Установить напоминалку">&#8986;</a>
                             {% ifnotequal task.category.name 'Звонки' %}
                                 <a href="/move_to_call/one_time/{{task.id}}"
                                    id="task_{{ task.id }}" title="Переместить в звонки">&#9742;</a>
@@ -227,8 +227,8 @@
                             {% ifequal task.category.name 'Звонки' %}
                                 &#9743;
                             {% endifequal %}                            
-                            <a href="../task/one_time/{{task.id}}"
-                               id="task_{{ task.id }}" title="{{task.description}}" target="_blank">{{task.name}} - Сделать до: {{task.due_date}}</a> <a href="../set_reminder/one_time/{{task.id}}" title="Установить напоминалку">&#8986;</a>
+                            <a href="/task/one_time/{{task.id}}"
+                               id="task_{{ task.id }}" title="{{task.description}}" target="_blank">{{task.name}} - Сделать до: {{task.due_date}}</a> <a href="/set_reminder/one_time/{{task.id}}" title="Установить напоминалку">&#8986;</a>
                             {% ifnotequal task.category.name 'Звонки' %}
                                 <a href="/move_to_call/one_time/{{task.id}}"
                                    id="task_{{ task.id }}"
@@ -260,14 +260,14 @@
                             {% ifequal task.category.name 'Звонки' %}
                                 &#9743;
                             {% endifequal %}                            
-                            <a href="../task/one_time/{{task.id}}"
+                            <a href="/task/one_time/{{task.id}}"
                                id="task_{{ task.id }}"
                                title="{{task.description}}" target="_blank"
                                     {% if task.nearest%}
                                     class="blink_me"
                                     {% endif %}
 
-                                    >{{task.name}} - Сделать до: {{task.due_date}}</a> <a href="../set_reminder/one_time/{{task.id}}" title="Установить напоминалку">&#8986;</a>
+                                    >{{task.name}} - Сделать до: {{task.due_date}}</a> <a href="/set_reminder/one_time/{{task.id}}" title="Установить напоминалку">&#8986;</a>
                             {% ifnotequal task.category.name 'Звонки' %}
                                 <a href="/move_to_call/one_time/{{task.id}}"
                                    id="task_{{ task.id }}" title="Переместить в звонки">&#9742;</a>
@@ -305,7 +305,7 @@
                                     {% ifequal task.state 1 %}
                                         <li class="future">
                                     {% endifequal %}
-                                    <a href="../task/{{ task.task.task_type }}/{{task.task.id}}" title="{{task.task.description}}" target="_blank">{{task.task.name}}</a></li>
+                                    <a href="/task/{{ task.task.task_type }}/{{task.task.id}}" title="{{task.task.description}}" target="_blank">{{task.task.name}}</a></li>
                                 {% endfor %}
                             </ol>
                         </div>
@@ -328,9 +328,9 @@
                             {% for task in tasks_to_confirm %}
                                 <li>
                                     <input type='checkbox' value='{{task.id}}' name='task_to_confirm_id' />
-                                    <a href="../confirm/{{task.id}}" title="{{task.description}}" target="_blank">{{task.name}}</a>
-                                    <a href="../unclose/{{task.id}}" title="Отменить закрытие задачи" onclick="if (confirm('Уверены?')) {return true} else {return false};"> &#10008;</a>
-                                    <a href="../task/one_time/{{task.id}}" title="Просмотреть описание задачи задачи"> &#9776;</a>
+                                    <a href="/confirm/{{task.id}}" title="{{task.description}}" target="_blank">{{task.name}}</a>
+                                    <a href="/unclose/{{task.id}}" title="Отменить закрытие задачи" onclick="if (confirm('Уверены?')) {return true} else {return false};"> &#10008;</a>
+                                    <a href="/task/one_time/{{task.id}}" title="Просмотреть описание задачи задачи"> &#9776;</a>
                                 </li>
                             {% endfor %}
                         </ol>
@@ -343,7 +343,7 @@
                     <h4>Все заявки</h4>
                     <ol>
                         {% for task in all_tasks %}
-                            <li><a href="../task/one_time/{{task.id}}">{{task.name}}; <b>Исполнитель</b>: {{task.worker.fio}}; <i>{{task.start_date}} - {{task.due_date}}</i></a></li>
+                            <li><a href="/task/one_time/{{task.id}}">{{task.name}}; <b>Исполнитель</b>: {{task.worker.fio}}; <i>{{task.start_date}} - {{task.due_date}}</i></a></li>
                         {% endfor %}
                     </ol>
                 {% endif %}
