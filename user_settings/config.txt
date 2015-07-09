@@ -54,3 +54,10 @@ __bd__app__status_after_closing_bill = assets
 __bd__model__status_after_closing_bill = Status
 __bd__field__status_after_closing_bill = status
 __bd__description__status_after_closing_bill = Статус, который выставляется по умолчанию для нового актива при закрытии счёта
+
+[save_state]
+section_description=Настрйки, относящиеся к модулю save_state
+
+api_key = lw3ef39aekfa3w;9;3fja32213409j;
+api_key_description = Ключ для подключения по API к модулю save_state
+api_key_name = save_state API ключ

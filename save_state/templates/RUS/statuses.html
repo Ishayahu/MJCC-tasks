@@ -1,0 +1,38 @@
+{% ifnotequal warning 0 %}
+    <div id="{{ div_id }}_kizur" style="visibility: hidden; text-decoration: underline">
+        backupScript: {{ warning }} warnings &#8693;
+        <div style="background-color: #c7254e; height: 10px; width: 10px; display: inline-block;">
+        </div>
+    </div>
+{% else %}
+    <div id="{{ div_id }}_kizur" style="visibility: hidden; text-decoration: underline">backupScript: OK &#8693; </div>
+{% endifnotequal %}
+<div id="{{ div_id }}">
+    <table border=1>
+        {% for group in statuses %}
+            <tr>
+                <td>{{group.name}}</td>
+                <td>
+                    {% for item in group.items %}
+                        {% ifequal item.status_name 'OK'%}
+                            <span style="background-color: #449d44" title="{{ item.status_name }}
+{{ item.message }}">{{ item.key }}</span>
+                        {% endifequal %}
+                        {% ifequal item.status_name 'INFO'%}
+                            <span style="background-color: #449d44" title="{{ item.status_name }}
+{{ item.message }}">{{ item.key }}</span>
+                        {% endifequal %}
+                        {% ifequal item.status_name 'WARNING'%}
+                            <span style="background-color: #eea236" title="{{ item.status_name }}
+{{ item.message }}">{{ item.key }}</span>
+                        {% endifequal %}
+                        {% ifequal item.status_name 'ERROR'%}
+                            <span style="background-color: #c7254e" title="{{ item.status_name }}
+{{ item.message }}">{{ item.key }}</span>
+                        {% endifequal %}
+                    {% endfor %}
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+</div>

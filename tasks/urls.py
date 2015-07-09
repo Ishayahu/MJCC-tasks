@@ -6,6 +6,7 @@ from django.conf.urls import patterns, url, include
 import todoes.views
 import todoes.api
 import assets.views
+import save_state.api
 import assets.test_view
 import assets.api
 import logs.views
@@ -95,6 +96,7 @@ urlpatterns = patterns('',
     url(r'^assets_by_type/(\d*)/$', assets.views.assets_by_type),
     # Просмотр актива
     url(r'^asset/(\d*)/$', assets.views.asset_view),
+
 # API для работы с активами
     # Выдача формы добавления актива, в качестве параметра - категория актива, префикс к имени полей формы (число)
     url(r'^api/get_asset_add_form/(\d+)/(\d*)/$', assets.api.get_asset_add_form),
@@ -143,6 +145,15 @@ urlpatterns = patterns('',
     url(r'^api/json/get/price_and_warranty/$', assets.api.json_price_and_warranty),
 # Логирование и т.п.
     url(r'^show_last_logs/(\d*)/$', logs.views.show_last_logs),
+# API для сохранения статусов
+    # сохранение статуса через http
+    url(r'^api/state/save_by_http/([^/]+)/([^/]+)/([^/]+)/(\d+)/([^/]*)/(\d+)/([^/]+)/$',
+        save_state.api.save_by_http),
+    # просмотр статусов
+    url(r'^api/state/show_states/([^/]+)/$',
+        save_state.api.show_states),
+
+
 
 # Настройки
     url(r'^settings/$', user_settings.views.show_settings),

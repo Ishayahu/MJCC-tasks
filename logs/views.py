@@ -35,7 +35,7 @@ except ImportError:
 
 from djlib.error_utils import FioError, ErrorMessage, add_error, shows_errors
 
-# Делаем переводы
+# пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 from djlib.multilanguage_utils import select_language,multilanguage,register_lang#,register_app
 
 register_lang('ru','RUS')
@@ -50,4 +50,4 @@ def show_last_logs(request,number_to_select):
     if not number_to_select:
         number_to_select = 50
     logs = Logging.objects.all()[:number_to_select]
-    return (True,('logs.html',{},{'logs':logs,'log_number':number_to_select},request,app))
+    return (True,('statuses.html',{},{'logs':logs,'log_number':number_to_select},request,app))

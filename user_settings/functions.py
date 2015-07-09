@@ -3,6 +3,7 @@
 
 from user_settings.settings import config_file
 import ConfigParser
+from django.db import models
 
 class Option():
     def __init__(self,section,option,opt_id,val,name,desc,help_message,from_bd):
@@ -103,11 +104,14 @@ def get_full_bd_option(section,option):
     app_module = __import__(app_module_name)
     models_module = getattr(app_module,'models')
     model = getattr(models_module,model_name)
-    opt = model.objects.get(id=id)
+    try:
+        opt = model.objects.get(id=id)
+        opt_val = getattr(opt,field_name)
+    except:
+        opt_val = u"Не существует в БД"
     
     name = config.get(section,"__bd__name__"+option)
     opt_id = config.get(section,"__bd__option__"+option)
-    opt_val = getattr(opt,field_name)
     desc = config.get(section,"__bd__description__"+option)
     help_message = None
     try:

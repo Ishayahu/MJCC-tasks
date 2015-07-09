@@ -131,42 +131,49 @@
         <script>alert("Обратите внимание на {{nearest_count}} задач!")
         </script>
     {% endif %}
-
-    {% if regular_tasks %}
-        <p>Повторяющиеся задачи</p>
-        <ol>
-            {% for task in regular_tasks %}
-                {% ifequal task.priority 1 %}
-                    <li class="first_prior">&#11014;
-                {% endifequal %}                            
-                {% ifequal task.priority 2 %}
-                    <li class="second_prior">&#8657;
-                {% endifequal %}                            
-                {% ifequal task.priority 3 %}
-                    <li class="third_prior">
-                {% endifequal %}                            
-                {% ifequal task.priority 4 %}
-                    <li class="fourth_prior">&#8659;
-                {% endifequal %}                            
-                {% ifequal task.priority 5 %}
-                    <li class="fifth_prior">&#11015;
-                {% endifequal %}
-                {% ifequal task.category.name 'Звонки' %}
-                    &#9743;
-                {% endifequal %}                            
-                <a id="rtask_{{ task.id }}"
-                   href="/task/regular/{{task.id}}"
-                    title="{{task.description}}" target="_blank">{{task.name}}</a> <a href="/set_reminder/regular/{{task.id}}" title="Установить напоминалку">&#8986;</a> <a href="/regular_task_done/{{task.id}}" title="Отметить как выполненую" onclick="if (confirm('Уверены?')) {return true} else {return false};">&#9790;</a>
-                {% ifnotequal task.category.name 'Звонки' %}
-                    <a href="/move_to_call/regular/{{task.id}}"
-                       id="rtask_{{ task.id }}" title="Переместить в
-                       звонки">&#9742;</a>
-                {% endifnotequal %}
-                </li>
-            {% endfor %}
-        </ol>
-    {% endif %}
     <table>
+        <tr>
+            <td>
+                {% if regular_tasks %}
+                    <p>Повторяющиеся задачи</p>
+                    <ol>
+                        {% for task in regular_tasks %}
+                            {% ifequal task.priority 1 %}
+                                <li class="first_prior">&#11014;
+                            {% endifequal %}
+                            {% ifequal task.priority 2 %}
+                                <li class="second_prior">&#8657;
+                            {% endifequal %}
+                            {% ifequal task.priority 3 %}
+                                <li class="third_prior">
+                            {% endifequal %}
+                            {% ifequal task.priority 4 %}
+                                <li class="fourth_prior">&#8659;
+                            {% endifequal %}
+                            {% ifequal task.priority 5 %}
+                                <li class="fifth_prior">&#11015;
+                            {% endifequal %}
+                            {% ifequal task.category.name 'Звонки' %}
+                                &#9743;
+                            {% endifequal %}
+                            <a id="rtask_{{ task.id }}"
+                               href="/task/regular/{{task.id}}"
+                                title="{{task.description}}" target="_blank">{{task.name}}</a> <a href="/set_reminder/regular/{{task.id}}" title="Установить напоминалку">&#8986;</a> <a href="/regular_task_done/{{task.id}}" title="Отметить как выполненую" onclick="if (confirm('Уверены?')) {return true} else {return false};">&#9790;</a>
+                            {% ifnotequal task.category.name 'Звонки' %}
+                                <a href="/move_to_call/regular/{{task.id}}"
+                                   id="rtask_{{ task.id }}" title="Переместить в
+                                   звонки">&#9742;</a>
+                            {% endifnotequal %}
+                            </li>
+                        {% endfor %}
+                    </ol>
+                {% endif %}
+            </td>
+            <td>
+                <div id="widgets"></div>
+            </td>
+        </tr>
+
         <tr>
             <th>Заявки для меня</th>
             <th>Заявки от меня</th>
@@ -360,32 +367,34 @@
         var old_tasks_str = localStorage.getItem('tasks');
         var new_rtasks = "{{ rtasks_id_string }}".split(',');
         var old_rtasks_str = localStorage.getItem('rtasks');
+        var old_tasks;
+        var old_rtasks;
         if (!old_tasks_str )
         {
-            var old_tasks = [];
+            old_tasks = [];
         }
         else
         {
-            var old_tasks = old_tasks_str.split(',')
+            old_tasks = old_tasks_str.split(',');
         }
         if (!old_rtasks_str )
         {
-            var old_rtasks = [];
+            old_rtasks = [];
         }
         else
         {
-            var old_rtasks = old_rtasks_str.split(',')
+            old_rtasks = old_rtasks_str.split(',');
         }
         var diff = [];
         var rdiff = [];
         new_tasks.forEach(function (item, i, arr){
             if(old_tasks.indexOf(item)==-1)
-                {diff.push(item)};
-        })
+                {diff.push(item)}
+        });
         new_rtasks.forEach(function (item, i, arr){
             if(old_rtasks.indexOf(item)==-1)
-                {rdiff.push(item)};
-        })
+                {rdiff.push(item)}
+        });
         if (diff.length+rdiff.length>5)
         {
             SoundNotify('/media/img/yago.jpg',
@@ -431,9 +440,40 @@
                 }
             })
         }
-        localStorage.setItem('tasks',new_tasks)
-        localStorage.setItem('rtasks',new_rtasks)
+        localStorage.setItem('tasks',new_tasks);
+        localStorage.setItem('rtasks',new_rtasks);
     </script>
-
+    {%  if admin %}
+    <script>
+        // adding backupScript widget
+        var wbackupScriptStatus = window.localStorage.getItem('wbackupScript');
+        $("#widgets").html($("#widgets").html()+"<div id='backupScript'></div>");
+        $("#backupScript").load("/api/state/show_states/wbackupScript/",
+        function(){
+            $("#backupScript").click(function(){un_showWidget("wbackupScript")});
+            if (wbackupScriptStatus=="0"){
+                un_showWidget("wbackupScript");
+        }
+        });
+        // for all widgets
+        function un_showWidget(div_id){
+            //$("#wbackupScript").css('visibility')
+            //"visible"
+            //$("#wbackupScript_kizur").css('visibility')
+            //"hidden"
+            if ($("#"+div_id).css('visibility')=="visible"){
+                $("#"+div_id).css('visibility','hidden');
+                $("#"+div_id+"_kizur").css('visibility','visible');
+                window.localStorage.setItem('wbackupScript',0);
+            }
+            else
+            {
+                $("#"+div_id+"_kizur").css('visibility','hidden');
+                $("#"+div_id).css('visibility','visible');
+                window.localStorage.setItem('wbackupScript',1);
+            }
+        }
+    </script>
+    {% endif %}
 
 {% endblock %}
