@@ -31,11 +31,13 @@ from djlib.cron_utils import decronize, crontab_to_russian,\
 from djlib.text_utils import htmlize
 from djlib.acl_utils import acl, for_admins, admins_only
 from djlib.user_tracking import set_last_activity_model, \
-    get_last_activities
+    get_last_activities, get_user_per_date_activities
 from djlib.mail_utils import send_email_alternative, send_email_html
 from djlib.error_utils import FioError, ErrorMessage, \
     add_error, shows_errors
 from utils import *
+from djlib.multilanguage_utils import multilanguage, select_language,\
+    register_lang
 
 from user_settings.settings import server_ip, admins, admins_mail
 try:
@@ -56,8 +58,13 @@ from todoes.utils import build_note_tree, note_with_indent
 task_types = {'one_time':Task,'regular':RegularTask}
 task_addr = {'one_time':'one_time','regular':'regular'}
 
+register_lang('ru','RUS')
+register_lang('eng','ENG')
+app='assets'
+
+
 # Делаем переводы
-from djlib.multilanguage_utils import select_language
+# from djlib.multilanguage_utils import select_language
 languages={'ru':'RUS/',
             'eng':'ENG/'}
 forms_RUS = {'NewTicketForm':NewTicketForm_RUS, 'NoteToTicketAddForm':NoteToTicketAddForm_RUS, 'UserCreationFormMY':UserCreationFormMY_RUS, 'TicketClosingForm':TicketClosingForm_RUS, 'TicketConfirmingForm':TicketConfirmingForm_RUS, 'TicketEditForm':TicketEditForm_RUS,'TicketSearchForm':TicketSearchForm_RUS, 'NewRegularTicketForm':NewRegularTicketForm_RUS, 'EditRegularTicketForm':EditRegularTicketForm_RUS, 'File_and_NoteToTicketAddForm':File_and_NoteToTicketAddForm_RUS}
@@ -516,7 +523,11 @@ def tasks(request):
         return result
     # получаем ошибку, если она установлена и сбрасываем её в запросах
     if request.session.get('my_error'):
-        my_error = [request.session.get('my_error'),]
+        #TODO: учесть при переводе на multilanguage
+        if type(request.session['my_error']) != list:
+            my_error = [request.session.get('my_error'),]
+        else:
+            my_error = request.session.get('my_error')
     else:
         my_error=[]
     # print my_error.encode('utf8')
@@ -660,10 +671,10 @@ def tasks(request):
                     self.new_comment_anchor=''
                     if task.notifications:
                         for x in task.notifications.split(';'):
-                            print worker.login,x
+                            # print worker.login,x
                             if worker.login in x:
                                 self.new_comment_anchor = x.split('|')[-1]
-                                print self.new_comment_anchor
+                                # print self.new_comment_anchor
                 try:
                     self.due_date = task.due_date
                 except:
@@ -750,15 +761,16 @@ def task(request,task_type,task_id):
         # есть ли здача или она уже удалена?
         task_full = task_types[task_type].objects.get(id=task_id)
         # удаляем оповещения о непрочитанных комментах
-        notifications = task_full.notifications
-        if notifications:
-            notifications = notifications.split(';')
-            tmp = []
-            for record in notifications:
-                if fio.login not in record:
-                    tmp.append(record)
-            task_full.notifications = ';'.join(tmp)
-            task_full.save()
+        if task_type == 'one_time':
+            notifications = task_full.notifications
+            if notifications:
+                notifications = notifications.split(';')
+                tmp = []
+                for record in notifications:
+                    if fio.login not in record:
+                        tmp.append(record)
+                task_full.notifications = ';'.join(tmp)
+                task_full.save()
         # получаем связанные комментарии
         try:
             if task_type == 'one_time':
@@ -828,7 +840,7 @@ def task(request,task_type,task_id):
                             acl_list.append(person.login)
                     task_full.acl = ';'.join(acl_list)
                     task_full.save()
-                    print mails
+                    # print mails
                     send_email_html(
                         u"Новый комментарий к задаче: " +
                         task_full.name,
@@ -1094,7 +1106,7 @@ def close_task(request,task_to_close_id):
     sizes = [float(x.weight) for x in pwds]
     min_weight = min(sizes)
     max_weight = max(sizes)
-    print min_weight,max_weight
+    # print min_weight,max_weight
     # font_size_step = (max_weight-min_weight)/\
     #                  (font_size_max-font_size_min)
     # print font_size_step
@@ -1644,7 +1656,7 @@ def all_tasks(request,page_number):
 
 
             except:
-                print 'exception'
+                # print 'exception'
                 not_finded = True
             set_last_activity(user,request.path)
             return render_to_response(languages[lang]+'all_tasks.html',
@@ -1793,9 +1805,9 @@ def add_children_task(request,parent_task_type,parent_task_id):
 
 @login_required
 def regular_task_done(request,task_id):
-    lang=select_language(request)
+    # lang=select_language(request)
     user = request.user.username
-    method = request.method
+    # method = request.method
     try:
         # находим задачу
         task = RegularTask.objects.get(id=task_id)
@@ -1808,13 +1820,49 @@ def regular_task_done(request,task_id):
                                             task.stop_date)
     task.when_to_reminder = task.next_date
     task.save()
-    set_last_activity(user,request.path)
+    set_last_activity(user, request.path)
     return HttpResponseRedirect('/tasks/')
 
 @login_required
+# @shows_errors
 def get_all_logged_in_users(request):
-    lang=select_language(request)
+    lang = select_language(request)
     user = request.user.username
     if user in admins:
         last_activities=get_last_activities()
-        return render_to_response(languages[lang]+'logged_in_user_list.html', {'last_activities':last_activities,},RequestContext(request))
+        for act in last_activities:
+            act.day = act.timestamp.day
+            act.month = act.timestamp.month
+            act.year = act.timestamp.year
+        return render_to_response(
+            languages[lang]+'logged_in_user_list.html',
+            {'last_activities': last_activities, 'admin': True},
+            RequestContext(request))
+
+@login_required
+@multilanguage
+@shows_errors
+@for_admins
+def get_user_activity_history(request,user_login,date):
+    print user_login
+    try:
+        d,m,y = date.split('.')
+        date = datetime.date(int(y), int(m), int(d))
+    except:
+        date = datetime.datetime.now().date()
+    try:
+        person = Person.objects.get(login=user_login)
+    except Person.DoesNotExist:
+        add_error(u"Не найден пользователь {0}".format(user_login),
+                  request)
+        # request.session.modified = True
+        return (False,(HttpResponseRedirect('/users/')))
+    last_activities = get_user_per_date_activities(date=date,
+                                                   person=person)
+    return (True,('user_activity.html',{},
+                      {'title': 'История активности',
+                       'last_activities': last_activities,
+                       'user': person,
+                       'date': date,},
+                      request,
+                      app))

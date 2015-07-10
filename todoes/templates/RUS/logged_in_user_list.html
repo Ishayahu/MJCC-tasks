@@ -6,32 +6,48 @@
     <style>
     </style>
     <meta http-equiv="refresh" content="60">
+  <script>
+      $(function() {
+          {% for activity in last_activities %}
+              $( "#datepicker_{{ activity.user.login }}" ).datepicker({
+                        dateFormat: "dd.mm.yy",
+                        onSelect: function (dateText, inst) {
+                            window.location="/users/activity_history/{{ activity.user.login }}/"+dateText+"/";
+                            console.log(dateText);
+                        }
+                    }
+                );
+              $( "#datepicker_{{ activity.user.login }}" ).datepicker( "setDate", "{{ activity.day }}.{{ activity.month }}.{{ activity.year }}" );
+          {% endfor %}
+      });
+  </script>
 {% endblock %}
 {% block content %}
-{% if last_activities %}
-<table border='1'>
-    <tr>
-        <td>
-            Пользователь
-        </td>
-        <td>
-            Последняя посещённая страница
-        </td>
-        <td>
-            Дата посещения
-        </td>
-    </tr>
-    {% for activity in last_activities %}
-        {% if activity.0 %}
+    {% if last_activities %}
+        <table border='1'>
             <tr>
-        {% else %}
-            <tr bgcolor="red">
-        {% endif %}       
-            <td>{{ activity.1 }}</td>
-            <td><a href="..{{ activity.2 }}">{{ activity.2 }}</a></td>
-            <td>{{ activity.3 }}</td>
-        </tr>
-    {% endfor %}
-</ul>
-{% endif %}
+                <td>
+                    Пользователь
+                </td>
+                <td>
+                    Последняя посещённая страница
+                </td>
+                <td>
+                    Дата посещения
+                </td>
+            </tr>
+            {% for activity in last_activities %}
+                {% if activity.not_older_than_15 %}
+                    <tr>
+                {% else %}
+                    <tr bgcolor="red">
+                {% endif %}
+                    <td><a href="/users/activity_history/{{ activity.user.login }}//">{{ activity.user.fio }}</a></td>
+                    <td><a href="..{{ activity.last_page }}">{{ activity.last_page }}</a></td>
+                    <td><input type="text" id="datepicker_{{ activity.user.login }}"></td>
+{#                    <td><a href="/users/activity_history/{{ activity.1 }}//">{{ activity.3 }}</td>#}
+                </tr>
+            {% endfor %}
+        </table>
+    {% endif %}
 {% endblock %}

@@ -1,8 +1,11 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 5//EN>
 <html lang="ru">
 <head>
-    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery.min.js"></script>
-    {# Для выпадающего списка #}
+{#    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery.min.js"></script>#}
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+    <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+    <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+      {# Для выпадающего списка #}
     <script type="text/javascript" src="/media/js/dropdown.js"></script>
     <script type="text/javascript" src="/media/js/notify.js"></script>
     <link rel="stylesheet" type="text/css" href="/media/css/dropdown.css" />
@@ -43,7 +46,6 @@
         </table>
     {% endif %}
 <!-- Конец Меню -->
-
 
 {% if my_error %}
     {% for error in my_error %}

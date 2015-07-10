@@ -55,7 +55,8 @@ urlpatterns = patterns('',
     # http://192.168.1.157:8080/set_reminder/47 - установка напоминания для задачи
     url(r'^set_reminder/([^/]+)/(\d+)/$', todoes.views.set_reminder),
 # Для администратора:
-    url(r'^users/', todoes.views.get_all_logged_in_users),
+    url(r'^users/$', todoes.views.get_all_logged_in_users),
+    url(r'^users/activity_history/([^/]+)/([^/]*)/$', todoes.views.get_user_activity_history),
     url(r'^tasks/to/([^/]+)/$', todoes.views.to),
 # APT для задач
     # Получение человеческого представления hardcore-style при

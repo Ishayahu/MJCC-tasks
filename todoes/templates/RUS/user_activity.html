@@ -1,0 +1,43 @@
+{% extends "todoes:RUS/base.html" %}
+{% block title %}
+   {{ title }}
+{% endblock %}
+{% block style %}
+    <style>
+    </style>
+  <script>
+      $(function() {
+          $( "#datepicker" ).datepicker({
+                    dateFormat: "dd.mm.yy",
+                    onSelect: function (dateText, inst) {
+                        window.location="/users/activity_history/{{ user.login }}/"+dateText+"/";
+                        console.log(dateText);
+                    }
+                }
+            );
+          $( "#datepicker" ).datepicker( "setDate", "{{ date.day }}.{{ date.month }}.{{ date.year }}" );
+      });
+  </script>
+{% endblock %}
+{% block content %}
+    <b>{{ user.fio }}</b> - {{ date }}
+    <input type="text" id="datepicker">
+    {% if last_activities %}
+        <table border='1'>
+            <tr>
+                <td>
+                    Время
+                </td>
+                <td>
+                    Последняя посещённая страница
+                </td>
+            </tr>
+            {% for activity in last_activities %}
+                <tr>
+                    <td>{{ activity.timestamp }}</td>
+                    <td><a href="{{ activity.last_page }}">{{ activity.last_page }}</a></td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% endif %}
+{% endblock %}
