@@ -1042,11 +1042,15 @@ def close_task(request,task_to_close_id):
             send_email_html(u"Задача закрыта и требует"
                             u" подтверждения: " +
                             task_to_close.name,
-                            u"<b>Описание задачи</b><table "
+                            u"<table "
                             u"cellpadding='5' border='1'>"
-                            u"<tr><td>" +
+                            u"<tr><td>Описание задачи</td>"
+                            u"<td>" +
                             htmlize(task_to_close.description) +
-                            u"</td></tr></table>"
+                            u"</td></tr><tr><td>Сделано для решения"
+                            u" проблемы / Выявленныая проблема</td>"
+                            u"<td>"+task_to_close.pbw.name+"</td>"
+                            u"</table>"
                             u"<b>Посмотреть задачу можно"
                             u" тут</b>: " +
                             htmlize("http://"+server_ip+
@@ -1054,20 +1058,6 @@ def close_task(request,task_to_close_id):
                                    str(task_to_close.id)),
                                    [task_to_close.client.mail,]+
                                    admins_mail)#,fio)
-            # send_email_alternative(u"Задача закрыта и требует"
-            #                        u" подтверждения: "+
-            #                        task_to_close.name,
-            #                        u"*Описание задачи*\<table "
-            #                        u"cellpadding='5' border='1'\>"
-            #                        u"\<tr\>\<td\>"+
-            #                        task_to_close.description+
-            #                        u"\</td\>\</tr\>\</table\>"
-            #                        u"\n\n*Посмотреть задачу можно"
-            #                        u" тут*:\nhttp://"+server_ip+
-            #                        "/task/one_time/"+
-            #                        str(task_to_close.id),
-            #                        [task_to_close.client.mail,]+
-            #                        admins_mail)#,fio)
             return HttpResponseRedirect('/tasks/')
     # если хотим закрыть заявку
     else: 
@@ -1141,7 +1131,16 @@ def unclose_task(request,task_to_unclose_id):
         fio = FioError()
     task_to_unclose.percentage = 50
     task_to_unclose.save()
-    send_email_alternative(u"Задача открыта заново: "+task_to_unclose.name,u"*Описание задачи*\<table cellpadding='5' border='1'\>\<tr\>\<td\>"+task_to_unclose.description+u"\</td\>\</tr\>\</table\>\n\n*Посмотреть задачу можно тут*:\nhttp://"+server_ip+"/task/one_time/"+str(task_to_unclose.id),[task_to_unclose.client.mail,task_to_unclose.worker.mail]+admins_mail,fio)
+    send_email_html(
+        u"Задача открыта заново: " + task_to_unclose.name,
+        u"<b>Описание задачи</b><table cellpadding='5' border='1'>"
+        u"<tr><td>" + task_to_unclose.description + u"</td></tr>"
+        u"</table><b>Посмотреть задачу можно тут</b>: " +
+        htmlize("http://" + server_ip + "/task/one_time/" +
+                str(task_to_unclose.id)),
+        [task_to_unclose.client.mail,
+         task_to_unclose.worker.mail] + admins_mail,
+        fio)
     set_last_activity(user,request.path)
     return HttpResponseRedirect('/tasks/')
 @login_required
