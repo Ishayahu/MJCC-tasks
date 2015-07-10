@@ -197,4 +197,9 @@ type='checkbox' value='16' name='day' />16 </td> <td> <input type='checkbox' val
             <div id='cron'></div>
             <input type="submit" name="set_task" value='Добавить' onclick='cronize()'/>
     </form>
+    <script>
+        $.each($("td").find("ul.errorlist"),function(index,val){
+            console.log($(val).css('background-color','red'))
+        })
+    </script>
 {% endblock %}

@@ -19,4 +19,9 @@
         </table>
         <input type="submit">
     </form>
+    <script>
+        $.each($("td").find("ul.errorlist"),function(index,val){
+            console.log($(val).css('background-color','red'))
+        })
+    </script>
 {% endblock %}
