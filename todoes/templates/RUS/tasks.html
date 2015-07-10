@@ -208,6 +208,10 @@
                                 <a href="/move_to_call/one_time/{{task.id}}"
                                    id="task_{{ task.id }}" title="Переместить в звонки">&#9742;</a>
                             {% endifnotequal %}
+                            {% if task.new_comment_anchor %}
+                                <a href="/task/one_time/{{task.id}}/#comment_{{ task.new_comment_anchor }}"
+                                   title="Непрочитанный комментарий">&#9993;</a>
+                            {% endif %}
                             </li>
                         {% endfor %}
                     </ol>
@@ -241,6 +245,10 @@
                                    id="task_{{ task.id }}"
                                    title="Переместить в звонки">&#9742;</a>
                             {% endifnotequal %}
+                            {% if task.new_comment_anchor %}
+                                <a href="/task/one_time/{{task.id}}/#comment_{{ task.new_comment_anchor }}"
+                                   title="Непрочитанный комментарий">&#9993;</a>
+                            {% endif %}
                             </li>
                         {% endfor %}
                     </ol>
@@ -279,6 +287,10 @@
                                 <a href="/move_to_call/one_time/{{task.id}}"
                                    id="task_{{ task.id }}" title="Переместить в звонки">&#9742;</a>
                             {% endifnotequal %}
+                            {% if task.new_comment_anchor %}
+                                <a href="/task/one_time/{{task.id}}/#comment_{{ task.new_comment_anchor }}"
+                                   title="Непрочитанный комментарий">&#9993;</a>
+                            {% endif %}
                             </li>
                         {% endfor %}
                     </ol>
@@ -302,17 +314,22 @@
                         </span>)</div>
                             <div name="{{group.person.fio}}">
                             <ol>
-                                {% for task in group.tasks %}
-                                    {% ifequal task.state -1 %}
+                                {% for task_wrapper in group.tasks %}
+                                    {% ifequal task_wrapper.state -1 %}
                                         <li class="overdue">
                                     {% endifequal %}   
-                                    {% ifequal task.state 0 %}
+                                    {% ifequal task_wrapper.state 0 %}
                                         <li class="today">
                                     {% endifequal %}
-                                    {% ifequal task.state 1 %}
+                                    {% ifequal task_wrapper.state 1 %}
                                         <li class="future">
                                     {% endifequal %}
-                                    <a href="/task/{{ task.task.task_type }}/{{task.task.id}}" title="{{task.task.description}}" target="_blank">{{task.task.name}}</a></li>
+                                    <a href="/task/{{ task_wrapper.task.task_type }}/{{task_wrapper.task.id}}" title="{{task_wrapper.task.description}}" target="_blank">{{task_wrapper.task.name}}</a>
+                                    {% if task_wrapper.task.new_comment_anchor %}
+                                        <a href="/task/one_time/{{task_wrapper.task.id}}/#comment_{{ task_wrapper.task.new_comment_anchor }}"
+                                           title="Непрочитанный комментарий">&#9993;</a>
+                                    {% endif %}
+                                    </li>
                                 {% endfor %}
                             </ol>
                         </div>

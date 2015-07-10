@@ -80,6 +80,7 @@ class Task(models.Model):
     client = models.ForeignKey(Person, related_name = "client_for_task")
     resource = models.ForeignKey(Resource, blank = True, null = True)
     note = models.ManyToManyField(Note, related_name = "for_task",blank = True)#, null = True)
+    notifications = models.TextField(blank = True, null = True)
     file = models.ManyToManyField(File, related_name = "for_task",
                                    blank = True)#, null = True)
     percentage = models.PositiveSmallIntegerField()

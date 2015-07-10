@@ -131,7 +131,8 @@
                             <form id="answer_to_note" action=""
                                   method="post">
                                 {% csrf_token %}
-                                <td style="padding: 0px 0px 0px {{note.indent_pix}}%;"> 
+                                <td style="padding: 0px 0px 0px {{note.indent_pix}}%;">
+                                <a name="comment_{{ note.id }}">x</a>
                                     {# {{note.indent|safe}} #}
                                     {# {{note.id}};{{note_to_edit_id}} #}
                                     {# Текст комментария #}

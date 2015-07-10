@@ -584,6 +584,7 @@ def tasks(request):
         except:
             tasks_future = ''# если задач нет - вывести это в шаблон
 
+
         # enhancement #47
         for task in list(set(chain(tasks_overdue,
                                    tasks_for_today,
@@ -646,21 +647,46 @@ def tasks(request):
         # соединяем все исходящие задачи в один список и сортируем
         # его по исполнителю и по состоянию
         all_my_tasks = []
+
         class SimpleTask():
             def __init__(self,task,task_type):
                 self.id = task.id
                 self.description = task.description
                 self.name = task.name
                 self.worker = task.worker
+                self.priority = task.priority
+                self.category = task.category
+                if task_type == 'one_time':
+                    self.new_comment_anchor=''
+                    if task.notifications:
+                        for x in task.notifications.split(';'):
+                            print worker.login,x
+                            if worker.login in x:
+                                self.new_comment_anchor = x.split('|')[-1]
+                                print self.new_comment_anchor
                 try:
                     self.due_date = task.due_date
                 except:
                     self.due_date = task.next_date
                 self.task_type = task_type
+
         for t in my_tasks:
             all_my_tasks.append(SimpleTask(t,'one_time'))
         for t in my_regular_tasks:
             all_my_tasks.append(SimpleTask(t,'regular'))
+        tmp = list(tasks_overdue)
+        tasks_overdue = []
+        for t in tmp:
+            tasks_overdue.append(SimpleTask(t,'one_time'))
+        tmp = list(tasks_for_today)
+        tasks_for_today = []
+        for t in tmp:
+            tasks_for_today.append(SimpleTask(t,'one_time'))
+        tmp = list(tasks_future)
+        tasks_future = []
+        for t in tmp:
+            tasks_future.append(SimpleTask(t,'one_time'))
+
 
         all_my_tasks = tasks_separation(all_my_tasks)
         # получаем кол-во заявок в этот раз и сравниваем с тем, что было для уведомления всплывающим окном или ещё какой фигней
@@ -723,6 +749,16 @@ def task(request,task_type,task_id):
     try:
         # есть ли здача или она уже удалена?
         task_full = task_types[task_type].objects.get(id=task_id)
+        # удаляем оповещения о непрочитанных комментах
+        notifications = task_full.notifications
+        if notifications:
+            notifications = notifications.split(';')
+            tmp = []
+            for record in notifications:
+                if fio.login not in record:
+                    tmp.append(record)
+            task_full.notifications = ';'.join(tmp)
+            task_full.save()
         # получаем связанные комментарии
         try:
             if task_type == 'one_time':
@@ -762,9 +798,24 @@ def task(request,task_type,task_id):
                     note.save()
                     if task_type == 'one_time':
                         note.for_task.add(task_full)
+
+                        # добавляем, кого оповестить о комменте
+                        if not task_full.notifications:
+                            task_full.notifications = ''
+                        task_full.notifications =\
+                            task_full.notifications.strip(';')
+                        for person in data['workers']:
+                            if person.login not in\
+                                    task_full.notifications:
+                                task_full.notifications =\
+                                    task_full.notifications + \
+                                    ';' + person.login + '|' +\
+                                    str(note.id)
+                        task_full.notifications =\
+                            task_full.notifications.strip(';')
+
                     if task_type == 'regular':
                         note.for_regular_task.add(task_full)
-                    note.save()
                     # кому будем его отпарвлять
                     mails = \
                         [person.mail for person in data['workers']]
@@ -808,6 +859,24 @@ def task(request,task_type,task_id):
                     note.save()
                     note.parent_note.add(parent_note)
                     note.save()
+
+                    # добавляем, кого оповестить о комменте
+                    if not task_full.notifications:
+                        task_full.notifications = ''
+                    task_full.notifications =\
+                        task_full.notifications.strip(';')
+                    if parent_note.author.login not in\
+                            task_full.notifications and \
+                                    parent_note.author.login !=\
+                                    fio.login:
+                        task_full.notifications =\
+                            task_full.notifications + \
+                            ';' + parent_note.author.login + '|' +\
+                            str(note.id)
+                    task_full.notifications =\
+                        task_full.notifications.strip(';')
+                    task_full.save()
+
                     mails = \
                         (parent_note.author.mail
                          if parent_note.author.mail else '' ,)
