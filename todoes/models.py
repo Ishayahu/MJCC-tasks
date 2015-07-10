@@ -123,8 +123,8 @@ class Joker(models.Model):
     name = models.CharField(max_length=140)
     link = models.URLField()
     def __unicode__(self):
-        return ";".join((self.name,self.link))
-    
+        pass
+
 class Joker_Visit(models.Model):
     worker = models.ForeignKey(Person)
     joker = models.ForeignKey(Joker)
