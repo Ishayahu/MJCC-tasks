@@ -18,7 +18,7 @@
 <!--Меню -->
          <table border="1" width="100%">
             <tr>
-                <td>Привет, {{ worker.fio }}</td>
+                <td>Привет, {{ worker.fio }} <a href="/language/ru">&#9881;</a></td>
                 <td><a href="/tasks/">К списку задач</a></td>
                 <td><a href="https://github.com/Ishayahu/MJCC-tasks/issues">Баг-трекер</a></td>
                 <td><a href="/language/ru">ru</a>|<a href="/language/eng">eng</a></td>
@@ -50,13 +50,15 @@
         </table>
     {% endif %}
 <!-- Меню для пользователя -->
-<table border="1" width="100%">
-    <tr>
-        {% for category in tasks_categories %}
-        <td><a href="/tasks/to/{{ category }}/">{{ category }}</a></td>
-        {% endfor %}
-    </tr>
-</table>
+{% if tasks_categories %}
+    <table border="1" width="100%">
+        <tr>
+            {% for category in tasks_categories %}
+            <td><a href="/tasks/to/{{ category }}/">{{ category }}</a></td>
+            {% endfor %}
+        </tr>
+    </table>
+{% endif %}
 
 <!-- Конец Меню -->
 

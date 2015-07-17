@@ -726,8 +726,9 @@ def tasks(request):
         # получаем категории задач для создания панели с быстрыми
         # ссылками
         tasks_categories = get_full_option(
-            '{0}_settings'.format(user),'tasks_category_groups').\
-            value.split(';')
+            '{0}_settings'.format(user), 'tasks_category_groups')
+        if tasks_categories:
+            tasks_categories = tasks_categories.value.split(';')
 
         # только для админов
         admin = False
@@ -1233,8 +1234,9 @@ def to(request, to_who):
     # получаем категории задач для создания панели с быстрыми
     # ссылками
     tasks_categories = get_full_option(
-        '{0}_settings'.format(user),'tasks_category_groups').\
-        value.split(';')
+        '{0}_settings'.format(user), 'tasks_category_groups')
+    if tasks_categories:
+        tasks_categories = tasks_categories.value.split(';')
 
     set_last_activity(user,request.path)
     return render_to_response(languages[lang]+'tasks_to.html',
@@ -1950,6 +1952,7 @@ def messages_add(request):
 def messages_show_message(request,message_id):
     lang, login, user, method = get_info(request)
     message = Message.objects.get(id=int(message_id))
+    message.text = htmlize(message.text)
     notification = Message_Visit.objects.filter(message=message).\
         filter(worker=user)
     notification.delete()

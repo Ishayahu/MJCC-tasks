@@ -51,7 +51,11 @@ def get_stages(separator):
 def get_full_option(section,option):
     config=ConfigParser.RawConfigParser()
     config.read(config_file)
-    val = config.get(section,option)
+    try:
+        val = config.get(section,option)
+    except:
+        return None
+        # return Option(section,option, None,'','','','',0)
     desc = config.get(section,option+"_description")
     name = config.get(section,option+"_name")
     help_message = None

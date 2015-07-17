@@ -6,7 +6,7 @@
 {% endblock %}
 {% block content %}
 <h1 style="text-align: center;">{{ message.name }}</h1>
-<p>{{ message.text }}</p>
+<p>{{ message.text | safe }}</p>
 <p style="text-align: right;"><i>{{ message.author.fio }}</i></p>
 <p style="text-align: right;"><i>{{ message.timestamp }}</i></p>
 {% endblock %}

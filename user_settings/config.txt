@@ -75,3 +75,10 @@ section_description=Настрйки для karpion
 tasks_category_groups = Звонки;Личное
 tasks_category_groups_description = Категории задач для создания меню с быстрыми ссылками
 tasks_category_groups_name = Группы категорий задач
+
+[frostwork_settings]
+section_description=Настрйки для frostwork
+
+tasks_category_groups = Звонки;Личное
+tasks_category_groups_description = Категории задач для создания меню с быстрыми ссылками
+tasks_category_groups_name = Группы категорий задач
