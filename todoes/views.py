@@ -4,7 +4,7 @@
 
 # TODO: сделать возможность изменения языков
 
-__version__ = '0.2.3d'
+__version__ = '0.2.3f'
 
 
 from django.http import HttpResponseRedirect
@@ -42,6 +42,7 @@ from djlib.multilanguage_utils import select_language,multilanguage,\
     register_lang, get_localized_name, get_localized_form #,register_app
 
 from user_settings.settings import server_ip, admins, admins_mail
+from user_settings.functions import get_full_option
 try:
     from user_settings.settings import todoes_url_not_to_track as \
         url_not_to_track
@@ -722,6 +723,11 @@ def tasks(request):
         # получаем непросмотренные сообщения
         notifications = Message_Visit.objects.filter(worker=worker)
 
+        # получаем категории задач для создания панели с быстрыми
+        # ссылками
+        tasks_categories = get_full_option(
+            '{0}_settings'.format(user),'tasks_category_groups').\
+            value.split(';')
 
         # только для админов
         admin = False
@@ -750,6 +756,7 @@ def tasks(request):
         'tasks_future':tasks_future,'my_tasks':all_my_tasks,
         'tasks_to_confirm':tasks_to_confirm,'all_tasks':all_tasks,
         'alert':alert,'admin':admin,'regular_tasks':regular_tasks,
+         'tasks_categories': tasks_categories,
          'nearest_count':nearest_count, 'notifications': notifications,
          'tasks_id_string': ','.join(map(str,tasks_id_list)),
          'rtasks_id_string': ','.join(map(str,rtasks_id_list)),
@@ -1175,6 +1182,8 @@ def to(request, to_who):
     method = request.method
     if user in admins:
         admin = True
+    else:
+        admin = False
     try:
         fio = Person.objects.get(login=user)
     except Person.DoesNotExist:
@@ -1184,16 +1193,27 @@ def to(request, to_who):
     else:
         my_error=[]
     request.session['my_error'] = ''
-    if user not in admins:
-        return HttpResponseRedirect("/tasks/")
+    # if user not in admins:
+    #     return HttpResponseRedirect("/tasks/")
     tasks = list()
     for task_type in task_types:
         if task_type != 'regular':
-            for task in task_types[task_type].objects.filter(deleted = False).filter(percentage__lt=100).filter(start_date__lt=datetime.datetime.now()).filter(when_to_reminder__lt=datetime.datetime.now()).filter(category=Categories.objects.get(name=to_who).id):
+            for task in task_types[task_type].objects.\
+                    filter(client = fio).\
+                    filter(deleted = False).\
+                    filter(percentage__lt=100).\
+                    filter(start_date__lt=datetime.datetime.now()).\
+                    filter(when_to_reminder__lt=datetime.datetime.now()).\
+                    filter(category=Categories.objects.get(name=to_who).id):
                 task.task_type=task_type
                 tasks.append(task)
         else:
-            for task in task_types[task_type].objects.filter(deleted = False).filter(next_date__lt=datetime.datetime.now()).filter(when_to_reminder__lt=datetime.datetime.now()).filter(category=Categories.objects.get(name=to_who).id):
+            for task in task_types[task_type].objects.\
+                    filter(client = fio).\
+                    filter(deleted = False).\
+                    filter(next_date__lt=datetime.datetime.now()).\
+                    filter(when_to_reminder__lt=datetime.datetime.now()).\
+                    filter(category=Categories.objects.get(name=to_who).id):
                 task.task_type=task_type
                 tasks.append(task)
     tasks_to = list(chain(tasks))
@@ -1203,15 +1223,25 @@ def to(request, to_who):
         try:
             notes[task.id] = Note.objects.filter(for_task=task).order_by('-timestamp')
         except Note.DoesNotExist:
-            notes = ('Нет подходящих заметок',)
+            notes[task.id] = None
+        except ValueError:
+            notes[task.id] = None
     for note_to_id in notes:
-        for note in notes[note_to_id]:
-            note.note = htmlize(note.note)
+        if notes[note_to_id]:
+            for note in notes[note_to_id]:
+                note.note = htmlize(note.note)
+    # получаем категории задач для создания панели с быстрыми
+    # ссылками
+    tasks_categories = get_full_option(
+        '{0}_settings'.format(user),'tasks_category_groups').\
+        value.split(';')
+
     set_last_activity(user,request.path)
     return render_to_response(languages[lang]+'tasks_to.html',
                               {'worker':fio,'tasks':tasks_to,
                                'notes':notes,'to_who':to_who,
-                               'method':method, 'admin':admin},
+                               'method':method, 'admin':admin,
+                               'tasks_categories':tasks_categories},
                               RequestContext(request))
 @login_required
 def confirm_task(request,task_to_confirm_id):

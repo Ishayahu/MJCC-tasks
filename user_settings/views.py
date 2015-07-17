@@ -47,7 +47,9 @@ from user_settings.functions import get_bd_option_variants
 from djlib.error_utils import FioError, ErrorMessage, add_error, shows_errors
 
 # Делаем переводы
-from djlib.multilanguage_utils import select_language,multilanguage,register_lang#,register_app
+from djlib.multilanguage_utils import select_language,\
+    multilanguage,register_lang#,register_app
+from djlib.auxiliary import get_info
 
 import ConfigParser
 import codecs
@@ -126,6 +128,46 @@ def show_settings(request):
                 full_option = get_full_option(section,item[0])
                 setting_goup.settings.append(full_option)
         settings.append(setting_goup)
+    return (True,('show_settings.html', {},{'settings':settings,},request,app))
+@login_required
+@multilanguage
+def show_user_settings(request,for_user_login):
+    class Settings_group():
+        def __init__(self,name,description):
+            self.name = name
+            self.settings = []
+            self.description = description
+    lang,login,user,method = get_info(request)
+    if user not in admins and for_user_login:
+        return (False,HttpResponseRedirect('/'))
+    settings=[]
+    config=ConfigParser.RawConfigParser()
+    config.read(config_file)
+    section = '{0}_settings'.format(login)
+    try:
+        setting_goup = Settings_group(section,get_section_description(section))
+        for item in config.items(section):
+            # Не включаем описания и названия опций
+            if item[0][-12:]=='_description' or item[0][-5:]=='_name' or item[0][-5:]=='_help':
+                continue
+            # Настройки, связанные со значениями в БД
+            if item[0][:6]=='__bd__':
+                if item[0][:12]=='__bd__name__':
+                    option = item[0][12:]
+                    # return name,opt_id,opt_val,desc
+                    # Надо, чтобы при отображении в шаблоне редактировалось оно как список!
+                    # name,opt_id,opt_val,desc = get_bd_option_with_description(section,option)
+                    full_option = get_full_bd_option(section,option)
+                    # setting_goup.settings.append(Setting(option, opt_id+";"+opt_val, name, desc, 1))
+                    setting_goup.settings.append(full_option)
+            # Все остальные настройки
+            else:
+                # setting_goup.settings.append(Setting(*get_option_with_name_and_description(section,item[0]), from_bd=0))
+                full_option = get_full_option(section,item[0])
+                setting_goup.settings.append(full_option)
+        settings.append(setting_goup)
+    except ConfigParser.NoSectionError:
+        settings=None
     return (True,('show_settings.html', {},{'settings':settings,},request,app))
 @login_required
 @multilanguage

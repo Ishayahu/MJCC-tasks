@@ -61,3 +61,17 @@ section_description=Настрйки, относящиеся к модулю sav
 api_key = lw3ef39aekfa3w;9;3fja32213409j;
 api_key_description = Ключ для подключения по API к модулю save_state
 api_key_name = save_state API ключ
+
+[ishayahu_settings]
+section_description=Настрйки для ishayahu
+
+tasks_category_groups = Мотя;Звонки;БД;Личное
+tasks_category_groups_description = Категории задач для создания меню с быстрыми ссылками
+tasks_category_groups_name = Группы категорий задач
+
+[karpion_settings]
+section_description=Настрйки для karpion
+
+tasks_category_groups = Звонки;Личное
+tasks_category_groups_description = Категории задач для создания меню с быстрыми ссылками
+tasks_category_groups_name = Группы категорий задач

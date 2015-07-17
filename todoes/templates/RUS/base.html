@@ -31,12 +31,16 @@
 {#    <div class ="leftstr"><p>Привет, {{ worker.fio }}</p></div>#}
 {#    <div class ="rightstr"><p><a target="_new"#}
 {#         href="/media/versions.html">v0.2.3d</a></p></div>#}
+
+
+<!-- Меню для администратора -->
     {% if admin %}
         <table border="1" width="100%">
             <tr>
-                <td><a href="/tasks/to/Мотя/">Вопросы к Моте</a></td>
-                <td><a href="/tasks/to/Звонки/">Звонки</a></td>
-                <td><a href="/tasks/to/БД/">Вопросы по БД</a></td>
+{#                <td><a href="/tasks/to/Мотя/">Вопросы к Моте</a></td>#}
+                <td><a href="/messages/add/">Добавить сообщение</a></td>
+{#                <td><a href="/tasks/to/Звонки/">Звонки</a></td>#}
+{#                <td><a href="/tasks/to/БД/">Вопросы по БД</a></td>#}
                 <td><a href="/users/" target="_new">Активность пользователей</a></td>
                 <td><a href="/all_bills/" target="_new">Счета</a></td>
                 <td><a href="/assets_by_type/0/" target="_new">Активы по
@@ -45,6 +49,15 @@
             </tr>
         </table>
     {% endif %}
+<!-- Меню для пользователя -->
+<table border="1" width="100%">
+    <tr>
+        {% for category in tasks_categories %}
+        <td><a href="/tasks/to/{{ category }}/">{{ category }}</a></td>
+        {% endfor %}
+    </tr>
+</table>
+
 <!-- Конец Меню -->
 
 {% if my_error %}

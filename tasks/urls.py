@@ -163,6 +163,8 @@ urlpatterns = patterns('',
 
 # Настройки
     url(r'^settings/$', user_settings.views.show_settings),
+    # Показ настроек для пользователя
+    url(r'^settings/user/([^/]*)/$', user_settings.views.show_user_settings),
     # Сохранить настройку после редактирования
     url(r'^api/setting/save/([^/]+)/([^/]+)/$', user_settings.views.save_edited_setting),
     # Выдать форму для редактирования настроек, берущихся из БД
