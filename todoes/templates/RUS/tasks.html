@@ -131,6 +131,11 @@
         <script>alert("Обратите внимание на {{nearest_count}} задач!")
         </script>
     {% endif %}
+
+    {% for notification in notifications %}
+        <p><a href="/messages/show/{{notification.message.id}}/" target="_blank">{{notification.message.name}}</a></p>
+    {% endfor %}
+
     <table>
         <tr>
             <td>

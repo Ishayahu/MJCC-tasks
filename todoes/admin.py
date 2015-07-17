@@ -1,5 +1,7 @@
 from django.contrib import admin
-from todoes.models import Note, Activity, Resource, File, Task, ProblemByWorker, ProblemByUser, Categories, Joker, Joker_Visit, Person, RegularTask
+from todoes.models import Note, Activity, Resource, File, Task,\
+    ProblemByWorker, ProblemByUser, Categories, Message,\
+    Message_Visit, Person, RegularTask
 
 class WorkerAdmin(admin.ModelAdmin):
     list_display = ('fio','login','tel','mail','raiting')
@@ -28,5 +30,5 @@ admin.site.register(ProblemByWorker)
 admin.site.register(Categories)
 admin.site.register(Task, TaskAdmin)
 admin.site.register(RegularTask, RegularTaskAdmin)
-admin.site.register(Joker)
-admin.site.register(Joker_Visit)
+admin.site.register(Message)
+admin.site.register(Message_Visit)

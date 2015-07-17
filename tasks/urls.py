@@ -25,6 +25,9 @@ urlpatterns = patterns('',
     url(r'^tasks/$', todoes.views.tasks),
     # просмотр всех задач по страницам
     url(r'^all_task/([^/]+)/$', todoes.views.all_tasks),
+    # просмотр сообщения
+    url(r'^messages/show/(\d+)/$', todoes.views.messages_show_message),
+
 
 # обычные задачи
     url(r'^new_ticket/$', todoes.views.new_ticket),
@@ -58,6 +61,8 @@ urlpatterns = patterns('',
     url(r'^users/$', todoes.views.get_all_logged_in_users),
     url(r'^users/activity_history/([^/]+)/([^/]*)/$', todoes.views.get_user_activity_history),
     url(r'^tasks/to/([^/]+)/$', todoes.views.to),
+    # добавление сообщения
+    url(r'^messages/add/$', todoes.views.messages_add),
 # APT для задач
     # Получение человеческого представления hardcore-style при
     # создании регулярной задачи

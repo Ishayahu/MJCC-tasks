@@ -1,0 +1,15 @@
+{% extends "todoes:RUS/base.html" %}
+{% block title %}
+    {{ title }}
+{% endblock %}
+{% block style %}
+{% endblock %}
+{% block content %}
+    <form action="" method="post" id="form">
+        {% csrf_token %}
+        <table border=1>
+            {{ form.as_table }}
+        </table>
+        <input type="submit" />
+    </form>
+{% endblock %}

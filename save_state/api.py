@@ -59,6 +59,8 @@ def save_by_http(request, group, key, source, status, message, TTL,
     api_key = get_full_option('save_state','api_key').value
     # print api_key.value
     # print api_key_got
+    print (group, key, source, status, message, TTL,
+                 api_key_got)
     if api_key != api_key_got:
         return HttpResponseForbidden('')
     next_report = datetime.datetime.now() + \
@@ -68,7 +70,9 @@ def save_by_http(request, group, key, source, status, message, TTL,
                     timestamp=datetime.datetime.now(),
                     next_report=next_report)
     status.save()
-    return HttpResponse('')
+    responce = HttpResponse()
+    # responce.status_code = 200
+    return responce
 
 @login_required
 @multilanguage
@@ -82,6 +86,9 @@ def show_states(request,div_id):
         def __init__(self,group):
             self.name = group[0]
             self.items = group[1]
+            self.sort()
+        def sort(self):
+            self.items = sorted(self.items)
     class Status_group:
         def __init__(self):
             self.__group = dict()

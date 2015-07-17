@@ -4,7 +4,10 @@
 #TODO: сделать английские формы
 
 from django import forms
-from todoes.models import Note, Resource, File, Person, Task, ProblemByWorker, ProblemByUser, Categories
+from django.forms import ModelForm
+
+from todoes.models import Note, Resource, File, Person, Task,\
+    ProblemByWorker, ProblemByUser, Categories, Message
 # from tasks.todoes.models import Worker, Client
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.admin import widgets
@@ -116,3 +119,9 @@ class File_and_NoteToTicketAddForm_RUS(forms.Form):
     note = forms.CharField(widget=forms.Textarea, label='Комментарий',required=False )
     file  = forms.FileField()
     workers = forms.ModelMultipleChoiceField(queryset  = Person.objects.all(), label='Кого ещё уведомить о комментарии?',required=False,)
+
+class NewMessageForm(ModelForm):
+    class Meta:
+        model = Message
+        fields = ['name', 'text',]
+        # localized_fields = ['name', 'text',]

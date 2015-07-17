@@ -119,15 +119,20 @@ class RegularTask(models.Model):
     class Meta:
         ordering = ['priority','next_date']
         
-class Joker(models.Model):
+class Message(models.Model):
     name = models.CharField(max_length=140)
-    link = models.URLField()
+    text = models.TextField()
+    author = models.ForeignKey(Person, related_name = "message_author")
+    timestamp = models.DateTimeField()
     def __unicode__(self):
-        pass
+        return u';'.join((str(self.id), self.name,self.author.login))
 
-class Joker_Visit(models.Model):
+class Message_Visit(models.Model):
     worker = models.ForeignKey(Person)
-    joker = models.ForeignKey(Joker)
+    message = models.ForeignKey(Message)
+    def __unicode__(self):
+        return u';'.join((str(self.id), self.message.name,
+                          self.worker.login))
 
 class Activity(models.Model):
     login = models.CharField(max_length=140, blank = True, null = True)

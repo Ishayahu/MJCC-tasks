@@ -11,7 +11,8 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response
 import datetime
 from todoes.models import Note, Resource, File, Person, Task, \
-    ProblemByWorker, ProblemByUser, Categories, RegularTask, Activity
+    ProblemByWorker, ProblemByUser, Categories, RegularTask, Activity,\
+    Message, Message_Visit
 from todoes.forms_rus import NewTicketForm_RUS,\
     NoteToTicketAddForm_RUS, UserCreationFormMY_RUS,\
     TicketClosingForm_RUS, TicketConfirmingForm_RUS,\
@@ -28,6 +29,7 @@ from itertools import chain
 
 from djlib.cron_utils import decronize, crontab_to_russian,\
     generate_next_reminder
+from djlib.auxiliary import get_info
 from djlib.text_utils import htmlize
 from djlib.acl_utils import acl, for_admins, admins_only
 from djlib.user_tracking import set_last_activity_model, \
@@ -36,8 +38,8 @@ from djlib.mail_utils import send_email_alternative, send_email_html
 from djlib.error_utils import FioError, ErrorMessage, \
     add_error, shows_errors
 from utils import *
-from djlib.multilanguage_utils import multilanguage, select_language,\
-    register_lang
+from djlib.multilanguage_utils import select_language,multilanguage,\
+    register_lang, get_localized_name, get_localized_form #,register_app
 
 from user_settings.settings import server_ip, admins, admins_mail
 try:
@@ -60,7 +62,7 @@ task_addr = {'one_time':'one_time','regular':'regular'}
 
 register_lang('ru','RUS')
 register_lang('eng','ENG')
-app='assets'
+app='todoes'
 
 
 # Делаем переводы
@@ -667,6 +669,12 @@ def tasks(request):
                 self.worker = task.worker
                 self.priority = task.priority
                 self.category = task.category
+                # fix #63
+                try:
+                    self.nearest = task.nearest
+                except:
+                    self.nearest = False
+                # end fix #63
                 if task_type == 'one_time':
                     self.new_comment_anchor=''
                     if task.notifications:
@@ -710,6 +718,11 @@ def tasks(request):
         if tasks_number_was < tasks_number:
             alert = True
         request.session['tasks_number'] = tasks_number
+
+        # получаем непросмотренные сообщения
+        notifications = Message_Visit.objects.filter(worker=worker)
+
+
         # только для админов
         admin = False
         all_tasks=[]
@@ -737,7 +750,7 @@ def tasks(request):
         'tasks_future':tasks_future,'my_tasks':all_my_tasks,
         'tasks_to_confirm':tasks_to_confirm,'all_tasks':all_tasks,
         'alert':alert,'admin':admin,'regular_tasks':regular_tasks,
-         'nearest_count':nearest_count,
+         'nearest_count':nearest_count, 'notifications': notifications,
          'tasks_id_string': ','.join(map(str,tasks_id_list)),
          'rtasks_id_string': ','.join(map(str,rtasks_id_list)),
         },RequestContext(request))
@@ -1866,3 +1879,54 @@ def get_user_activity_history(request,user_login,date):
                        'date': date,},
                       request,
                       app))
+
+@login_required
+@multilanguage
+@shows_errors
+@for_admins
+@admins_only
+def messages_add(request):
+    lang, login, user, method = get_info(request)
+    if method == 'POST':
+        form = get_localized_form('NewMessageForm',app,request)\
+            (request.POST)
+        if form.is_valid():
+            data = form.cleaned_data
+            m=Message(name = data['name'],
+                      text = data['text'],
+                      author = user,
+                      timestamp = datetime.datetime.now(),)
+            m.save()
+            # добавляем оповещения для всех пользователей
+            all_persons = Person.objects.all()
+            for person in all_persons:
+                if person != user:
+                    mp = Message_Visit(message = m,
+                                       worker = person)
+                    mp.save()
+        return (False,(HttpResponseRedirect('/tasks/')))
+    return (True,('any_form.html',
+                  {'NewMessageForm':{}},
+                  {'title': 'Добавление сообщения',
+                   'form_template_name':'form',
+                   'user': user,},
+                  request,
+                  app))
+
+@login_required
+@multilanguage
+@shows_errors
+@for_admins
+def messages_show_message(request,message_id):
+    lang, login, user, method = get_info(request)
+    message = Message.objects.get(id=int(message_id))
+    notification = Message_Visit.objects.filter(message=message).\
+        filter(worker=user)
+    notification.delete()
+    return (True,('any_text.html',
+                  {},
+                  {'title': 'Cообщение №{0}'.format(message_id),
+                   'message':message,
+                   'user': user,},
+                  request,
+                  app))
