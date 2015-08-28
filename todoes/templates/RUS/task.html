@@ -108,7 +108,9 @@
                 {% ifequal task_type 'regular' %}
                     <p><a href="/edit_regular/{{task.id}}">Редактировать описание задачи</a></p>
                 {% endifequal %}
-            
+                {% ifnotequal worker.level 0 %}
+                    <p><a href="/escalate/{{task.id}}">Эскалировать задачу</a></p>
+                {% endifnotequal %}
             <p><a href="/add_children_task/one_time/{{task.id}}">Добавить дочернюю задачу</a></p>
                 {% ifequal task_type 'one_time' %}
                     <p><form action="/delete/one_time/{{task.id}}/" method="post">{% csrf_token %}<input type="submit" value="Удалить задачу" name="close_task" onclick="if (confirm('Уверены?')) {return true} else {return false};"/></form></p>
@@ -226,7 +228,60 @@
             <li> <a href="{{file.get_absolute_url}}">{{file.name}}</a>
         {% endfor %}
     </ul>
-    
+    {% if admin %}
+        {% if task.history %}
+            <div id="history_show" style=" text-decoration: underline;visibility: visible">Просмотреть историю изменений</div>
+            <div id="history" style="visibility: hidden">
+                <div id="history_hide" style=" text-decoration: underline;">Скрыть историю изменений</div>
+                <table border="1">
+                <tr>
+                    <th>
+                        Пользователь, когда
+                    </th>
+                    <th>
+                        Поле
+                    </th>
+                    <th>
+                        Старое значение
+                    </th>
+                    <th>
+                        Новое значение
+                    </th>
+                </tr>
+                {% for record in task.history%}
+                    {% for item in record.items %}
+                        <tr>
+                            {% ifequal item.number 0 %}
+                                <td rowspan="{{ record.length }}">
+                                    {{ record.user }}<p></p><i>{{ record.timestamp }}</i>
+                                </td>
+                            {% endifequal %}
+                            <td>
+                                {{ item.key }}
+                            </td>
+                            <td>
+                                {{ item.old_value }}
+                            </td>
+                            <td>
+                                {{ item.new_value }}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                {% endfor %}
+                </table>
+            </div>
+            <script>
+                $("#history_show").click(function(){
+                    $("#history").css('visibility','visible');
+                    $("#history_show").css('visibility','hidden');
+                });
+                $("#history_hide").click(function(){
+                    $("#history").css('visibility','hidden');
+                    $("#history_show").css('visibility','visible');
+                });
+            </script>
+        {% endif %}
+    {% endif %}
 
     <script>
         {# Ставим обработчики сохранения черновиков и восстановления их #}

@@ -1,0 +1,51 @@
+{% extends "todoes:RUS/base.html" %}
+{% block title %}
+    {{ title }}
+{% endblock %}
+{% block style %}
+    <script src="http://cdn.jsdelivr.net/qtip2/2.2.1/jquery.qtip.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="http://cdn.jsdelivr.net/qtip2/2.2.1/jquery.qtip.min.css" />
+    <script>
+    </script>
+{% endblock %}
+{% block content %}
+{#    {{ mac_port_dict }}#}
+    <table border="1">
+        <tr>
+            <th>
+                Свич
+            </th>
+            <th>
+                Место
+            </th>
+            <th>
+                Порт
+            </th>
+            <th>
+                Устройств на порту
+            </th>
+            <th>
+                Ссылка на свич
+            </th>
+        </tr>
+        {% for k in trace %}
+            <tr {% if k.probably_not %}style="background-color: darkgrey"{% endif %} }}>
+                <td>
+                    {{ k.name }}
+                </td>
+                <td>
+                    {{ k.location }}
+                </td>
+                <td>
+                    {{ k.port }}
+                </td>
+                <td>
+                    {{ k.port_count }}
+                </td>
+                <td>
+                    <a href="/api/snmp/show_map/{{ k.community_string }}/{{ k.ip }}/">&#9072;</a>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

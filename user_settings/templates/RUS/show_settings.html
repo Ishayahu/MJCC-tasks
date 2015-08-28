@@ -93,48 +93,74 @@
 
 {% block content %}
     <div id="message"></div>
+{#    <div id="modules">#}
+{#        <h3>Выбор модулей</h3>#}
+{#        {{ modules }}#}
+{#    </div>#}
     <div id="settings_table">
-    {% for group in settings %}
-        <h3>{{group.description}}</h3>
-        <form method="post" id="settings_edition_form" action="">
-            {% csrf_token %}
-            <table border=1 id="settings_table_inner">
-                <tr>
-                    <th>
-                        Название настройки
-                    </th>
-                    <th>
-                        Значение
-                    </th>
-                </tr>
-                {% for setting in group.settings %}
-                    <tr  id="setting_{{group.name}}_{{setting.option}}" from_bd="{{setting.from_bd}}" section="{{group.name}}" option="{{setting.option}}">
-                        <td>
-                            <div title="{{setting.description}}">
-                                {{setting.name}} 
-                            </div>
-                            <div class="help_message">
-                                {% if setting.help_message %}
-                                <a class="tooltip" href="#">?<span class="custom info">{{setting.help_message}}</span></a>
-                                {% endif %}
-                            </div>
-                        </td>
-                        <td>
-                            <div  id="setting_value_{{group.name}}_{{setting.option}}">
-                                {% if setting.id %}
-                                    {{setting.id}};
-                                {% endif %}
-                                {{setting.html_value|safe}}
-                            </div>
-                        </td>
-                        <td>
-                            <div id="button_{{group.name}}_{{setting.option}}"><input type="button" value="✎" title="Редактировать" name="edit_setting" onclick="f_edit_setting('{{group.name}}','{{setting.option}}')" /></div>
-                        </td>
+        {% for group in settings %}
+            <h3>{{group.description}}</h3>
+            <form method="post" id="settings_edition_form" action="">
+                {% csrf_token %}
+                <table border=1 id="settings_table_inner">
+                    <tr>
+                        <th>
+                            Название настройки
+                        </th>
+                        <th>
+                            Значение
+                        </th>
                     </tr>
-                {% endfor %}
-            </table>
-    {% endfor %}
+                    {% for setting in group.settings %}
+                        <tr  id="setting_{{group.name}}_{{setting.option}}" from_bd="{{setting.from_bd}}" section="{{group.name}}" option="{{setting.option}}">
+                            <td>
+                                <div title="{{setting.description}}">
+                                    {{setting.name}}
+                                </div>
+                                {% if setting.help_message %}
+                                    <div class="help_message">
+                                    <a class="tooltip" href="#">?<span class="custom info">{{setting.help_message}}</span></a>
+                                    </div>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div  id="setting_value_{{group.name}}_{{setting.option}}">
+                                    {% if setting.id %}
+                                        {{setting.id}};
+                                    {% endif %}
+                                    {% ifequal setting.option_type 'TEXT' %}
+                                        {{setting.html_value|safe}}
+                                    {% endifequal %}
+                                    {% ifequal setting.option_type 'CHECKBOX' %}
+                                        <input type="checkbox" {% if setting.value %}checked="True"{% endif %}>
+                                    {% endifequal %}
+                                    {% ifequal setting.option_type 'CONNECT' %}
+                                        <input disabled="disabled" type="checkbox" {% if setting.value %}checked="True"{% endif %}>
+                                    {% endifequal %}
+
+                                </div>
+                            </td>
+                            <td>
+                                {% ifequal setting.option_type 'TEXT' %}
+                                    <div id="button_{{group.name}}_{{setting.option}}"><input type="button" value="✎" title="Редактировать" name="edit_setting" onclick="f_edit_setting('{{group.name}}','{{setting.option}}')" /></div>
+                                {% endifequal %}
+                                {% ifequal setting.option_type 'CONNECT' %}
+                                        {% if setting.value %}
+                                            <a href="/api/setting/stop/{{ setting.option }}/" title="Выключить">&#28040;</a>
+                                        {% else %}
+                                            <a href="/api/setting/run/{{ setting.option }}/" title="Включить">&#28857;</a>
+                                        {% endif %}
+                                {% endifequal %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </form>
+        {% endfor %}
     </div>
     <script>
     </script>
+    <br />
+    <br />
+    <br />
 {% endblock %}

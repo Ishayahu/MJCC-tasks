@@ -7,6 +7,7 @@ import todoes.views
 import todoes.api
 import assets.views
 import save_state.api
+import snmp.api
 import assets.test_view
 import assets.api
 import logs.views
@@ -32,6 +33,12 @@ urlpatterns = patterns('',
 # обычные задачи
     url(r'^new_ticket/$', todoes.views.new_ticket),
     url(r'^edit/([^/]+)/$', todoes.views.edit_task),
+    # подвтерждение срока переноса задачи
+    url(r'^task_accept_request_due_date/(\d+)/$',
+        todoes.views.accept_request_due_date),
+    # отклонение срока переноса задачи
+    url(r'^task_reject_request_due_date/(\d+)/$',
+        todoes.views.reject_request_due_date),
     # закрытие / отмена закрытия заявки
     url(r'^close/([^/]+)/$', todoes.views.close_task),
     url(r'^unclose/([^/]+)/$', todoes.views.unclose_task),
@@ -63,7 +70,7 @@ urlpatterns = patterns('',
     url(r'^tasks/to/([^/]+)/$', todoes.views.to),
     # добавление сообщения
     url(r'^messages/add/$', todoes.views.messages_add),
-# APT для задач
+# API для задач
     # Получение человеческого представления hardcore-style при
     # создании регулярной задачи
     url(r'^api/crontab_to_russian/([^/]+)/$', todoes.api.crontab_to_human),
@@ -158,7 +165,22 @@ urlpatterns = patterns('',
     # просмотр статусов
     url(r'^api/state/show_states/([^/]+)/$',
         save_state.api.show_states),
-
+# API snmp
+    # просмотр карты роутера по community string & ip
+    url(r'^api/snmp/show_router_mapping/([^/]+)/(\d+.\d+.\d+.\d+)/$',
+        snmp.api.show_router_mapping),
+    # просмотр карты по номеру роутера в базе
+    url(r'^api/snmp/show_router_mapping_by_id/(\d+)/$',
+        snmp.api.show_router_mapping_by_id),
+    # определение производителя по маку
+    url(r'^api/snmp/brand_by_mac/([0-9a-fA-F]{2}-[0-9a-fA-F]{2}-[0-9a-fA-F]{2})/$',
+        snmp.api.brand_by_mac),
+    # определение имени по ip
+    url(r'^api/snmp/name_by_ip/(\d{1,3}.\d{1,3}.\d{1,3}.\d{1,3})/$',
+        snmp.api.name_by_ip),
+    # определение имени по ip
+    url(r'^api/snmp/find_by_mac/([0-9a-fA-F]{2}:[0-9a-fA-F]{2}:[0-9a-fA-F]{2}:[0-9a-fA-F]{2}:[0-9a-fA-F]{2}:[0-9a-fA-F]{2})/$',
+        snmp.api.find_by_mac),
 
 
 # Настройки
@@ -171,6 +193,11 @@ urlpatterns = patterns('',
     url(r'^api/setting/edit_from_bd/([^/]+)/([^/]+)/$', user_settings.views.edit_from_bd),
     # Сохранить настройку из БД после редактирования
     url(r'^api/setting/save_from_bd/([^/]+)/([^/]+)/$', user_settings.views.save_from_bd),
+# Модули
+    # Включить модуль
+    url(r'^api/setting/run/([^/]+)/$', user_settings.views.run_module),
+    # Выключить модуль
+    url(r'^api/setting/stop/([^/]+)/$', user_settings.views.stop_module),
 
 
 # Тестированание

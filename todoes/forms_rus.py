@@ -90,7 +90,7 @@ class TicketConfirmingForm_RUS(forms.Form):
     # workers = forms.ModelMultipleChoiceField(queryset  = Person.objects.all(), label='Кого ещё уведомить о комментарии?',required=False)
 
     
-class UserCreationFormMY_RUS(UserCreationForm):
+class UserCreationFormMY(UserCreationForm):
     fio = forms.CharField(label='ФИО')
     mail = forms.EmailField(label = 'Мыло')
     tel = forms.CharField(label='Телефон', max_length=10, min_length=10)

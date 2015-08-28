@@ -1,1 +1,6 @@
 http://www.evernote.com/l/AK6_9AQq0nBGWboxaElew50V5KPEZ2nLzPw/
+
+prerequisites:
+#TODO: надо сделать так, чтобы предварительные требования проверялись, а ещё лучше - устанавливались
+pyquery
+pysnmp

@@ -43,7 +43,7 @@ except ImportError:
 
 from user_settings.functions import  get_section_description, get_full_bd_option, get_full_option
 from user_settings.functions import get_bd_option_variants
-
+import codecs
 from djlib.error_utils import FioError, ErrorMessage, add_error, shows_errors
 
 # Делаем переводы
@@ -52,6 +52,7 @@ from djlib.multilanguage_utils import select_language,\
 from djlib.auxiliary import get_info
 
 import ConfigParser
+from ConfigParser import DEFAULTSECT
 import codecs
 
 register_lang('ru','RUS')
@@ -85,19 +86,6 @@ class UnicodeConfigParser(ConfigParser.RawConfigParser):
 @multilanguage
 @admins_only
 def show_settings(request):
-    # a=open(os.path.sep.join((os.getcwd(),'user_settings','test_file.py')),'w')
-    
-    # raise NotImplementedError("Надо корректно обрабатывать настройки, связанные с БД!! например, место по умолчанию, статус по умолчанию+сделать, чтобы при редактировании всё было правильно")
-    # Надо корректно обрабатывать настройки, связанные с БД!! например, место по умолчанию, статус по умолчанию
-    #+сделать, чтобы при редактировании всё было правильно
-    
-    # class Setting():
-        # def __init__(self, option, value, name, description, from_bd):
-            # self.name = name
-            # self.value = value.replace('\n','<p>')
-            # self.description = description
-            # self.option = option
-            # self.from_bd = from_bd
     class Settings_group():
         def __init__(self,name,description):
             self.name = name
@@ -128,7 +116,71 @@ def show_settings(request):
                 full_option = get_full_option(section,item[0])
                 setting_goup.settings.append(full_option)
         settings.append(setting_goup)
-    return (True,('show_settings.html', {},{'settings':settings,},request,app))
+        # получаем список модулей, доступных для подключения в меню
+    modules = Settings_group('Модули','Доступные модули для системы')
+    import os
+    import os.path
+    from functions import Option
+    # [('assets_name', ''), ('section_description', '\xd0\x9f\xd0\xbe\xd0\xb4\xd0\xba\xd0\xbb\xd1\x8e\xd1\x87\xd1\x91\xd0\xbd\xd0\xbd\xd1\x8b\xd0\xb5 \xd0\xbc\xd0\xbe\xd0\xb4\xd1\x83\xd0\xbb\xd0\xb8'), ('assets_description', ''), ('assets', 'True')]
+    # получаем списки модулей, которые находятся в настройках
+    try:
+        connected_modules = [x[0] for x in config.items('modules')]
+    except ConfigParser.NoSectionError:
+        connected_modules=[]
+    # print connected_modules
+    cur_dir = os.getcwd()
+    for record in os.listdir('.'):
+        if os.path.isdir(record):
+            temp_dir = os.path.join(cur_dir,record)
+            # os.chdir(temp_dir)
+            if 'todoes_module' in os.listdir(temp_dir):
+                lines = codecs.open(os.path.join(cur_dir,
+                                          record,
+                                          'todoes_module'),
+                                    'r',
+                                    encoding='utf-8').readlines()
+                lines = [line.strip() for line in lines]
+                if lines and lines[0]==u'MODULE_DESCRIPTION_v_1':
+                    # проверяем, не включён ли он
+                    if record in connected_modules:
+                        modules.settings.append(Option(
+                            section=u'Модули',
+                            option=record,
+                            val='True',
+                            name=lines[1],
+                            desc=lines[2],
+                            help_message=lines[3],
+                            from_bd=0,
+                            opt_id=None,
+                            option_type='CONNECT'
+                        ))
+                    else:
+                        # если не подключён
+                        modules.settings.append(Option(
+                            section=u'Модули',
+                            option=record,
+                            val='False',
+                            name=lines[1],
+                            desc=lines[2],
+                            help_message=lines[3],
+                            from_bd=0,
+                            opt_id=None,
+                            option_type='CONNECT'
+                        ))
+    # для каждого модуля надо проверить, есть ли он в настройках
+    # если нет - то можно его подключить и добавить в настройки,
+    # если есть показываем статус из настроек. Данные для модуля
+    # будем брать из файла todoes_module. Если в нём не правильные
+    # данные - выдаём про него отдельное сообщение
+    settings.append(modules)
+    return (True,('show_settings.html',
+                  {},
+                  {'settings':settings,
+                   # 'modules':modules,
+                   },
+                  request,
+                  app))
+
 @login_required
 @multilanguage
 def show_user_settings(request,for_user_login):
@@ -217,3 +269,34 @@ def edit_from_bd(request,section,option):
             opt.selected = True
     # raise NotImplementedError("Надо корректно обрабатывать настройки, связанные с БД!! например, место по умолчанию, статус по умолчанию+сделать, чтобы при редактировании всё было правильно")
     return (True,('edit_from_bd.html', {},{'opts':opts,'option':option},request,app))
+@login_required
+@multilanguage
+@admins_only
+def run_module(request,module_name):
+    lang,user,fio,method = get_info(request)
+    config=UnicodeConfigParser()
+    config.readfp(codecs.open(config_file, encoding='utf-8', mode='r'))
+    try:
+        config.set('modules',module_name,'True')
+        config.set('modules',module_name+"_description",'')
+        config.set('modules',module_name+"_name",'')
+    except ConfigParser.NoSectionError:
+        config.add_section('modules')
+        config.set('modules','section_description',u'Подключённые модули')
+        config.set('modules',module_name,'True')
+        config.set('modules',module_name+"_description",'')
+        config.set('modules',module_name+"_name",'')
+    config.write(codecs.open(config_file, encoding='utf-8', mode='w'))
+    return (False,HttpResponseRedirect('/settings/'))
+@login_required
+@multilanguage
+@admins_only
+def stop_module(request,module_name):
+    lang,user,fio,method = get_info(request)
+    config=UnicodeConfigParser()
+    config.readfp(codecs.open(config_file, encoding='utf-8', mode='r'))
+    config.remove_option('modules',module_name)
+    config.remove_option('modules',module_name+"_description")
+    config.remove_option('modules',module_name+"_name")
+    config.write(codecs.open(config_file, encoding='utf-8', mode='w'))
+    return (False,HttpResponseRedirect('/settings/'))

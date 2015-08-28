@@ -1,7 +1,6 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 5//EN>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 5//EN">
 <html lang="ru">
 <head>
-{#    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery.min.js"></script>#}
     <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
     <script src="//code.jquery.com/jquery-1.10.2.js"></script>
     <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
@@ -11,44 +10,129 @@
     <link rel="stylesheet" type="text/css" href="/media/css/dropdown.css" />
     <link rel="stylesheet" type="text/css" href="/media/css/blink.css" />
 
+    <script type="text/javascript" src="/media/select2-4.0.0/dist/js/select2.full.js"></script>
+    <link rel="stylesheet" type="text/css" href="/media/select2-4.0.0/dist/css/select2.css" />
+
+
     <title>{% block title %}{% endblock %}</title>
+    {% if modules %}
+        <script>
+        links = {
+            {% for module in modules %}
+                "{{ module.name }}": {
+                    {% for link in  module.links %}
+                        "{{ link.name }}": {
+                            "href": "{{ link.href }}",
+                            "id": "{{ link.id }}",
+                            "oncklick": "{{ link.onclick | safe }}",
+                        },
+                    {% endfor %}
+                    },
+            {% endfor %}
+        }
+        // для меню выбора модулей
+        $(document).ready(function () {
+            $('#modules_select').select2({
+                query: function (query){
+                    var data = {
+                        results: [
+                            { id: -1, text: "---" },
+                            {% for module in modules %}
+                                { id: {{ module.id }}, text: "{{ module.name }}" {% if module.active %} {% else %}, disabled: true {% endif %} },
+                            {% endfor %}
+{#                                  { id: 1, text: "I'm selectable" },#}
+{#                                  { id: 2, text: "I'm a disabled option", disabled: true },#}
+{#                                  { id: 3, text: "I'm selectable too!" }#}
+                        ]
+                    };
+
+                    query.callback(data);
+                }
+            });
+            function create_module_menu(links,selected,div_id){
+                var html_links = ""
+                for(key in links[selected]) {
+                    html_links += "<td><a id='"+links[selected][key]["id"]+"' href='"+links[selected][key]["href"]+"'";
+                    if (links[selected][key]["oncklick"]) {
+                        html_links += "onclick='" + links[selected][key]["oncklick"]+"'";
+                    }
+                    html_links += " >"+key+"</a></td>";
+                }
+                $("#"+div_id).html(html_links);
+            }
+            $('#modules_select').on("select2:select", function(e) {
+                var selected = $("#modules_select option:selected").text();
+                var selected_val = $("#modules_select option:selected").val()
+                localStorage.setItem('selected_module',selected_val);
+                console.log(selected);
+                //<div id="module_links"></div>
+                /*var html_links = ""
+                for(key in links[selected]) {
+                    html_links += "<td><a href='"+links[selected][key]["href"]+"' onclick="+links[selected][key]["oncklick"]+">"+key+"</a></td>";
+                }
+                $("#module_links").html(html_links);*/
+                create_module_menu(links,selected,"module_links")
+            });
+            // init selection based on previous selection
+            var selected_module = localStorage.getItem('selected_module');
+            if (selected_module){
+                $("#modules_select").val(selected_module).change();
+                var selected = $("#modules_select option:selected").text();
+                /*var html_links = ""
+                for(key in links[selected]) {
+                    html_links += "<td><a href='"+links[selected][key]["href"]+"' onclick="+links[selected][key]["oncklick"]+">"+key+"</a></td>";
+                }
+                $("#module_links").html(html_links);*/
+                create_module_menu(links,selected,"module_links")
+            }
+
+        });
+
+        </script>
+    {% endif %}
     {% block style %}{% endblock %}
 </head>
-<body>
+<body style="font-family: Segoe UI Symbol;">
 <!--Меню -->
          <table border="1" width="100%">
             <tr>
-                <td>Привет, {{ worker.fio }} <a href="/language/ru">&#9881;</a></td>
+                <td>Привет, {{ worker.fio }} <a href="/settings/user//" title="Настройки пользователя">&#9881;</a> {% if admin %}<a href="/settings/" title="Настройки системы">&#128295;</a>{% endif %} <a title="Выйти" href="/accounts/logout/">&#128272;</a></td>
                 <td><a href="/tasks/">К списку задач</a></td>
                 <td><a href="https://github.com/Ishayahu/MJCC-tasks/issues">Баг-трекер</a></td>
                 <td><a href="/language/ru">ru</a>|<a href="/language/eng">eng</a></td>
                 <td><a target="_new" href="/media/versions.html">v0.2.3e</a></td>
             <tr>
         </table>
-{# <div class ="rightstr"><p><a href="/language/ru">ru</a>|<a#}
-{#href="/language/eng">eng</a></p></div> #}
-{#<div style="clear:left"></div>#}
-{#    <div class ="leftstr"><p>Привет, {{ worker.fio }}</p></div>#}
-{#    <div class ="rightstr"><p><a target="_new"#}
-{#         href="/media/versions.html">v0.2.3d</a></p></div>#}
-
 
 <!-- Меню для администратора -->
     {% if admin %}
         <table border="1" width="100%">
             <tr>
-{#                <td><a href="/tasks/to/Мотя/">Вопросы к Моте</a></td>#}
                 <td><a href="/messages/add/">Добавить сообщение</a></td>
-{#                <td><a href="/tasks/to/Звонки/">Звонки</a></td>#}
-{#                <td><a href="/tasks/to/БД/">Вопросы по БД</a></td>#}
                 <td><a href="/users/" target="_new">Активность пользователей</a></td>
                 <td><a href="/all_bills/" target="_new">Счета</a></td>
-                <td><a href="/assets_by_type/0/" target="_new">Активы по
-                    категориям
-                </a></td>
+                <td><a href="/assets_by_type/0/" target="_new">Активы по категориям</a></td>
             </tr>
         </table>
     {% endif %}
+<!-- Меню модулей -->
+    <table border="1" width="100%">
+        <tr>
+            <td>
+                <select id="modules_select">
+                    <option value="-1">---</option>
+                    {% for module in modules %}
+                        <option value="{{ module.id }}">{{ module.name }}</option>
+                    {% endfor %}
+                </select>
+
+            </td>
+            <td>
+                <div id="module_links"></div>
+            </td>
+        </tr>
+    </table>
+<!-- Конец меню модулей -->
 <!-- Меню для пользователя -->
 {% if tasks_categories %}
     <table border="1" width="100%">

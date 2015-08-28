@@ -17,11 +17,22 @@
         <table border=1>
             {{ form.as_table }}
         </table>
+        <input type="hidden" name="due_date_request_reason" id="due_date_request_reason" value="" />
         <input type="submit">
     </form>
     <script>
         $.each($("td").find("ul.errorlist"),function(index,val){
             console.log($(val).css('background-color','red'))
         })
+        {% if need_reason %}
+            var old_date = $("#id_due_date").val();
+            $("#id_due_date").on('change',function(){
+                if ($("#id_due_date").val() != old_date)
+                var a = prompt('Введите причину переноса даты выполнения','');
+                $("#due_date_request_reason").val(a);
+                return true;
+                //console.log(a);
+            })
+        {% endif %}
     </script>
 {% endblock %}

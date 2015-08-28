@@ -88,7 +88,7 @@ def show_states(request,div_id):
             self.items = group[1]
             self.sort()
         def sort(self):
-            self.items = sorted(self.items)
+            self.items = sorted(self.items,key=lambda x: x.key)
     class Status_group:
         def __init__(self):
             self.__group = dict()
@@ -115,7 +115,9 @@ def show_states(request,div_id):
             res = []
             max_length = 0
             for k,v in sorted(self.__group.items()):
-                res.append(Group([k,v]))
+                g = Group([k,v])
+                # g.sort()
+                res.append(g)
                 if len(v)>max_length:
                     max_length=len(v)
             return res,max_length,self.warning

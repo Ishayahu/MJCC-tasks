@@ -1,0 +1,68 @@
+{% extends "todoes:RUS/base.html" %}
+{% block title %}
+    {{ title }}
+{% endblock %}
+{% block style %}
+    <script src="http://cdn.jsdelivr.net/qtip2/2.2.1/jquery.qtip.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="http://cdn.jsdelivr.net/qtip2/2.2.1/jquery.qtip.min.css" />
+    <script>
+        // Create the tooltips only when document ready
+         $(document).ready(function()
+         {
+             // MAKE SURE YOUR SELECTOR MATCHES SOMETHING IN YOUR HTML!!!
+             $("a.qtip_link").each(function() {
+                 $(this).qtip({
+                    content: {
+                        text: function(event, api) {
+                            $.ajax({
+                                url: api.elements.target.attr('href') // Use href attribute as URL
+                            })
+                            .then(function(content) {
+                                // Set the tooltip content upon successful retrieval
+                                api.set('content.text', content);
+                            }, function(xhr, status, error) {
+                                // Upon failure... set the tooltip content to error
+                                api.set('content.text', status + ': ' + error);
+                            });
+
+                            return 'Loading...'; // Set some initial text
+                        }
+                    },
+                    position: {
+                        my: 'left top',  // Position my top left...
+                        at: 'top right', // at the bottom right of...
+                        viewport: $(window)
+                    },
+                    style: 'qtip-wiki'
+                 });
+             });
+         });
+    </script>
+{% endblock %}
+{% block content %}
+{#    {{ mac_port_dict }}#}
+    <table border="1">
+        {% for k in mac_port_dict %}
+            <tr>
+                <td>
+                    {{ k.number }}
+                </td>
+                <td>
+                    {{ k.mac }}
+                </td>
+                <td>
+                    <a href="/api/snmp/brand_by_mac/{{ k.brand_mac }}/" class="qtip_link">&#9072;</a>
+                </td>
+                <td>
+                    {{ k.ip }}
+                </td>
+                <td>
+                    {{ k.name }}
+                </td>
+                <td>
+                    {{ k.port }}
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

@@ -4,7 +4,7 @@
 
 # TODO: сделать возможность изменения языков
 
-__version__ = '0.2.3f'
+__version__ = '0.2.3f1'
 
 
 from django.http import HttpResponseRedirect
@@ -14,7 +14,7 @@ from todoes.models import Note, Resource, File, Person, Task, \
     ProblemByWorker, ProblemByUser, Categories, RegularTask, Activity,\
     Message, Message_Visit
 from todoes.forms_rus import NewTicketForm_RUS,\
-    NoteToTicketAddForm_RUS, UserCreationFormMY_RUS,\
+    NoteToTicketAddForm_RUS, UserCreationFormMY,\
     TicketClosingForm_RUS, TicketConfirmingForm_RUS,\
     TicketEditForm_RUS,TicketSearchForm_RUS, NewRegularTicketForm_RUS,\
     EditRegularTicketForm_RUS, File_and_NoteToTicketAddForm_RUS
@@ -30,6 +30,7 @@ from itertools import chain
 from djlib.cron_utils import decronize, crontab_to_russian,\
     generate_next_reminder
 from djlib.auxiliary import get_info
+from djlib.module_utils import add_module_menu
 from djlib.text_utils import htmlize
 from djlib.acl_utils import acl, for_admins, admins_only
 from djlib.user_tracking import set_last_activity_model, \
@@ -70,7 +71,16 @@ app='todoes'
 # from djlib.multilanguage_utils import select_language
 languages={'ru':'RUS/',
             'eng':'ENG/'}
-forms_RUS = {'NewTicketForm':NewTicketForm_RUS, 'NoteToTicketAddForm':NoteToTicketAddForm_RUS, 'UserCreationFormMY':UserCreationFormMY_RUS, 'TicketClosingForm':TicketClosingForm_RUS, 'TicketConfirmingForm':TicketConfirmingForm_RUS, 'TicketEditForm':TicketEditForm_RUS,'TicketSearchForm':TicketSearchForm_RUS, 'NewRegularTicketForm':NewRegularTicketForm_RUS, 'EditRegularTicketForm':EditRegularTicketForm_RUS, 'File_and_NoteToTicketAddForm':File_and_NoteToTicketAddForm_RUS}
+forms_RUS = {'NewTicketForm':NewTicketForm_RUS,
+             'NoteToTicketAddForm':NoteToTicketAddForm_RUS,
+             'UserCreationFormMY':UserCreationFormMY,
+             'TicketClosingForm':TicketClosingForm_RUS,
+             'TicketConfirmingForm':TicketConfirmingForm_RUS,
+             'TicketEditForm':TicketEditForm_RUS,
+             'TicketSearchForm':TicketSearchForm_RUS,
+             'NewRegularTicketForm':NewRegularTicketForm_RUS,
+             'EditRegularTicketForm':EditRegularTicketForm_RUS,
+             'File_and_NoteToTicketAddForm':File_and_NoteToTicketAddForm_RUS}
 forms_ENG = {'NewTicketForm':NewTicketForm_ENG, 'NoteToTicketAddForm':NoteToTicketAddForm_ENG, 'UserCreationFormMY':UserCreationFormMY_ENG, 'TicketClosingForm':TicketClosingForm_ENG, 'TicketConfirmingForm':TicketConfirmingForm_ENG, 'TicketEditForm':TicketEditForm_ENG,'TicketSearchForm':TicketSearchForm_ENG, 'NewRegularTicketForm':NewRegularTicketForm_ENG, 'EditRegularTicketForm':EditRegularTicketForm_ENG, 'File_and_NoteToTicketAddForm':File_and_NoteToTicketAddForm_ENG}
 l_forms = {'ru':forms_RUS,
            'eng':forms_ENG,
@@ -314,6 +324,10 @@ def set_reminder(request,task_type,task_id):
     # end fix #52
 
     user = request.user.username
+    try:
+        fio = Person.objects.get(login=user)
+    except Person.DoesNotExist:
+        fio = FioError()
     admin = False
     if user in admins:
         admin = True
@@ -373,7 +387,7 @@ def set_reminder(request,task_type,task_id):
     set_last_activity(user,request.path)
     return render_to_response(languages[lang]+'set_reminder.html',
                               {'my_error':my_error, 'admin':admin,
-                                               'method':method,
+                                'worker':fio,'method':method,
                                'today':today,'after_hour':after_hour},
                               RequestContext(request))
 
@@ -409,7 +423,8 @@ def move_to_call(request,task_type,task_id):
     set_last_activity(user,request.path)
     return render_to_response(languages[lang]+'set_reminder.html', {'method':method,'today':today,'after_hour':after_hour},RequestContext(request))
 
-@login_required    
+@login_required
+@multilanguage
 def register(request):
     lang=select_language(request)
     if request.method == 'POST':
@@ -428,7 +443,16 @@ def register(request):
             return HttpResponseRedirect("/tasks/")
     else:
         form = l_forms[lang]['UserCreationFormMY']()
-    return render_to_response(languages[lang]+"registration/register.html",{'form':form},RequestContext(request))
+    # return render_to_response(languages[lang]+"register.html",
+    #                           {'form':form},
+    #                           RequestContext(request))
+    return (True,
+            ('register.html',
+             {'UserCreationFormMY':{}},
+              {'title': 'Регистрация нового пользователя',
+               'form_template_name':'form'},
+              request,
+              app))
 @login_required    
 def profile(request):
     lang=select_language(request)
@@ -437,6 +461,10 @@ def profile(request):
     return HttpResponseRedirect("/tasks/")
 
 @login_required
+@multilanguage
+@shows_errors
+@for_admins
+@add_module_menu
 def tasks(request):
     lang=select_language(request)
     def tasks_separation(tasks):
@@ -477,6 +505,9 @@ def tasks(request):
             def __init__(self,state,task):
                 self.state = state
                 self.task = task
+                # if int(task.id)==479:
+                #     print self.task.request_due_date
+
         def get_state(task):
             """
             Для определения того, просроченная задача, сегодняшнаяя
@@ -508,17 +539,6 @@ def tasks(request):
         #                                на будущее
         for k,v in my_tasks.items():
             my_tasks[k].prepare()
-            # over = []
-            # now = []
-            # futures = []
-            # for t in my_tasks[k].tasks:
-            #     if t.state == -1:
-            #         over.append(t)
-            #     elif t.state == 0:
-            #         now.append(t)
-            #     else:
-            #         futures.append(t)
-            #     my_tasks[k].tasks = over+now+futures
         # делаем из задач список для отображения
         result = []
         for k,v in my_tasks.items():
@@ -536,6 +556,9 @@ def tasks(request):
     # print my_error.encode('utf8')
     request.session['my_error'] = ''
     user = request.user.username
+    admin = False
+    if user in admins:
+        admin = True
     # method = request.method
     # Если подтверждаются задачи с главной страницы
     if request.method == 'POST':
@@ -547,7 +570,7 @@ def tasks(request):
             send_email_alternative(u"Завершение задачи подтверждено: "+task_to_confirm.name,u"Описание задачи\<table cellpadding='5' border='1'\>\<tr\>\<td\>"+task_to_confirm.description+u"\</td\>\</tr\>\</table\>\n*Посмотреть задачу можно тут*:\nhttp://"+server_ip+"/task/one_time/"+str(task_to_confirm.id),[task_to_confirm.worker.mail,task_to_confirm.client.mail])
             request.session['my_error'] = u'Выполнение задач успешно подтверждено!'
         set_last_activity(user,request.path)
-        return HttpResponseRedirect('/tasks/')
+        return False, HttpResponseRedirect('/tasks/')
     # Если просто просматриваем список задач
     else:
         try:
@@ -613,11 +636,12 @@ def tasks(request):
         # срок исполнения которых меньше 3-х дней, для выделения
         # оповещение должно выдаваться только раз за сессию!
         # и раз за день
-        was_nearest_remining = request.session.get('nearest_remining',False)
+        was_nearest_remining = request.session.get('nearest_remining',
+                                                   False)
         today = str(datetime.datetime.now().date())
         last_nearest_remining_date = request.session.get(
-            'nearest_remining_date','1900-01-01')
-        if last_nearest_remining_date!=today:
+            'nearest_remining_date', '1900-01-01')
+        if last_nearest_remining_date != today:
             was_nearest_remining = False
         # print request.session.get('nearest_remining_date',False)
         nearest_count = 0
@@ -676,6 +700,18 @@ def tasks(request):
                 except:
                     self.nearest = False
                 # end fix #63
+                # fix #53
+                # if int(task.id)==479:
+                #     print task.request_due_date
+                #     print task.due_date_request_reason
+                if (worker==task.client or admin)\
+                    and task_type == 'one_time'\
+                        and task.request_due_date:
+                    # print 'OK'
+                    self.request_due_date = task.request_due_date
+                    self.due_date_request_reason =\
+                        task.due_date_request_reason
+                # end fix #53
                 if task_type == 'one_time':
                     self.new_comment_anchor=''
                     if task.notifications:
@@ -731,11 +767,12 @@ def tasks(request):
             tasks_categories = tasks_categories.value.split(';')
 
         # только для админов
-        admin = False
+        # admin = False
         all_tasks=[]
         tasks_to_confirm=[]
-        if user in admins:
-            admin = True
+        # if user in admins:
+        if admin:
+            # admin = True
             # получаем Список всех заявок для админов
             try:
                 # отображаем только НЕ закрытые заявки, т.е. процент выполнения которых меньше 100
@@ -750,18 +787,23 @@ def tasks(request):
                 tasks_to_confirm = ''# если задач нет - вывести это в шаблон
                 my_error.append('Нет неподтверждённых заявок')
     set_last_activity(user,request.path)
-    return render_to_response(languages[lang]+'tasks.html',
-        {'my_error':my_error,'user':user,'worker':worker,
-        'tasks_overdue':tasks_overdue,
-        'tasks_for_today':tasks_for_today,
-        'tasks_future':tasks_future,'my_tasks':all_my_tasks,
-        'tasks_to_confirm':tasks_to_confirm,'all_tasks':all_tasks,
-        'alert':alert,'admin':admin,'regular_tasks':regular_tasks,
-         'tasks_categories': tasks_categories,
-         'nearest_count':nearest_count, 'notifications': notifications,
-         'tasks_id_string': ','.join(map(str,tasks_id_list)),
-         'rtasks_id_string': ','.join(map(str,rtasks_id_list)),
-        },RequestContext(request))
+    # return render_to_response(languages[lang]+'tasks.html',
+    return (True,
+            ('tasks.html',
+             {},
+            {'my_error':my_error,'user':user,'worker':worker,
+            'tasks_overdue':tasks_overdue,
+            'tasks_for_today':tasks_for_today,
+            'tasks_future':tasks_future,'my_tasks':all_my_tasks,
+            'tasks_to_confirm':tasks_to_confirm,'all_tasks':all_tasks,
+            'alert':alert,'admin':admin,'regular_tasks':regular_tasks,
+             'tasks_categories': tasks_categories,
+             'nearest_count':nearest_count, 'notifications': notifications,
+             'tasks_id_string': ','.join(map(str,tasks_id_list)),
+             'rtasks_id_string': ','.join(map(str,rtasks_id_list)),
+            },
+             request,
+             app))
 
 @login_required
 def task(request,task_type,task_id):
@@ -1015,6 +1057,8 @@ def task(request,task_type,task_id):
             build_tasks_tree(task_full,children_tasks,0)
             # files[0].file.url
             set_last_activity(user,request.path)
+            # task_full.due_date_history = task_full.due_date_history.split('|')
+            task_full.build_history()
             return render_to_response(languages[lang]+'task.html',
                                       {'files':files,'user':user,
                                        'worker':fio,'task':task_full,
@@ -1310,16 +1354,10 @@ def confirm_task(request,task_to_confirm_id):
                                'worker':fio,},
                               RequestContext(request))
 @login_required
-def edit_task(request,task_to_edit_id):
+def edit_task(request, task_to_edit_id):
     lang=select_language(request)
-    if not acl(request,'one_time',task_to_edit_id):
-        request.session['my_error'] =\
-            u'Нет права доступа к этой задаче!'
-        return HttpResponseRedirect("/tasks/")
-
-    task_to_edit = Task.objects.get(id=task_to_edit_id)
+    task = Task.objects.get(id=task_to_edit_id)
     method = request.method
-    
     user = request.user.username
     admin = False
     if user in admins:
@@ -1328,195 +1366,237 @@ def edit_task(request,task_to_edit_id):
         fio = Person.objects.get(login=user)
     except Person.DoesNotExist:
         fio = FioError()
+
+    # редактировать может только админ, работник или клиент
+    # if not acl(request,'one_time',task_to_edit_id):
+    # print fio
+    # print task_to_edit.worker
+    if not(admin or fio==task.client or fio==task.worker):
+        request.session['my_error'] =\
+            u'Нет права редактировать эту задачу!'
+        return HttpResponseRedirect("/tasks/")
+    if fio == task.worker:
+        need_reason = True
+    else:
+        need_reason = False
     if request.method == 'POST':
         form = l_forms[lang]['TicketEditForm'](
             request.POST,request.FILES)
         # если меняется исполнитель - чтобы оповестить
-        old_worker = task_to_edit.worker
-        old_pbu = task_to_edit.pbu
-        old_client = task_to_edit.client
-        old_start_date = task_to_edit.start_date
-        old_category = task_to_edit.category
-        old_due_date = task_to_edit.due_date
-        old_name = task_to_edit.name
+        old_worker = task.worker
+        old_pbu = task.pbu
+        old_client = task.client
+        old_start_date = task.start_date
+        old_category = task.category
+        old_due_date = task.due_date
+        old_name = task.name
 
         # # старый варинат
         if form.is_valid():
             # проверка - есть ли файл надо добавить
             def save_file(files):
-                instanse = File(file=files['file'],
+                instance = File(file=files['file'],
                                 timestamp=datetime.datetime.now(),
                                 file_name = 'file_name',
                                 description = 'TEST',)
-                instanse.save()
-                return instanse
+                instance.save()
+                return instance
             if request.FILES:
-                task_to_edit.file.add(save_file(request.FILES))
-                task_to_edit.save()
-            # raise TabError
+                task.file.add(save_file(request.FILES))
+                task.save(user=user)
             data = form.cleaned_data
-            task_to_edit.name=data['name']
-            task_to_edit.pbu=data['pbus']
-            task_to_edit.description=data['description']
-            task_to_edit.client=data['clients']
-            task_to_edit.priority=data['priority']
-            task_to_edit.category=data['category']
-            task_to_edit.start_date=data['start_date']
-            task_to_edit.due_date=data['due_date']
-            task_to_edit.worker=data['workers']
-            task_to_edit.percentage=data['percentage']
-            task_to_edit.when_to_reminder=data['when_to_reminder']
-            # task_to_edit.file_id = file.id
-            task_to_edit.save()
-            task_description = htmlize(task_to_edit.description)
-            if task_to_edit.name != old_name:
+            task.name = data['name']
+            task.pbu = data['pbus']
+            task.description = data['description']
+            task.client = data['clients']
+            task.priority = data['priority']
+            task.category = data['category']
+            task.start_date = data['start_date']
+            task.worker = data['workers']
+
+            # fix #53
+            if fio == task.worker and not admin:
+                task.request_due_date = data['due_date']
+                task.due_date_request_reason = \
+                    request.POST.get('due_date_request_reason')
+            else:
+                if task.due_date_editor_level >= fio.level or admin:
+                    task.due_date=data['due_date']
+                    task.due_date_editor_level = fio.level
+
+            task.percentage=data['percentage']
+            task.when_to_reminder=data['when_to_reminder']
+            task.save(user=user)
+            task_description = htmlize(task.description)
+            if task.name != old_name:
                 send_email_html(
                     u"Изменёно название задачи: " + old_name,
                     u"<table cellpadding='5' border='1'>"
                     u"<tr><td>Прежнее название</td><td>" +
                     old_name + u"</td></tr><tr><td>Новое название"
-                    u"</td><td>" + task_to_edit.name + u"</td></tr>"
+                    u"</td><td>" + task.name + u"</td></tr>"
                     u"</table><b>Описание задачи</b>"
                     u"<table cellpadding='5' border='1'><tr><td>" +
                     task_description + u"</td></tr>"
                     u"</table><b>Посмотреть задачу можно тут</b>: " +
                     htmlize("http://" + server_ip +
-                            "/task/one_time/" + str(task_to_edit.id)),
-                    [task_to_edit.worker.mail,
-                     task_to_edit.client.mail] + admins_mail)
-            if task_to_edit.worker != old_worker:
+                            "/task/one_time/" + str(task.id)),
+                    [task.worker.mail,
+                     task.client.mail] + admins_mail)
+
+            # fix #53
+            if task.request_due_date != old_due_date:
+
+                send_email_html(
+                    u"Запрос на изменение срока выполнения задачи: " +
+                    task.name,
+                    u"<table cellpadding='5' border='1'>"
+                    u"<tr><td>Прежний срок</td><td>" +
+                    str(old_due_date) + u"</td></tr><tr><td>Новий срок"
+                    u"</td><td>" + str(task.request_due_date) +
+                    u"</td></tr>"
+                    u"</table><b>Описание задачи</b>"
+                    u"<table cellpadding='5' border='1'><tr><td>" +
+                    task_description + u"</td></tr>"
+                    u"</table><b>Посмотреть задачу можно тут</b>: " +
+                    htmlize("http://" + server_ip +
+                            "/task/one_time/" + str(task.id)),
+                    [task.worker.mail,
+                     task.client.mail] + admins_mail)
+
+            if task.worker != old_worker:
                 # добавление нового исполнителя в acl
-                if task_to_edit.worker.login not in task_to_edit.acl:
-                    task_to_edit.acl=task_to_edit.acl\
-                                     + ";" + task_to_edit.worker.login
-                    task_to_edit.save()
+                if task.worker.login not in task.acl:
+                    task.acl = task.acl\
+                                   + ";" + task.worker.login
+                    task.save()
                 send_email_html(
                     u"Изменён исполнитель задачи: " +
-                    task_to_edit.name,
+                    task.name,
                     u"<table cellpadding='5' border='1'><tr><td>"
                     u"Прежний исполнитель</td><td>" +
                     old_worker.fio + u"</td></tr><tr><td>"
                     u"Новый исполнитель</td><td>" +
-                    task_to_edit.worker.fio + u"</td></tr>"
+                    task.worker.fio + u"</td></tr>"
                     u"</table><b>Описание задачи</b>"
                     u"<table cellpadding='5' border='1'><tr><td>" +
                     task_description+u"</td></tr></table>"
                     u"<b>Посмотреть задачу можно тут</b>: " +
                     htmlize("http://" + server_ip +
-                            "/task/one_time/" + str(task_to_edit.id)),
-                    [task_to_edit.worker.mail,
-                     task_to_edit.client.mail,
+                            "/task/one_time/" + str(task.id)),
+                    [task.worker.mail,
+                     task.client.mail,
                      old_worker.mail] + admins_mail)
-            if task_to_edit.pbu != old_pbu:
+            if task.pbu != old_pbu:
                 send_email_html(
                     u"Изменёно описание проблемы со слов пользователя"
-                    u" для задачи: " + task_to_edit.name,
+                    u" для задачи: " + task.name,
                     u"<table cellpadding='5' border='1'><tr><td>"
                     u"Прежная проблема</td><td>" + old_pbu.name +
                     u"</td></tr><tr><td>Новая проблема</td><td>" +
-                    task_to_edit.pbu.name + u"</td></tr></table>"
+                    task.pbu.name + u"</td></tr></table>"
                     u"<b>Описание задачи</b>"
                     u"<table cellpadding='5' border='1'><tr><td>" +
                     task_description + u"</td></tr></table>"
                     u"<b>Посмотреть задачу можно тут</b>: " +
                     htmlize("http://" + server_ip +
-                            "/task/one_time/" + str(task_to_edit.id)),
-                    [task_to_edit.worker.mail,
-                         task_to_edit.client.mail] + admins_mail)
-            if task_to_edit.client != old_client:
+                            "/task/one_time/" + str(task.id)),
+                    [task.worker.mail,
+                         task.client.mail] + admins_mail)
+            if task.client != old_client:
                 # добавление нового заказчика в acl
-                if task_to_edit.client.login not in task_to_edit.acl:
-                    task_to_edit.acl=task_to_edit.acl \
-                                     + ";" + task_to_edit.client.login
-                    task_to_edit.save()
+                if task.client.login not in task.acl:
+                    task.acl=task.acl \
+                                     + ";" + task.client.login
+                    task.save()
                 send_email_html(
-                    u"Изменён заказчик задачи: " + task_to_edit.name,
+                    u"Изменён заказчик задачи: " + task.name,
                     u"<table cellpadding='5' border='1'><tr><td>"
                     u"Прежний заказчик</td><td>" + old_client.fio +
                     u"</td></tr><tr><td>Новый заказчик</td><td>" +
-                    task_to_edit.client.fio+u"</td></tr></table>"
+                    task.client.fio+u"</td></tr></table>"
                     u"<b>Описание задачи</b>"
                     u"<table cellpadding='5' border='1'><tr><td>" +
                     task_description + u"</td></tr></table>"
                     u"<b>Посмотреть задачу можно тут</b>: " +
                     htmlize("http://" + server_ip +
-                            "/task/one_time/" + str(task_to_edit.id)),
-                    [task_to_edit.worker.mail,
-                     task_to_edit.client.mail,
+                            "/task/one_time/" + str(task.id)),
+                    [task.worker.mail,
+                     task.client.mail,
                      old_client.mail] + admins_mail)
-            if task_to_edit.category != old_category:
+            if task.category != old_category:
                 send_email_html(
                     u"Изменёна категория задачи: " +
-                    task_to_edit.name,
+                    task.name,
                     u"<table cellpadding='5' border='1'><tr><td>"
                     u"Прежная категория</td><td>" +
                     old_category.name +
                     u"</td></tr><tr><td>Новая категория</td><td>" +
-                    task_to_edit.category.name + u"</td></tr></table>"
+                    task.category.name + u"</td></tr></table>"
                     u"<b>Описание задачи</b>"
                     u"<table cellpadding='5' border='1'><tr><td>" +
                     task_description+u"</td></tr></table>"
                     u"<b>Посмотреть задачу можно тут</b>: " +
                     htmlize("http://" + server_ip +
-                            "/task/one_time/" + str(task_to_edit.id)),
-                    [task_to_edit.worker.mail,
-                     task_to_edit.client.mail] + admins_mail)
-            if task_to_edit.due_date != old_due_date:
+                            "/task/one_time/" + str(task.id)),
+                    [task.worker.mail,
+                     task.client.mail] + admins_mail)
+            if task.due_date != old_due_date:
                 send_email_html(
                     u"Изменён срок выполонения задачи: "
-                    + task_to_edit.name,
+                    + task.name,
                     u"<table cellpadding='5' border='1'><tr><td>"
                     u"Старый срок</td><td>" + str(old_due_date) +
                     u"</td></tr><tr><td>Новый срок</td><td>" +
-                    str(task_to_edit.due_date) +
+                    str(task.due_date) +
                     u"</td></tr></table><b>Описание задачи</b>"
                     u"<table cellpadding='5' border='1'><tr><td>" +
                     task_description +
                     u"</td></tr></table>"
                     u"<b>Посмотреть задачу можно тут</b>: " +
                     htmlize("http://" + server_ip +
-                            "/task/one_time/" + str(task_to_edit.id)),
-                    [task_to_edit.worker.mail,
-                     task_to_edit.client.mail] + admins_mail)
-            if task_to_edit.start_date != old_start_date:
+                            "/task/one_time/" + str(task.id)),
+                    [task.worker.mail,
+                     task.client.mail] + admins_mail)
+            if task.start_date != old_start_date:
                 send_email_html(
                     u"Изменена дата начала задачи: " +
-                    task_to_edit.name,
+                    task.name,
                     u"<table cellpadding='5' border='1'><tr><td>"
                     u"Прежняя дата начала</td><td>" +
                     str(old_start_date) +
                     u"</td></tr><tr><td>Новая дата начала</td><td>" +
-                    str(task_to_edit.start_date) +
+                    str(task.start_date) +
                     u"</td></tr></table><b>Описание задачи</b>"
                     u"<table cellpadding='5' border='1'><tr><td>" +
                     task_description + u"</td></tr></table>"
                     u"<b>Посмотреть задачу можно тут</b>: " +
                     htmlize("http://" + server_ip +
-                            "/task/one_time/" + str(task_to_edit.id)),
-                    [task_to_edit.worker.mail,
-                     task_to_edit.client.mail] + admins_mail)
+                            "/task/one_time/" + str(task.id)),
+                    [task.worker.mail,
+                     task.client.mail] + admins_mail)
             set_last_activity(user,request.path)
             return HttpResponseRedirect('/tasks/')
     else:
-        form = l_forms[lang]['TicketEditForm']({'name' : task_to_edit.name,
-            'pbus' : task_to_edit.pbu,
-            'description' : task_to_edit.description,
-            'clients' : task_to_edit.client,
-            'priority' : task_to_edit.priority,
-            'category' : task_to_edit.category,
-            'start_date' : task_to_edit.start_date,
-            'when_to_reminder' : task_to_edit.when_to_reminder,
-            'due_date' : task_to_edit.due_date,
-            'workers' : task_to_edit.worker,
-            'percentage' : task_to_edit.percentage,
+        form = l_forms[lang]['TicketEditForm']({'name' : task.name,
+            'pbus' : task.pbu,
+            'description' : task.description,
+            'clients' : task.client,
+            'priority' : task.priority,
+            'category' : task.category,
+            'start_date' : task.start_date,
+            'when_to_reminder' : task.when_to_reminder,
+            'due_date' : task.due_date,
+            'workers' : task.worker,
+            'percentage' : task.percentage,
             # 'file':task_to_edit.file,
         })
-        # Creating a form to change an existing task.
-        # form = TaskEditForm(instance=task_to_edit)
+        if fio.level > task.due_date_editor_level and not admin:
+            del form.fields['due_date']
     set_last_activity(user,request.path)
     return render_to_response(languages[lang]+'new_ticket.html',
                               {'worker':fio,'form':form,
-                               'admin':admin,
+                               'admin':admin,'need_reason':need_reason,
                                'method':method},
     RequestContext(request))
 @login_required
@@ -1535,7 +1615,7 @@ def undelete_task(request,task_type,task_id):
     user = request.user.username
     task = task_types[task_type].objects.get(id=task_id)
     task.deleted = False
-    task.save()
+    task.save(user=user)
     set_last_activity(user,request.path)
     return HttpResponseRedirect('/tasks/')    
 @login_required
@@ -1963,3 +2043,58 @@ def messages_show_message(request,message_id):
                    'user': user,},
                   request,
                   app))
+
+@login_required
+@multilanguage
+@shows_errors
+@for_admins
+def accept_request_due_date(request,task_id):
+    lang, login, user, method = get_info(request)
+    task = Task.objects.get(id=task_id)
+    if (user==task.client or user in admins):
+        # task.due_date_history += u"|"+unicode(datetime.datetime.now())+u";user;accept"
+        task.due_date = task.request_due_date
+        task.request_due_date = None
+        task.save(user=user)
+        send_email_html(
+                    u"Запрос на изменение срока выполнения задачи: " +
+                    task.name + u" принят",
+                    u"Новий срок: " + str(task.due_date) +
+                    u"<p><b>Описание задачи</b>"
+                    u"<table cellpadding='5' border='1'><tr><td>" +
+                    htmlize(task.description) + u"</td></tr>"
+                    u"</table><b>Посмотреть задачу можно тут</b>: " +
+                    htmlize("http://" + server_ip +
+                            "/task/one_time/" + str(task.id)),
+                    [task.worker.mail,
+                     task.client.mail] + admins_mail)
+    else:
+        add_error(u'Нет прав',request)
+    return (False,(HttpResponseRedirect('/tasks/')))
+
+@login_required
+@multilanguage
+@shows_errors
+@for_admins
+def reject_request_due_date(request,task_id):
+    lang, login, user, method = get_info(request)
+    task = Task.objects.get(id=task_id)
+    if (user==task.client or user in admins):
+        # task.due_date_history += u"|"+unicode(datetime.datetime.now())+u"user;reject"
+        task.request_due_date = None
+        task.save(user=user)
+        send_email_html(
+                    u"Запрос на изменение срока выполнения задачи: " +
+                    task.name + u" отклонён",
+                    u"Прежний срок: " + str(task.due_date) +
+                    u"<p><b>Описание задачи</b>"
+                    u"<table cellpadding='5' border='1'><tr><td>" +
+                    htmlize(task.description) + u"</td></tr>"
+                    u"</table><b>Посмотреть задачу можно тут</b>: " +
+                    htmlize("http://" + server_ip +
+                            "/task/one_time/" + str(task.id)),
+                    [task.worker.mail,
+                     task.client.mail] + admins_mail)
+    else:
+        add_error(u'Нет прав',request)
+    return (False,(HttpResponseRedirect('/tasks/')))

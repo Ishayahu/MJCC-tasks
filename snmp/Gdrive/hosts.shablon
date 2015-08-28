@@ -1,0 +1,7 @@
+{% header %}
+{% endheader %}
+{% record %}
+{0[MAC]};{0[A]}.{0[B]}.{0[C]}.{0[D]};{0[PC-Name]}
+{% endrecord %}
+{% footer %}
+{% endfooter %}

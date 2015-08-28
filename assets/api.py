@@ -444,7 +444,10 @@ def get_new_asset_model_add_form(request,asset_type_id,asset_model_name):
     # Имя формы для ввода нового актива получается добавлением каталожного имени к 'NewModel_'
     asset_type = Asset_type.objects.get(id=asset_type_id)
     form_name = 'NewModel_'+asset_type.catalogue_name
-    return (True,('get_new_asset_model_add_form.html', {form_name:{'model_name':asset_model_name}},{'method':method,'form_template_name':'NewModelForm','asset_type_id':asset_type_id},request,app))
+    return (True,('get_new_asset_model_add_form.html',
+                  {form_name:{'model_name':asset_model_name}},
+                  {'method':method,'form_template_name':'NewModelForm',
+                   'asset_type_id':asset_type_id},request,app))
 @login_required
 @multilanguage
 @shows_errors

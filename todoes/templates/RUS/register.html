@@ -1,0 +1,18 @@
+{% extends "RUS/base.html" %}
+{% block title %}
+Создать учётную запись
+
+{% endblock %}
+{% block content %}
+
+{% if form.errors %}
+    <p class="error">Неверное имя или пароль</p>
+{% endif %}
+<h1>Создать учётную запись</h1>
+<form action="" method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Зарегистрировать" />
+</form>
+
+{% endblock %}

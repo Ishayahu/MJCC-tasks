@@ -1,0 +1,171 @@
+#!/usr/local/bin/python
+# -*- coding: utf-8 -*-
+#
+# По одному тесты не запускать! Только всем набором
+#
+#
+
+import unittest
+import ami
+import os,sys
+
+class DhcpAndSquidTestCase(unittest.TestCase):
+    def setUp(self):
+        # название таблицы для тестов в гуглодоксе
+        self.test_table_name = 'IPtest'
+        # где хранятся файлы образцы
+        self.dhcp_gold_dir_name = 'dhcp_test.gold'
+        self.squid_gold_dir_name = 'squid_test.gold'
+        # Где хранятся ссылки для проверки корректной обработки ссылок
+        self.dhcp_links_dir_name = 'dhcp_test.links'
+        self.squid_links_dir_name = 'squid_test.links'
+        # куда будут делаться тестовые файлы dhcp
+        self.dhcp_dir_name = 'dhcp_test'
+        # куда будут делаться тестовые файлы squid
+        self.squid_path = 'squid_test'
+        # функции получения имён "идеальных" файлов
+        self.dhcp_gold_file_name_function = lambda a:a.split('.')[0]
+        self.squid_gold_file_name_function = lambda a:'.'.join((a.split('.')[0],a.split('.')[1]))
+    @staticmethod
+    def delete_dir_content(dir_name):
+        for the_file in os.listdir(dir_name):
+            file_path = os.path.join(dir_name, the_file)
+            try:
+                if os.path.isfile(file_path):
+                    os.unlink(file_path)
+            except Exception, e:
+                print e
+    # Метод, вызывающий скрипт с нужными параметрами
+    # Так как тестирование dhcp & squid практически идентично
+    def xxx_do_new_correct_files(self,xxx_dir_name='',
+                                xxx_gold_dir_name='',
+                                ami_run_args='',
+                                empty_dir=True):
+        if empty_dir:
+            # надо удалить файлы из папки, чтобы точно создавались новые файлы
+            self.delete_dir_content(xxx_dir_name)
+        ami.run(**ami_run_args)
+        # Проверяем соответствие кол-ва файлов полученных скриптом тому, сколько их должно быть
+        test_files = [tmp for tmp in os.listdir(xxx_dir_name) if tmp[-4:]!='.bak'] 
+        gold_files = [tmp for tmp in os.listdir(xxx_gold_dir_name)] 
+        self.compare_files(test_files,gold_files,xxx_dir_name,xxx_gold_dir_name)
+    def xxx_replace_files(self,xxx_dir_name='',xxx_gold_dir_name='',ami_run_args='',
+                            gold_file_name_function=lambda x:x):
+        """
+        идея такая: два раза запускаем скрипт, после этого проверяем, что и полученные, и забекапленные файлы идентичны идеальным
+        """
+        self.xxx_do_new_correct_files(xxx_dir_name=xxx_dir_name,
+                                    xxx_gold_dir_name=xxx_gold_dir_name,
+                                    ami_run_args=ami_run_args)
+        self.xxx_do_new_correct_files(xxx_dir_name=xxx_dir_name,
+                                    xxx_gold_dir_name=xxx_gold_dir_name,
+                                    ami_run_args=ami_run_args,
+                                    empty_dir=False)
+        # Проверяем файлы полученные скриптом
+        test_files = [tmp for tmp in os.listdir(xxx_dir_name) if tmp[-4:]!='.bak'] 
+        gold_files = [tmp for tmp in os.listdir(xxx_gold_dir_name)] 
+        self.compare_files(test_files,gold_files,xxx_dir_name,xxx_gold_dir_name)
+        # Проверяем файлы забекапленные скриптом
+        test_files = [tmp for tmp in os.listdir(xxx_dir_name) if tmp[-4:]=='.bak'] 
+        gold_files = [tmp for tmp in os.listdir(xxx_gold_dir_name)] 
+        self.compare_files(test_files,gold_files,xxx_dir_name,xxx_gold_dir_name,
+                            gold_file_name_function = gold_file_name_function,
+                            )
+    def compare_files(self,test_files='',gold_files='',xxx_dir_name='',xxx_gold_dir_name='',
+                        gold_file_name_function=lambda x:x):
+        # Проверяем соответствие кол-ва файлов полученных скриптом тому, сколько их должно быть
+        self.assertEqual(len(test_files), len(gold_files))
+        for file in test_files:
+            fgold = open(xxx_gold_dir_name+os.sep+gold_file_name_function(file)+'.gold','r')
+            ftest = open(xxx_dir_name+os.sep+file,'r')
+            for test_line in ftest:
+                # если в идеальном файле МЕНЬШЕ строк, чем в полученном - выйдет фигня при сравнении, так как все "несуществующие" строки будут пустыми
+                gold_line = fgold.readline()
+                self.assertEqual(test_line.strip(), gold_line.strip())
+            # Проверяем, что в идеальном файле не осталось больше строк (что в нём не БОЛЬШЕ строк)
+            self.assertEqual(fgold.read(1),'')
+            fgold.close()
+            ftest.close()
+    def test_dhcp_do_new_correct_files(self):
+        self.xxx_do_new_correct_files(xxx_dir_name=self.dhcp_dir_name,
+                                    xxx_gold_dir_name=self.dhcp_gold_dir_name,
+                                    ami_run_args={'IP_table_name': self.test_table_name,
+                                                    'dhcp_dir_name': self.dhcp_dir_name,
+                                                    'test': True,
+                                    })
+    def test_squid_do_new_correct_files(self):
+        self.xxx_do_new_correct_files(xxx_dir_name=self.squid_path,
+                                    xxx_gold_dir_name=self.squid_gold_dir_name,
+                                    ami_run_args={'IP_table_name': self.test_table_name,
+                                                'squid_path': self.squid_path,
+                                                'test': True,
+                                                'run_first':False,
+                                    })
+    def test_dhcp_replace_files(self):
+        self.xxx_replace_files(xxx_dir_name=self.dhcp_dir_name,
+                                    xxx_gold_dir_name=self.dhcp_gold_dir_name,
+                                    ami_run_args={'IP_table_name': self.test_table_name,
+                                                    'dhcp_dir_name': self.dhcp_dir_name,
+                                                    'test': True,
+                                                    'run_first':False,},
+                                    gold_file_name_function = self.dhcp_gold_file_name_function,
+                                    )
+    def test_squid_replace_files(self):
+        self.xxx_replace_files(xxx_dir_name=self.squid_path,
+                                    xxx_gold_dir_name=self.squid_gold_dir_name,
+                                    ami_run_args={'IP_table_name': self.test_table_name,
+                                                'squid_path': self.squid_path,
+                                                'test': True,
+                                                'run_first':False,},
+                                    gold_file_name_function = self.squid_gold_file_name_function,
+                                    )
+    def test_sending_error_log(self):
+        self.xxx_do_new_correct_files(xxx_dir_name=self.dhcp_dir_name,
+                                    xxx_gold_dir_name=self.dhcp_gold_dir_name,
+                                    ami_run_args={'IP_table_name': self.test_table_name,
+                                                    'dhcp_dir_name': self.dhcp_dir_name,
+                                                    'test': True,
+                                                    'run_first':False,
+                                                    'admins':('ishayahu@gmail.com',),}
+                                        )
+    @unittest.skipUnless(sys.platform.startswith("freebsd"), "only on FreeBSD")
+    def test_symlink_dhcp(self):
+        """
+        Порядок такой:
+        Отчищаем каталог для ссылок
+        Создаём там пустые файлы с правильными именами (для простоты)
+        Делаем ссылки в каталог, в который должны получаться результаты с теми же правильными именами
+        Запускаем скрипт
+        Проверяем, что изменились файлы в каталоге для ссылок        
+        """
+        self.delete_dir_content(self.dhcp_links_dir_name)
+        gold_files = [tmp for tmp in os.listdir(xxx_gold_dir_name)] 
+        for file in gold_files:
+            f=open(self.dhcp_links_dir_name+os.sep+file,'w')
+            f.close()
+            os.symlink(self.dhcp_links_dir_name+os.sep+file,self.dhcp_dir_name+os.sep+file)
+        self.xxx_do_new_correct_files(xxx_dir_name=dhcp_dir_name,
+                                    xxx_gold_dir_name=dhcp_gold_dir_name,
+                                    ami_run_args={'IP_table_name': self.test_table_name,
+                                                    'dhcp_dir_name': self.dhcp_dir_name,
+                                                    'test': True,
+                                                    'run_first':False,},
+                                    empty_dir=False)
+        # Проверяем файлы полученные скриптом
+        test_files = [tmp for tmp in os.listdir(dhcp_links_dir_name) if tmp[-4:]!='.bak'] 
+        gold_files = [tmp for tmp in os.listdir(dhcp_gold_dir_name)] 
+        self.compare_files(test_files,gold_files,dhcp_links_dir_name,dhcp_gold_dir_name)
+        # Проверяем файлы забекапленные скриптом
+        test_files = [tmp for tmp in os.listdir(dhcp_links_dir_name) if tmp[-4:]=='.bak'] 
+        gold_files = [tmp for tmp in os.listdir(dhcp_gold_dir_name)] 
+        self.compare_files(test_files,gold_files,dhcp_links_dir_name,dhcp_gold_dir_name,
+                            gold_file_name_function = self.dhcp_gold_file_name_function,
+                            )
+    # def test_hard_link_dhcp(self):
+    # def test_stderr_output_dhcp(self):
+    
+    
+suite = unittest.TestLoader().loadTestsFromTestCase(DhcpAndSquidTestCase)
+        
+if __name__ == '__main__':
+    unittest.main()

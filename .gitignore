@@ -167,3 +167,4 @@ MJCC-tasks.e4p
 */migrations/*
 .idea/*
 tasks/settings.py
+snmp/Gdrive/client_secrets.json

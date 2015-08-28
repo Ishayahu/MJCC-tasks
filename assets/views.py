@@ -214,7 +214,14 @@ def bill_cashless_add(request):
 
     contractors_list = assets.api.get_contractors_list(request,internal=True)
     asset_types_list = assets.api.get_asset_type_list(request,internal=True)
-    return (True,('new_bill.html', {'NewCashBillForm':{'garanty':garanty_number}},{'stages':stages,'contractors_list':contractors_list,'asset_types_list':asset_types_list, 'method':method},request,app))
+    return (True,
+            ('new_bill.html',
+             {'NewCashBillForm':{'garanty':garanty_number}},
+             {'stages':stages,'contractors_list':contractors_list,
+              'asset_types_list':asset_types_list,
+              'method':method},
+             request,
+             app))
 @login_required
 @multilanguage
 @shows_errors
