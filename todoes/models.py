@@ -267,6 +267,10 @@ class RegularTask(models.Model):
             self.name,
             u"\t"+self.worker.fio))
 
+    def build_history(self):
+        pass
+
+
     class Meta:
         ordering = ['priority', 'next_date']
 

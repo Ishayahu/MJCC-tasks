@@ -6,16 +6,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="4b5549e5-02bd-42d7-a98f-72fdd6afcf44" name="Default" comment="">
-      <change type="DELETED" beforePath="E:\Dropbox\scripts\MJCC-tasks\.idea\.name" afterPath="" />
-      <change type="DELETED" beforePath="E:\Dropbox\scripts\MJCC-tasks\.idea\MJCC-tasks.iml" afterPath="" />
-      <change type="DELETED" beforePath="E:\Dropbox\scripts\MJCC-tasks\.idea\codeStyleSettings.xml" afterPath="" />
-      <change type="DELETED" beforePath="E:\Dropbox\scripts\MJCC-tasks\.idea\deployment.xml" afterPath="" />
-      <change type="DELETED" beforePath="E:\Dropbox\scripts\MJCC-tasks\.idea\encodings.xml" afterPath="" />
-      <change type="DELETED" beforePath="E:\Dropbox\scripts\MJCC-tasks\.idea\misc.xml" afterPath="" />
-      <change type="DELETED" beforePath="E:\Dropbox\scripts\MJCC-tasks\.idea\modules.xml" afterPath="" />
-      <change type="DELETED" beforePath="E:\Dropbox\scripts\MJCC-tasks\.idea\scopes\scope_settings.xml" afterPath="" />
-      <change type="DELETED" beforePath="E:\Dropbox\scripts\MJCC-tasks\.idea\vcs.xml" afterPath="" />
-      <change type="DELETED" beforePath="E:\Dropbox\scripts\MJCC-tasks\.idea\workspace.xml" afterPath="" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/encodings.xml" afterPath="$PROJECT_DIR$/.idea/encodings.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/todoes/models.py" afterPath="$PROJECT_DIR$/todoes/models.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="MJCC-tasks.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -67,82 +61,300 @@
     <favorites_list name="MJCC-tasks" />
   </component>
   <component name="FileEditorManager">
-    <splitter split-orientation="horizontal" split-proportion="0.47819063">
+    <splitter split-orientation="vertical" split-proportion="0.86165047">
       <split-first>
+        <splitter split-orientation="horizontal" split-proportion="0.5387722">
+          <split-first>
+            <leaf>
+              <file leaf-file-name="views.py" pinned="false" current-in-tab="true">
+                <entry file="file://$PROJECT_DIR$/todoes/views.py">
+                  <provider selected="true" editor-type-id="text-editor">
+                    <state vertical-scroll-proportion="9.369193">
+                      <caret line="2024" column="25" selection-start-line="2024" selection-start-column="18" selection-end-line="2024" selection-end-column="25" />
+                      <folding>
+                        <element signature="e#113#157#0" expanded="true" />
+                        <element signature="e#22995#25674#0" expanded="false" />
+                        <element signature="e#23116#24141#0" expanded="false" />
+                        <element signature="e#23155#23508#0" expanded="false" />
+                        <element signature="e#24419#24806#0" expanded="false" />
+                        <element signature="e#33517#35184#0" expanded="false" />
+                        <element signature="e#33568#35184#0" expanded="false" />
+                      </folding>
+                    </state>
+                  </provider>
+                </entry>
+              </file>
+              <file leaf-file-name="any_form.html" pinned="false" current-in-tab="false">
+                <entry file="file://$PROJECT_DIR$/todoes/templates/RUS/any_form.html">
+                  <provider selected="true" editor-type-id="text-editor">
+                    <state vertical-scroll-proportion="-2.6153846">
+                      <caret line="4" column="17" selection-start-line="4" selection-start-column="17" selection-end-line="4" selection-end-column="17" />
+                      <folding />
+                    </state>
+                  </provider>
+                </entry>
+              </file>
+              <file leaf-file-name="multilanguage_utils.py" pinned="false" current-in-tab="false">
+                <entry file="file://E:/Yandex/Sites/djlib/multilanguage_utils.py">
+                  <provider selected="true" editor-type-id="text-editor">
+                    <state vertical-scroll-proportion="0.0">
+                      <caret line="106" column="20" selection-start-line="106" selection-start-column="20" selection-end-line="106" selection-end-column="20" />
+                      <folding>
+                        <element signature="e#24#81#0" expanded="true" />
+                      </folding>
+                    </state>
+                  </provider>
+                </entry>
+              </file>
+              <file leaf-file-name="module_utils.py" pinned="false" current-in-tab="false">
+                <entry file="file://E:/Yandex/Sites/djlib/module_utils.py">
+                  <provider selected="true" editor-type-id="text-editor">
+                    <state vertical-scroll-proportion="0.0">
+                      <caret line="115" column="22" selection-start-line="115" selection-start-column="22" selection-end-line="115" selection-end-column="22" />
+                      <folding>
+                        <element signature="e#63#72#0" expanded="true" />
+                        <marker date="1440765526154" expanded="true" signature="221:1136" placeholder="..." />
+                        <marker date="1440765526154" expanded="true" signature="257:1136" placeholder="..." />
+                      </folding>
+                    </state>
+                  </provider>
+                </entry>
+              </file>
+              <file leaf-file-name="confirm_ticket.html" pinned="false" current-in-tab="false">
+                <entry file="file://$PROJECT_DIR$/todoes/templates/RUS/confirm_ticket.html">
+                  <provider selected="true" editor-type-id="text-editor">
+                    <state vertical-scroll-proportion="-11.115385">
+                      <caret line="38" column="29" selection-start-line="38" selection-start-column="19" selection-end-line="38" selection-end-column="29" />
+                      <folding />
+                    </state>
+                  </provider>
+                </entry>
+              </file>
+              <file leaf-file-name="config.txt" pinned="false" current-in-tab="false">
+                <entry file="file://$PROJECT_DIR$/user_settings/config.txt">
+                  <provider selected="true" editor-type-id="text-editor">
+                    <state vertical-scroll-proportion="0.0">
+                      <caret line="8" column="26" selection-start-line="8" selection-start-column="26" selection-end-line="8" selection-end-column="26" />
+                      <folding />
+                    </state>
+                  </provider>
+                </entry>
+              </file>
+              <file leaf-file-name="settings.py" pinned="false" current-in-tab="false">
+                <entry file="file://$PROJECT_DIR$/tasks/settings.py">
+                  <provider selected="true" editor-type-id="text-editor">
+                    <state vertical-scroll-proportion="0.0">
+                      <caret line="211" column="0" selection-start-line="211" selection-start-column="0" selection-end-line="211" selection-end-column="0" />
+                      <folding />
+                    </state>
+                  </provider>
+                </entry>
+              </file>
+              <file leaf-file-name="api.py" pinned="false" current-in-tab="false">
+                <entry file="file://$PROJECT_DIR$/snmp/api.py">
+                  <provider selected="true" editor-type-id="text-editor">
+                    <state vertical-scroll-proportion="0.0">
+                      <caret line="173" column="0" selection-start-line="173" selection-start-column="0" selection-end-line="173" selection-end-column="0" />
+                      <folding>
+                        <element signature="e#5314#5841#0" expanded="false" />
+                        <element signature="e#5934#6213#0" expanded="false" />
+                        <element signature="e#6263#8093#0" expanded="false" />
+                      </folding>
+                    </state>
+                  </provider>
+                </entry>
+              </file>
+              <file leaf-file-name="urls.py" pinned="false" current-in-tab="false">
+                <entry file="file://$PROJECT_DIR$/tasks/urls.py">
+                  <provider selected="true" editor-type-id="text-editor">
+                    <state vertical-scroll-proportion="0.0">
+                      <caret line="172" column="45" selection-start-line="172" selection-start-column="45" selection-end-line="172" selection-end-column="45" />
+                      <folding />
+                    </state>
+                  </provider>
+                </entry>
+              </file>
+              <file leaf-file-name="tmp.py" pinned="false" current-in-tab="false">
+                <entry file="file://$PROJECT_DIR$/tmp/tmp.py">
+                  <provider selected="true" editor-type-id="text-editor">
+                    <state vertical-scroll-proportion="0.0">
+                      <caret line="1" column="21" selection-start-line="0" selection-start-column="0" selection-end-line="6" selection-end-column="14" />
+                      <folding />
+                    </state>
+                  </provider>
+                </entry>
+              </file>
+            </leaf>
+          </split-first>
+          <split-second>
+            <leaf>
+              <file leaf-file-name="console.sql" pinned="false" current-in-tab="false">
+                <entry file="file://$APPLICATION_CONFIG_DIR$/consoles/db/6ca5afba-47e4-4ad5-af3b-691c0684ecca/console.sql">
+                  <provider selected="true" editor-type-id="text-editor">
+                    <state vertical-scroll-proportion="0.0">
+                      <caret line="5" column="29" selection-start-line="5" selection-start-column="29" selection-end-line="5" selection-end-column="29" />
+                      <folding />
+                    </state>
+                  </provider>
+                </entry>
+              </file>
+              <file leaf-file-name="views.py" pinned="false" current-in-tab="false">
+                <entry file="file://$PROJECT_DIR$/user_settings/views.py">
+                  <provider selected="true" editor-type-id="text-editor">
+                    <state vertical-scroll-proportion="0.0">
+                      <caret line="197" column="31" selection-start-line="197" selection-start-column="31" selection-end-line="197" selection-end-column="31" />
+                      <folding />
+                    </state>
+                  </provider>
+                </entry>
+              </file>
+              <file leaf-file-name="functions.py" pinned="false" current-in-tab="false">
+                <entry file="file://$PROJECT_DIR$/user_settings/functions.py">
+                  <provider selected="true" editor-type-id="text-editor">
+                    <state vertical-scroll-proportion="0.0">
+                      <caret line="5" column="0" selection-start-line="5" selection-start-column="0" selection-end-line="5" selection-end-column="0" />
+                      <folding>
+                        <element signature="e#40#86#0" expanded="true" />
+                      </folding>
+                    </state>
+                  </provider>
+                </entry>
+              </file>
+              <file leaf-file-name="models.py" pinned="false" current-in-tab="true">
+                <entry file="file://$PROJECT_DIR$/todoes/models.py">
+                  <provider selected="true" editor-type-id="text-editor">
+                    <state vertical-scroll-proportion="0.70660144">
+                      <caret line="270" column="12" selection-start-line="270" selection-start-column="12" selection-end-line="270" selection-end-column="12" />
+                      <folding>
+                        <element signature="e#4532#4567#0" expanded="false" />
+                      </folding>
+                    </state>
+                  </provider>
+                </entry>
+              </file>
+              <file leaf-file-name="views.py" pinned="false" current-in-tab="false">
+                <entry file="file://$PROJECT_DIR$/assets/views.py">
+                  <provider selected="true" editor-type-id="text-editor">
+                    <state vertical-scroll-proportion="0.0">
+                      <caret line="223" column="13" selection-start-line="223" selection-start-column="13" selection-end-line="223" selection-end-column="13" />
+                      <folding />
+                    </state>
+                  </provider>
+                </entry>
+              </file>
+              <file leaf-file-name="__settings__.py" pinned="false" current-in-tab="false">
+                <entry file="file://$PROJECT_DIR$/snmp/__settings__.py">
+                  <provider selected="true" editor-type-id="text-editor">
+                    <state vertical-scroll-proportion="0.0">
+                      <caret line="31" column="45" selection-start-line="31" selection-start-column="45" selection-end-line="31" selection-end-column="45" />
+                      <folding />
+                    </state>
+                  </provider>
+                </entry>
+              </file>
+              <file leaf-file-name="foo.html" pinned="false" current-in-tab="false">
+                <entry file="file://$PROJECT_DIR$/tmp/foo.html">
+                  <provider selected="true" editor-type-id="text-editor">
+                    <state vertical-scroll-proportion="-3.3846154">
+                      <caret line="28" column="47" selection-start-line="28" selection-start-column="47" selection-end-line="28" selection-end-column="47" />
+                      <folding />
+                    </state>
+                  </provider>
+                </entry>
+              </file>
+            </leaf>
+          </split-second>
+        </splitter>
+      </split-first>
+      <split-second>
         <leaf>
-          <file leaf-file-name="views.py" pinned="false" current-in-tab="true">
-            <entry file="file://$PROJECT_DIR$/todoes/views.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.47572815">
-                  <caret line="973" column="48" selection-start-line="973" selection-start-column="48" selection-end-line="973" selection-end-column="48" />
-                  <folding>
-                    <element signature="e#112#156#0" expanded="true" />
-                    <element signature="e#22168#22521#0" expanded="false" />
-                    <element signature="e#23196#23294#0" expanded="false" />
-                    <element signature="e#23336#23723#0" expanded="false" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="versions.html" pinned="true" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/todoes/files/versions.html">
+          <file leaf-file-name="show_map.html" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/snmp/templates/RUS/show_map.html">
               <provider selected="true" editor-type-id="text-editor">
                 <state vertical-scroll-proportion="0.0">
-                  <caret line="24" column="50" selection-start-line="24" selection-start-column="50" selection-end-line="24" selection-end-column="50" />
+                  <caret line="3" column="14" selection-start-line="0" selection-start-column="0" selection-end-line="68" selection-end-column="0" />
                   <folding />
                 </state>
               </provider>
             </entry>
           </file>
-        </leaf>
-      </split-first>
-      <split-second>
-        <leaf>
-          <file leaf-file-name="views.py" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/todoes/views.py">
+          <file leaf-file-name="show_trace.html" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/snmp/templates/RUS/show_trace.html">
               <provider selected="true" editor-type-id="text-editor">
                 <state vertical-scroll-proportion="0.0">
-                  <caret line="1247" column="31" selection-start-line="1247" selection-start-column="16" selection-end-line="1247" selection-end-column="31" />
+                  <caret line="10" column="19" selection-start-line="10" selection-start-column="19" selection-end-line="10" selection-end-column="19" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="tasks.html" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/todoes/templates/RUS/tasks.html">
+              <provider selected="true" editor-type-id="text-editor">
+                <state vertical-scroll-proportion="0.0">
+                  <caret line="405" column="27" selection-start-line="405" selection-start-column="27" selection-end-line="405" selection-end-column="27" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="task.html" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/todoes/templates/RUS/task.html">
+              <provider selected="true" editor-type-id="text-editor">
+                <state vertical-scroll-proportion="0.0">
+                  <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="29" />
                   <folding>
-                    <element signature="e#112#156#0" expanded="true" />
-                    <element signature="e#22168#22521#0" expanded="false" />
-                    <element signature="e#23196#23294#0" expanded="false" />
-                    <element signature="e#23336#23723#0" expanded="false" />
+                    <element signature="n#for#5;n#!!top" expanded="false" />
                   </folding>
                 </state>
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="htmlize_test.py" pinned="false" current-in-tab="false">
-            <entry file="file://E:/Yandex/Sites/djlib/test/htmlize_test.py">
+          <file leaf-file-name="statuses.html" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/save_state/templates/RUS/statuses.html">
               <provider selected="true" editor-type-id="text-editor">
                 <state vertical-scroll-proportion="0.0">
-                  <caret line="159" column="13" selection-start-line="0" selection-start-column="0" selection-end-line="189" selection-end-column="0" />
-                  <folding>
-                    <element signature="e#25#40#0" expanded="true" />
-                  </folding>
+                  <caret line="21" column="66" selection-start-line="21" selection-start-column="66" selection-end-line="21" selection-end-column="66" />
+                  <folding />
                 </state>
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="cron_utils_test.py" pinned="false" current-in-tab="false">
-            <entry file="file://E:/Yandex/Sites/djlib/test/cron_utils_test.py">
+          <file leaf-file-name="login.html" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/todoes/templates/RUS/login.html">
               <provider selected="true" editor-type-id="text-editor">
                 <state vertical-scroll-proportion="0.0">
-                  <caret line="10" column="0" selection-start-line="10" selection-start-column="0" selection-end-line="10" selection-end-column="0" />
-                  <folding>
-                    <element signature="e#25#40#0" expanded="true" />
-                  </folding>
+                  <caret line="4" column="14" selection-start-line="4" selection-start-column="14" selection-end-line="4" selection-end-column="14" />
+                  <folding />
                 </state>
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="base.html" pinned="false" current-in-tab="false">
+          <file leaf-file-name="show_settings.html" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/user_settings/templates/RUS/show_settings.html">
+              <provider selected="true" editor-type-id="text-editor">
+                <state vertical-scroll-proportion="0.0">
+                  <caret line="139" column="0" selection-start-line="139" selection-start-column="0" selection-end-line="139" selection-end-column="0" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="main.css" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/todoes/files/css/main.css">
+              <provider selected="true" editor-type-id="text-editor">
+                <state vertical-scroll-proportion="0.0">
+                  <caret line="12" column="8" selection-start-line="12" selection-start-column="1" selection-end-line="12" selection-end-column="8" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="base.html" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/todoes/templates/RUS/base.html">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.0">
-                  <caret line="8" column="0" selection-start-line="7" selection-start-column="0" selection-end-line="8" selection-end-column="0" />
+                <state vertical-scroll-proportion="6.263158">
+                  <caret line="25" column="45" selection-start-line="25" selection-start-column="45" selection-end-line="25" selection-end-column="45" />
                   <folding />
                 </state>
               </provider>
@@ -151,41 +363,9 @@
           <file leaf-file-name="close_ticket.html" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/todoes/templates/RUS/close_ticket.html">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="-12.076923">
-                  <caret line="153" column="82" selection-start-line="153" selection-start-column="82" selection-end-line="153" selection-end-column="82" />
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="settings.py" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/tasks/settings.py">
-              <provider selected="true" editor-type-id="text-editor">
                 <state vertical-scroll-proportion="0.0">
-                  <caret line="48" column="16" selection-start-line="48" selection-start-column="16" selection-end-line="48" selection-end-column="16" />
+                  <caret line="152" column="36" selection-start-line="152" selection-start-column="28" selection-end-line="152" selection-end-column="36" />
                   <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name=".gitignore" pinned="false" current-in-tab="true">
-            <entry file="file://$PROJECT_DIR$/.gitignore">
-              <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.7111651">
-                  <caret line="168" column="17" selection-start-line="168" selection-start-column="17" selection-end-line="168" selection-end-column="17" />
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="cron_utils.py" pinned="false" current-in-tab="false">
-            <entry file="file://E:/Yandex/Sites/djlib/cron_utils.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.0">
-                  <caret line="65" column="0" selection-start-line="62" selection-start-column="0" selection-end-line="65" selection-end-column="0" />
-                  <folding>
-                    <element signature="e#107#2034#0" expanded="false" />
-                  </folding>
                 </state>
               </provider>
             </entry>
@@ -199,8 +379,8 @@
       <list>
         <option value="Python Unit Test" />
         <option value="CSS File" />
-        <option value="Html5" />
         <option value="JavaScript File" />
+        <option value="Html5" />
         <option value="Python Script" />
       </list>
     </option>
@@ -239,57 +419,57 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/assets/models.py" />
+        <option value="$APPLICATION_CONFIG_DIR$/consoles/db/6ca5afba-47e4-4ad5-af3b-691c0684ecca/console_2.sql" />
+        <option value="E:/Yandex/Sites/djlib/auxiliary.py" />
         <option value="$PROJECT_DIR$/assets/forms_rus.py" />
-        <option value="$PROJECT_DIR$/help/creating_regulartask_file_relation.sql" />
-        <option value="$APPLICATION_CONFIG_DIR$/consoles/db/6ca5afba-47e4-4ad5-af3b-691c0684ecca/console.sql" />
         <option value="$PROJECT_DIR$/todoes/templates/RUS/tasks_to.html" />
-        <option value="$PROJECT_DIR$/assets/templates/RUS/all_bills.html" />
-        <option value="$PROJECT_DIR$/help/deployming" />
-        <option value="$PROJECT_DIR$/assets/templates/RUS/all_deleted_bills.html" />
-        <option value="$PROJECT_DIR$/assets/templates/RUS/asset.html" />
-        <option value="$PROJECT_DIR$/assets/templates/RUS/assets_by_type.html" />
-        <option value="$PROJECT_DIR$/assets/templates/RUS/new_asset.html" />
-        <option value="$PROJECT_DIR$/assets/templates/RUS/new_bill.html" />
-        <option value="$PROJECT_DIR$/assets/templates/RUS/show_bill.html" />
-        <option value="E:/Yandex/Sites/djlib/acl_utils.py" />
-        <option value="E:/Yandex/Sites/djlib/multilanguage_utils.py" />
-        <option value="$PROJECT_DIR$/assets/views.py" />
-        <option value="$PROJECT_DIR$/assets/templates/RUS/base_assets.html" />
-        <option value="$PROJECT_DIR$/todoes/files/css/blink.css" />
-        <option value="$PROJECT_DIR$/.gitignore" />
-        <option value="E:/Yandex/Sites/djlib/.gitignore" />
-        <option value="$PROJECT_DIR$/todoes/templates/RUS/all_tasks.html" />
-        <option value="$PROJECT_DIR$/todoes/templates/RUS/confirm_ticket.html" />
-        <option value="E:/Yandex/Sites/djlib/notification.html" />
-        <option value="$PROJECT_DIR$/test.html" />
-        <option value="$PROJECT_DIR$/tmp/foo.js" />
-        <option value="$PROJECT_DIR$/tmp/manifest.json" />
-        <option value="$PROJECT_DIR$/todoes/files/js/notify.js" />
-        <option value="$PROJECT_DIR$/todoes/files/js/editor.js" />
-        <option value="$PROJECT_DIR$/todoes/ize.py" />
-        <option value="$PROJECT_DIR$/todoes/templates/RUS/base.html" />
-        <option value="$PROJECT_DIR$/tmp/foo.html" />
-        <option value="$PROJECT_DIR$/todoes/utils.py" />
-        <option value="$PROJECT_DIR$/todoes/files/js/teg_cloud.js" />
-        <option value="$PROJECT_DIR$/todoes/files/jqcloud/source" />
-        <option value="$PROJECT_DIR$/todoes/files/jqcloud/jqcloud.css" />
-        <option value="$PROJECT_DIR$/todoes/management/commands/update_pbw_weights.py" />
-        <option value="$PROJECT_DIR$/tasks/urls.py" />
-        <option value="$PROJECT_DIR$/todoes/api.py" />
-        <option value="$PROJECT_DIR$/todoes/templates/RUS/new_regular_task.html" />
-        <option value="$PROJECT_DIR$/todoes/models.py" />
-        <option value="E:/Yandex/Sites/djlib/mail_utils.py" />
-        <option value="E:/Yandex/Sites/djlib/test/htmlize_test.py" />
-        <option value="E:/Yandex/Sites/djlib/text_utils.py" />
-        <option value="$PROJECT_DIR$/todoes/templates/RUS/task.html" />
+        <option value="$PROJECT_DIR$/todoes/templates/RUS/any_text.html" />
+        <option value="$PROJECT_DIR$/user_settings/config.txt" />
         <option value="$PROJECT_DIR$/todoes/files/versions.html" />
-        <option value="$PROJECT_DIR$/todoes/templates/RUS/tasks.html" />
         <option value="E:/Yandex/Sites/djlib/cron_utils.py" />
-        <option value="E:/Yandex/Sites/djlib/test/cron_utils_test.py" />
-        <option value="$PROJECT_DIR$/todoes/views.py" />
-        <option value="$PROJECT_DIR$/todoes/templates/RUS/close_ticket.html" />
+        <option value="$PROJECT_DIR$/save_state/api.py" />
+        <option value="$PROJECT_DIR$/snmp/templates/RUS/help.html" />
+        <option value="$PROJECT_DIR$/snmp/nmap_processing.py" />
+        <option value="$PROJECT_DIR$/snmp/nmap_scan.sh" />
+        <option value="$PROJECT_DIR$/snmp/templates/RUS/show_map.html" />
+        <option value="$PROJECT_DIR$/snmp/Gdrive/sample.py" />
+        <option value="$PROJECT_DIR$/snmp/Gdrive/Gtable_to_files_with_template.py" />
+        <option value="$PROJECT_DIR$/snmp/Gdrive/hosts.shablon" />
+        <option value="$PROJECT_DIR$/snmp/admin.py" />
+        <option value="$PROJECT_DIR$/todoes/templates/RUS/new_ticket.html" />
+        <option value="$PROJECT_DIR$/snmp/models.py" />
+        <option value="$PROJECT_DIR$/tmp/snmp.py" />
+        <option value="$PROJECT_DIR$/snmp/templates/RUS/show_trace.html" />
+        <option value="$PROJECT_DIR$/help/deployming" />
+        <option value="$PROJECT_DIR$/todoes/templates/RUS/task.html" />
+        <option value="$PROJECT_DIR$/assets/api.py" />
+        <option value="$PROJECT_DIR$/todoes/forms_rus.py" />
+        <option value="$PROJECT_DIR$/todoes/templates/RUS/register.html" />
+        <option value="$APPLICATION_CONFIG_DIR$/consoles/db/6ca5afba-47e4-4ad5-af3b-691c0684ecca/console.sql" />
         <option value="$PROJECT_DIR$/tasks/settings.py" />
+        <option value="$PROJECT_DIR$/snmp/todoes_module" />
+        <option value="$PROJECT_DIR$/save_state/todoes_module" />
+        <option value="$PROJECT_DIR$/assets/todoes_module" />
+        <option value="$PROJECT_DIR$/user_settings/templates/RUS/show_settings.html" />
+        <option value="$APPLICATION_CONFIG_DIR$/consoles/db/3124da1f-4567-43d4-9c65-88b153ba0914/console.sql" />
+        <option value="$PROJECT_DIR$/todoes/templates/RUS/tasks.html" />
+        <option value="$PROJECT_DIR$/assets/views.py" />
+        <option value="$PROJECT_DIR$/user_settings/views.py" />
+        <option value="&lt;de2ef246-82f0-459a-9816-58dda8458391&gt;/user_settings/config.txt" />
+        <option value="$PROJECT_DIR$/user_settings/functions.py" />
+        <option value="$PROJECT_DIR$/todoes/templates/RUS/close_ticket.html" />
+        <option value="$PROJECT_DIR$/tasks/urls.py" />
+        <option value="$PROJECT_DIR$/snmp/api.py" />
+        <option value="$PROJECT_DIR$/tmp/foo.html" />
+        <option value="$PROJECT_DIR$/tmp/tmp.py" />
+        <option value="$PROJECT_DIR$/todoes/templates/RUS/base.html" />
+        <option value="$PROJECT_DIR$/snmp/__settings__.py" />
+        <option value="$PROJECT_DIR$/.gitignore" />
+        <option value="E:/Yandex/Sites/djlib/module_utils.py" />
+        <option value="$PROJECT_DIR$/todoes/templates/RUS/any_form.html" />
+        <option value="$PROJECT_DIR$/todoes/views.py" />
+        <option value="E:/Yandex/Sites/djlib/multilanguage_utils.py" />
+        <option value="$PROJECT_DIR$/todoes/models.py" />
       </list>
     </option>
   </component>
@@ -319,7 +499,7 @@
         </expanded-state>
         <selected-state>
           <State>
-            <id>PyNonAsciiCharInspection</id>
+            <id>PyPep8Inspection</id>
           </State>
         </selected-state>
       </profile-state>
@@ -351,6 +531,7 @@
       <sortByType />
     </navigator>
     <panes>
+      <pane id="Scratches" />
       <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
@@ -369,6 +550,10 @@
               <option name="myItemId" value="MJCC-tasks" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewModuleNode" />
             </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="djlib" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
           </PATH>
           <PATH>
             <PATH_ELEMENT>
@@ -381,6 +566,42 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="MJCC-tasks" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="MJCC-tasks" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="MJCC-tasks" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewModuleNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="MJCC-tasks" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="user_settings" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="MJCC-tasks" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="MJCC-tasks" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewModuleNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="MJCC-tasks" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="todoes" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -404,12 +625,11 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="options.splitter.main.proportions" value="0.3" />
-    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="WebServerToolWindowFactoryState" value="true" />
     <property name="recentsLimit" value="5" />
     <property name="options.lastSelected" value="preferences.sourceCode" />
     <property name="restartRequiresConfirmation" value="true" />
@@ -421,11 +641,16 @@
     <property name="TODO_SCOPE" value="Project Files" />
     <property name="Console.TableResult.DefaultCopyAction" value="JSON" />
     <property name="LayoutCode.rearrangeEntriesPython" value="false" />
-    <property name="settings.editor.selected.configurable" value="web.server" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
     <property name="settings.editor.splitter.proportion" value="0.2" />
     <property name="dynamic.classpath" value="false" />
     <property name="DefaultHtmlFileTemplate" value="Html5" />
     <property name="list.type.of.created.stylesheet" value="CSS" />
+    <property name="WebServerToolWindowPanel.toolwindow.show.size" value="false" />
+    <property name="WebServerToolWindowPanel.toolwindow.show.date" value="false" />
+    <property name="WebServerToolWindowPanel.toolwindow.show.permissions" value="false" />
+    <property name="WebServerToolWindowPanel.toolwindow.highlight.symlinks" value="true" />
+    <property name="WebServerToolWindowPanel.toolwindow.highlight.mappings" value="true" />
   </component>
   <component name="PyConsoleOptionsProvider">
     <option name="myPythonConsoleState">
@@ -442,10 +667,14 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="E:\Dropbox\scripts\MJCC-tasks\todoes\templates\RUS" />
       <recent name="E:\Dropbox\scripts\MJCC-tasks\help" />
     </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="E:\Dropbox\scripts\MJCC-tasks\todoes\templates\RUS" />
+    </key>
   </component>
-  <component name="RunManager" selected="Python tests.djlibs-test">
+  <component name="RunManager" selected="Django server.DEV_TASKS">
     <configuration default="false" name="Unittests in models" type="tests" factoryName="Unittests" temporary="true" nameIsGenerated="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -558,13 +787,36 @@
       <option name="ADDITIONAL_ARGS" value="" />
       <method />
     </configuration>
+    <configuration default="true" type="Python.DjangoServer" factoryName="Django server">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="E:\Yandex\Sites\PyCharmVE\MJCC-tasks\Scripts\python.exe" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="MJCC-tasks" />
+      <option name="launchJavascriptDebuger" value="true" />
+      <option name="port" value="8080" />
+      <option name="host" value="172.22.0.138" />
+      <option name="additionalOptions" value="" />
+      <option name="browserUrl" value="http://172.22.0.138:8080/" />
+      <option name="runTestServer" value="false" />
+      <option name="runNoReload" value="false" />
+      <option name="useCustomRunCommand" value="false" />
+      <option name="customRunCommand" value="" />
+      <method />
+    </configuration>
     <configuration default="true" type="PythonConfigurationType" factoryName="Python">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
-      <option name="SDK_HOME" value="" />
+      <option name="SDK_HOME" value="C:\Users\Ishayahu\VIRT34\Scripts\python.exe" />
       <option name="WORKING_DIRECTORY" value="" />
       <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
@@ -695,6 +947,30 @@
       <option name="USE_KEYWORD" value="false" />
       <method />
     </configuration>
+    <configuration default="false" name="DEV_TASKS" type="Python.DjangoServer" factoryName="Django server">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+        <env name="DJANGO_SETTINGS_MODULE" value="" />
+      </envs>
+      <option name="SDK_HOME" value="E:\Yandex\Sites\PyCharmVE\MJCC-tasks\Scripts\python.exe" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="MJCC-tasks" />
+      <option name="launchJavascriptDebuger" value="true" />
+      <option name="port" value="8080" />
+      <option name="host" value="172.22.0.138" />
+      <option name="additionalOptions" value="" />
+      <option name="browserUrl" value="http://172.22.0.138:8080/" />
+      <option name="runTestServer" value="false" />
+      <option name="runNoReload" value="false" />
+      <option name="useCustomRunCommand" value="false" />
+      <option name="customRunCommand" value="" />
+      <method />
+    </configuration>
     <configuration default="false" name="tasks-todoes" type="DjangoTestsConfigurationType" factoryName="Django tests">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -782,13 +1058,14 @@
       <ConfigurationWrapper RunnerId="PythonRunner" />
       <method />
     </configuration>
-    <list size="6">
-      <item index="0" class="java.lang.String" itemvalue="Django tests.tasks-todoes" />
-      <item index="1" class="java.lang.String" itemvalue="Python tests.djlibs-test" />
-      <item index="2" class="java.lang.String" itemvalue="Python tests.Doctest in sqlite_models\models.py" />
-      <item index="3" class="java.lang.String" itemvalue="Python tests.Doctest in djlib\test_utils.py" />
-      <item index="4" class="java.lang.String" itemvalue="Python tests.Unittests in models" />
-      <item index="5" class="java.lang.String" itemvalue="Python tests.Unittest MyTestCase.test_lists" />
+    <list size="7">
+      <item index="0" class="java.lang.String" itemvalue="Django server.DEV_TASKS" />
+      <item index="1" class="java.lang.String" itemvalue="Django tests.tasks-todoes" />
+      <item index="2" class="java.lang.String" itemvalue="Python tests.djlibs-test" />
+      <item index="3" class="java.lang.String" itemvalue="Python tests.Doctest in sqlite_models\models.py" />
+      <item index="4" class="java.lang.String" itemvalue="Python tests.Doctest in djlib\test_utils.py" />
+      <item index="5" class="java.lang.String" itemvalue="Python tests.Unittests in models" />
+      <item index="6" class="java.lang.String" itemvalue="Python tests.Unittest MyTestCase.test_lists" />
     </list>
     <recent_temporary>
       <list size="2">
@@ -997,7 +1274,109 @@
       <option name="project" value="LOCAL" />
       <updated>1436265566106</updated>
     </task>
-    <option name="localTasksCounter" value="32" />
+    <task id="LOCAL-00032" summary="и ещё удалены всякие служебные файлы">
+      <created>1436265859278</created>
+      <option name="number" value="00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1436265859278</updated>
+    </task>
+    <task id="LOCAL-00033" summary="все ../ заменены на / для того, чтобы БД можно было тестировать">
+      <created>1436277680199</created>
+      <option name="number" value="00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1436277680199</updated>
+    </task>
+    <task id="LOCAL-00034" summary="интеграция с backupScripts">
+      <created>1436444543773</created>
+      <option name="number" value="00034" />
+      <option name="project" value="LOCAL" />
+      <updated>1436444543773</updated>
+    </task>
+    <task id="LOCAL-00035" summary="#27&#10;Улучшение 27 - Оповещение о непрочитанных комментариях">
+      <created>1436513152431</created>
+      <option name="number" value="00035" />
+      <option name="project" value="LOCAL" />
+      <updated>1436513152431</updated>
+    </task>
+    <task id="LOCAL-00036" summary="fix #28">
+      <created>1436516109721</created>
+      <option name="number" value="00036" />
+      <option name="project" value="LOCAL" />
+      <updated>1436516109721</updated>
+    </task>
+    <task id="LOCAL-00037" summary="fix #44&#10;и заодно исправил отправку оповещения о повтороном открытии задачи">
+      <created>1436517241405</created>
+      <option name="number" value="00037" />
+      <option name="project" value="LOCAL" />
+      <updated>1436517241405</updated>
+    </task>
+    <task id="LOCAL-00038" summary="fix #8&#10;Возможность просмотра истории активности пользователей по датам">
+      <created>1436535411942</created>
+      <option name="number" value="00038" />
+      <option name="project" value="LOCAL" />
+      <updated>1436535411942</updated>
+    </task>
+    <task id="LOCAL-00039" summary="fix #8&#10;Возможность просмотра истории активности пользователей по датам">
+      <created>1436535494782</created>
+      <option name="number" value="00039" />
+      <option name="project" value="LOCAL" />
+      <updated>1436535494782</updated>
+    </task>
+    <task id="LOCAL-00040" summary="get_last_activities&#10;возвращается объек, а не список для более удобной работы в шаблоне">
+      <created>1436535568538</created>
+      <option name="number" value="00040" />
+      <option name="project" value="LOCAL" />
+      <updated>1436535568538</updated>
+    </task>
+    <task id="LOCAL-00041" summary="fix #63&#10;fix #76&#10;&#10;Возможность отправлять рассылки для ознакомления пользователям">
+      <created>1437128294524</created>
+      <option name="number" value="00041" />
+      <option name="project" value="LOCAL" />
+      <updated>1437128294524</updated>
+    </task>
+    <task id="LOCAL-00042" summary="Ссылки на категории задач создаются из настроек">
+      <created>1437131666602</created>
+      <option name="number" value="00042" />
+      <option name="project" value="LOCAL" />
+      <updated>1437131666602</updated>
+    </task>
+    <task id="LOCAL-00043" summary="Исправление на случай отсутствия настройки групп категорий">
+      <created>1437132755127</created>
+      <option name="number" value="00043" />
+      <option name="project" value="LOCAL" />
+      <updated>1437132755127</updated>
+    </task>
+    <task id="LOCAL-00044" summary="в get_info:&#10;    заменил user на login, что логичнее&#10;в multilanguage_utils:&#10;    заменил dict на context&#10;добавлена работа с модулями module_utils">
+      <created>1440764566901</created>
+      <option name="number" value="00044" />
+      <option name="project" value="LOCAL" />
+      <updated>1440764566901</updated>
+    </task>
+    <task id="LOCAL-00045" summary="добавлена работа с модулями">
+      <created>1440764752570</created>
+      <option name="number" value="00045" />
+      <option name="project" value="LOCAL" />
+      <updated>1440764752570</updated>
+    </task>
+    <task id="LOCAL-00046" summary="исправлена ошибка с недобавлением csrf_tocken&#10;и обёртка на случай, если в настройках нет раздела modules">
+      <created>1440927137306</created>
+      <option name="number" value="00046" />
+      <option name="project" value="LOCAL" />
+      <updated>1440927137306</updated>
+    </task>
+    <task id="LOCAL-00047" summary="временная заглушка на build_history в models">
+      <created>1440927371967</created>
+      <option name="number" value="00047" />
+      <option name="project" value="LOCAL" />
+      <updated>1440927371967</updated>
+    </task>
+    <task id="LOCAL-00048" summary="временная заглушка на build_history в models для RegularTasks">
+      <created>1440927671818</created>
+      <option name="number" value="00048" />
+      <option name="project" value="LOCAL" />
+      <updated>1440927671818</updated>
+    </task>
+    <option name="localTasksCounter" value="49" />
     <servers>
       <GitHub shared="false" url="http://github.com">
         <commitMessageFormat>{id} {summary}</commitMessageFormat>
@@ -1019,32 +1398,34 @@
   <component name="TodoView" selected-index="2" />
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1296" height="916" extended-state="6" />
-    <editor active="true" />
+    <editor active="false" />
     <layout>
       <window_info id="TODO" active="false" anchor="left" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.36790925" sideWeight="0.33026317" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32849604" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.823219" sideWeight="0.5048465" order="9" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.53957784" sideWeight="0.50807756" order="9" side_tool="true" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
-      <window_info id="File Transfer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3276316" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.27704486" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.42216358" sideWeight="0.4951535" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="File Transfer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32585752" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.45778364" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.45118734" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.16882068" sideWeight="0.66842103" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.46701846" sideWeight="0.49434572" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32189974" sideWeight="0.49192247" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.45382586" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Remote Host" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32956383" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2358643" sideWeight="0.66842103" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.20193861" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" x="684" y="96" width="407" height="760" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.22051696" sideWeight="0.66973686" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3986842" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25688818" sideWeight="0.33026317" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Changes" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32849604" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="3" side_tool="false" content_ui="combo" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Changes" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32849604" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39973614" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Coverage" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3296875" sideWeight="0.67070216" order="3" side_tool="true" content_ui="tabs" />
-      <window_info id="Database Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3298153" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
-      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="3" side_tool="false" content_ui="combo" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33113456" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Django errors" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3298153" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
+      <window_info id="Database Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.33157894" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.35488126" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
   <component name="Vcs.Log.UiProperties">
@@ -1060,21 +1441,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CHECK_NEW_TODO" value="false" />
-    <MESSAGE value="fixed #31" />
-    <MESSAGE value="fix #46 #42" />
-    <MESSAGE value="fix #29&#10;и убрана возможность удалять комментарии при подтверждении заявки" />
-    <MESSAGE value="fix #47&#10;Добавлены всплывающие уведомления при новых заявках" />
-    <MESSAGE value="fix #51&#10;Отображение дочерних заявок при просмотре основной" />
-    <MESSAGE value="удалил ненужный параметр из send_email_alternative" />
-    <MESSAGE value="покрыл тестами htmlize и сделал там корректную обработку фигурных скобок" />
-    <MESSAGE value="покарыл тестами htmlize и сделал корректную обработку фигурных скобок" />
-    <MESSAGE value="fix #54&#10;Теперь сохраняются черновики комментариев даже при перезагрузке страницы&#10;кроме того в views.py убрал fio из отправки мыла" />
-    <MESSAGE value="исправлена невозможность редактировать комменты + сохранение их черновиков" />
-    <MESSAGE value="два перехода на новую строку - новый абзац" />
-    <MESSAGE value="fix #26&#10;Теперь в исходящих задачах отображаются и регулярные задачи со сроком напоминания раньше чем сегодня" />
-    <MESSAGE value="fix #26&#10;допилил исправление. до этого было неправильно группирование по исполнителю" />
-    <MESSAGE value="fix #18&#10;добавлена возможность создавать списки при помощи + -" />
-    <MESSAGE value="fix #11&#10;Теперь выбор завершения заявки можно делать при помощи облака тегов или выпадающего списка" />
     <MESSAGE value="fix #41&#10;теперь при вводе значения для hardcore-style под полями показывается когда эта задача будет выполняться" />
     <MESSAGE value="fix #18&#10;очередные фиксы в htmlize, добавлены тесты, которые всё проходятся&#10;основной геморой с созданием списков" />
     <MESSAGE value="fix #18&#10;очередные фиксы в htmlize, добавлены тесты, которые всё проходятся&#10;основной геморой с созданием списков&#10;mail_utils приведён в божеский вид" />
@@ -1085,7 +1451,22 @@
     <MESSAGE value="fix #75&#10;изменения в settings.py для более удобной настройки&#10;в close_task заменено send_email_alternative на send_email_html" />
     <MESSAGE value="удалён файл settings.py" />
     <MESSAGE value="и ещё удалены всякие служебные файлы" />
-    <option name="LAST_COMMIT_MESSAGE" value="и ещё удалены всякие служебные файлы" />
+    <MESSAGE value="все ../ заменены на / для того, чтобы БД можно было тестировать" />
+    <MESSAGE value="интеграция с backupScripts" />
+    <MESSAGE value="#27&#10;Улучшение 27 - Оповещение о непрочитанных комментариях" />
+    <MESSAGE value="fix #28" />
+    <MESSAGE value="fix #44&#10;и заодно исправил отправку оповещения о повтороном открытии задачи" />
+    <MESSAGE value="fix #8&#10;Возможность просмотра истории активности пользователей по датам" />
+    <MESSAGE value="get_last_activities&#10;возвращается объек, а не список для более удобной работы в шаблоне" />
+    <MESSAGE value="fix #63&#10;fix #76&#10;&#10;Возможность отправлять рассылки для ознакомления пользователям" />
+    <MESSAGE value="Ссылки на категории задач создаются из настроек" />
+    <MESSAGE value="Исправление на случай отсутствия настройки групп категорий" />
+    <MESSAGE value="в get_info:&#10;    заменил user на login, что логичнее&#10;в multilanguage_utils:&#10;    заменил dict на context&#10;добавлена работа с модулями module_utils" />
+    <MESSAGE value="добавлена работа с модулями" />
+    <MESSAGE value="исправлена ошибка с недобавлением csrf_tocken&#10;и обёртка на случай, если в настройках нет раздела modules" />
+    <MESSAGE value="временная заглушка на build_history в models" />
+    <MESSAGE value="временная заглушка на build_history в models для RegularTasks" />
+    <option name="LAST_COMMIT_MESSAGE" value="временная заглушка на build_history в models для RegularTasks" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1096,392 +1477,379 @@
           </properties>
         </breakpoint>
       </default-breakpoints>
-      <option name="time" value="5" />
+      <option name="time" value="17" />
     </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/assets/templates/RUS/show_bill.html">
+    <entry file="file://$PROJECT_DIR$/snmp/templates/RUS/help.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.08018868">
-          <caret line="2" column="0" selection-start-line="2" selection-start-column="0" selection-end-line="2" selection-end-column="2" />
+        <state vertical-scroll-proportion="-0.0">
+          <caret line="0" column="14" selection-start-line="0" selection-start-column="14" selection-end-line="0" selection-end-column="14" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/assets/templates/RUS/OK.html">
+    <entry file="file://$PROJECT_DIR$/snmp/nmap_processing.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <caret line="9" column="46" selection-start-line="9" selection-start-column="12" selection-end-line="9" selection-end-column="46" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/assets/templates/RUS/new_bill.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.08018868">
-          <caret line="2" column="0" selection-start-line="2" selection-start-column="0" selection-end-line="2" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/assets/templates/RUS/new_asset.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.08018868">
-          <caret line="2" column="0" selection-start-line="2" selection-start-column="0" selection-end-line="2" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/assets/templates/RUS/get_new_contractor_add_form.html">
+    <entry file="file://$PROJECT_DIR$/snmp/nmap_scan.sh">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <caret line="3" column="6" selection-start-line="3" selection-start-column="6" selection-end-line="3" selection-end-column="6" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/assets/templates/RUS/get_new_asset_type_add_form.html">
+    <entry file="file://$PROJECT_DIR$/snmp/Gdrive/sample.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-6.923077">
+          <caret line="140" column="0" selection-start-line="136" selection-start-column="0" selection-end-line="140" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/snmp/Gdrive/hosts.shablon">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <caret line="7" column="0" selection-start-line="7" selection-start-column="0" selection-end-line="7" selection-end-column="0" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/assets/templates/RUS/get_new_asset_model_add_form.html">
+    <entry file="file://$PROJECT_DIR$/todoes/admin.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/assets/templates/RUS/get_list.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://E:/Yandex/Sites/djlib/user_tracking.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-0.11333334">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://E:/Yandex/Sites/djlib/acl_utils.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="2" column="0" selection-start-line="2" selection-start-column="0" selection-end-line="2" selection-end-column="41" />
-          <folding>
-            <element signature="e#39#80#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/assets/views.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="209" column="83" selection-start-line="209" selection-start-column="83" selection-end-line="209" selection-end-column="83" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://E:/Yandex/Sites/djlib/multilanguage_utils.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="21" selection-start-line="0" selection-start-column="21" selection-end-line="0" selection-end-column="21" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/assets/templates/RUS/base_assets.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-0.65384614">
-          <caret line="1" column="0" selection-start-line="1" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/todoes/files/css/blink.css">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="17" column="24" selection-start-line="17" selection-start-column="24" selection-end-line="17" selection-end-column="24" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/todoes/files/css/main.css">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.05279503">
+          <caret line="22" column="0" selection-start-line="22" selection-start-column="0" selection-end-line="23" selection-end-column="0" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/todoes/templates/RUS/new_ticket.html">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <caret line="18" column="16" selection-start-line="18" selection-start-column="16" selection-end-line="18" selection-end-column="16" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/todoes/templates/RUS/set_reminder.html">
+    <entry file="file://$PROJECT_DIR$/snmp/admin.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <caret line="3" column="26" selection-start-line="3" selection-start-column="26" selection-end-line="3" selection-end-column="26" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/save_state/templates/RUS/statuses.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="21" column="66" selection-start-line="21" selection-start-column="66" selection-end-line="21" selection-end-column="66" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/todoes/templates/RUS/all_tasks.html">
+    <entry file="file://$PROJECT_DIR$/tmp/snmp.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-15.384615">
-          <caret line="84" column="29" selection-start-line="84" selection-start-column="29" selection-end-line="84" selection-end-column="29" />
+        <state vertical-scroll-proportion="0.0">
+          <caret line="17" column="57" selection-start-line="17" selection-start-column="49" selection-end-line="17" selection-end-column="57" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/snmp/templates/RUS/show_map.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="3" column="14" selection-start-line="0" selection-start-column="0" selection-end-line="68" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/todoes/templates/RUS/confirm_ticket.html">
+    <entry file="file://$PROJECT_DIR$/snmp/models.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-48.26923">
-          <caret line="82" column="7" selection-start-line="82" selection-start-column="7" selection-end-line="82" selection-end-column="7" />
+        <state vertical-scroll-proportion="0.0">
+          <caret line="39" column="12" selection-start-line="39" selection-start-column="4" selection-end-line="39" selection-end-column="12" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/snmp/templates/RUS/show_trace.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="10" column="19" selection-start-line="10" selection-start-column="19" selection-end-line="10" selection-end-column="19" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/tmp/manifest.json">
+    <entry file="file://$PROJECT_DIR$/snmp/Gdrive/Gtable_to_files_with_template.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-11.115385">
-          <caret line="17" column="1" selection-start-line="17" selection-start-column="1" selection-end-line="17" selection-end-column="1" />
+        <state vertical-scroll-proportion="0.33161953">
+          <caret line="408" column="44" selection-start-line="408" selection-start-column="33" selection-end-line="408" selection-end-column="44" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/tmp/foo.js">
+    <entry file="file://$PROJECT_DIR$/help/deployming">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="19" column="6" selection-start-line="7" selection-start-column="4" selection-end-line="19" selection-end-column="6" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/todoes/files/js/notify.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="38" column="1" selection-start-line="38" selection-start-column="1" selection-end-line="38" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://E:/Yandex/Sites/djlib/.gitignore">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.7952381">
-          <caret line="96" column="7" selection-start-line="96" selection-start-column="7" selection-end-line="96" selection-end-column="7" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://E:/Yandex/Sites/backupScripts/TASKS/deploy_server.sh">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/todoes/files/js/edit_asset.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/todoes/files/js/editor.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="35" column="1" selection-start-line="35" selection-start-column="1" selection-end-line="35" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/tmp/foo.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-15.038462">
-          <caret line="36" column="0" selection-start-line="31" selection-start-column="0" selection-end-line="36" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/todoes/forms_rus.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="77" column="6" selection-start-line="77" selection-start-column="6" selection-end-line="77" selection-end-column="6" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/todoes/files/jqcloud/source">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="34" selection-start-line="0" selection-start-column="34" selection-end-line="0" selection-end-column="34" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/todoes/files/jqcloud/jqcloud.css">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.12757973">
-          <caret line="4" column="15" selection-start-line="4" selection-start-column="15" selection-end-line="4" selection-end-column="15" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/todoes/management/commands/update_pbw_weights.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="8" column="23" selection-start-line="8" selection-start-column="23" selection-end-line="8" selection-end-column="23" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/todoes/utils.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="13" column="12" selection-start-line="13" selection-start-column="12" selection-end-line="13" selection-end-column="12" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/assets/templates/RUS/all_bills.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.06896552">
-          <caret line="2" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="2" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/todoes/models.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="91" column="22" selection-start-line="91" selection-start-column="22" selection-end-line="91" selection-end-column="22" />
-          <folding>
-            <element signature="e#537#667#0" expanded="false" />
-            <element signature="e#708#999#0" expanded="false" />
-            <element signature="e#1035#1111#0" expanded="false" />
-          </folding>
+          <caret line="4" column="7" selection-start-line="4" selection-start-column="0" selection-end-line="4" selection-end-column="7" />
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/assets/api.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="392" column="6" selection-start-line="392" selection-start-column="4" selection-end-line="392" selection-end-column="6" />
+          <caret line="449" column="19" selection-start-line="449" selection-start-column="19" selection-end-line="449" selection-end-column="19" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/todoes/api.py">
+    <entry file="file://$PROJECT_DIR$/todoes/forms.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.7707129">
-          <caret line="62" column="43" selection-start-line="62" selection-start-column="43" selection-end-line="62" selection-end-column="43" />
+        <state vertical-scroll-proportion="0.39891696">
+          <caret line="98" column="0" selection-start-line="94" selection-start-column="0" selection-end-line="98" selection-end-column="0" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/tasks/urls.py">
+    <entry file="file://$PROJECT_DIR$/todoes/templates/RUS/task.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="61" column="73" selection-start-line="61" selection-start-column="73" selection-end-line="61" selection-end-column="73" />
+        <state vertical-scroll-proportion="-0.0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="29" />
           <folding>
-            <element signature="e#102#153#0" expanded="false" />
+            <element signature="n#for#5;n#!!top" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/todoes/templates/RUS/new_regular_task.html">
+    <entry file="file://$PROJECT_DIR$/todoes/templates/RUS/register.html">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="146" column="1978" selection-start-line="146" selection-start-column="1978" selection-end-line="146" selection-end-column="1978" />
+          <caret line="0" column="29" selection-start-line="0" selection-start-column="29" selection-end-line="0" selection-end-column="29" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/todoes/forms_rus.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-10.461538">
+          <caret line="92" column="24" selection-start-line="92" selection-start-column="24" selection-end-line="92" selection-end-column="24" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/todoes/templates/RUS/login.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="4" column="14" selection-start-line="4" selection-start-column="14" selection-end-line="4" selection-end-column="14" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://E:/Yandex/Sites/djlib/mail_utils.py">
+    <entry file="file://$PROJECT_DIR$/todoes/files/css/main.css">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="13" column="6" selection-start-line="13" selection-start-column="6" selection-end-line="13" selection-end-column="6" />
-          <folding>
-            <element signature="e#40#91#0" expanded="true" />
-          </folding>
+          <caret line="12" column="8" selection-start-line="12" selection-start-column="1" selection-end-line="12" selection-end-column="8" />
+          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://E:/Yandex/Sites/djlib/text_utils.py">
+    <entry file="file://$PROJECT_DIR$/assets/todoes_module">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="247" column="15" selection-start-line="247" selection-start-column="15" selection-end-line="247" selection-end-column="15" />
+        <state vertical-scroll-proportion="0.038990825">
+          <caret line="1" column="6" selection-start-line="1" selection-start-column="0" selection-end-line="1" selection-end-column="6" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/todoes/files/versions.html">
+    <entry file="file://$PROJECT_DIR$/save_state/todoes_module">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.07375271">
+          <caret line="2" column="50" selection-start-line="2" selection-start-column="50" selection-end-line="2" selection-end-column="50" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/snmp/todoes_module">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.11062907">
+          <caret line="3" column="73" selection-start-line="0" selection-start-column="0" selection-end-line="3" selection-end-column="73" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://E:/Yandex/Sites/djlib/acl_utils.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.22125813">
+          <caret line="36" column="4" selection-start-line="36" selection-start-column="4" selection-end-line="36" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$APPLICATION_CONFIG_DIR$/consoles/db/6ca5afba-47e4-4ad5-af3b-691c0684ecca/console.sql">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="24" column="50" selection-start-line="24" selection-start-column="50" selection-end-line="24" selection-end-column="50" />
+          <caret line="5" column="29" selection-start-line="5" selection-start-column="29" selection-end-line="5" selection-end-column="29" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/user_settings/templates/RUS/show_settings.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="139" column="0" selection-start-line="139" selection-start-column="0" selection-end-line="139" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://E:/Yandex/Sites/djlib/error_utils.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="52" column="70" selection-start-line="52" selection-start-column="8" selection-end-line="52" selection-end-column="70" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$APPLICATION_CONFIG_DIR$/consoles/db/3124da1f-4567-43d4-9c65-88b153ba0914/console.sql">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.5271318">
+          <caret line="12" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="12" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="dbDummy://dbtable:/2d3992f9/3124da1f-4567-43d4-9c65-88b153ba0914/tasks.public.todoes_task">
+      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+        <state>
+          <filtering enabled="true" />
+        </state>
+      </provider>
+      <provider editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/assets/views.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="223" column="13" selection-start-line="223" selection-start-column="13" selection-end-line="223" selection-end-column="13" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/todoes/templates/RUS/tasks.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="86.30769">
-          <caret line="56" column="58" selection-start-line="56" selection-start-column="58" selection-end-line="56" selection-end-column="58" />
+        <state vertical-scroll-proportion="0.0">
+          <caret line="405" column="27" selection-start-line="405" selection-start-column="27" selection-end-line="405" selection-end-column="27" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/todoes/templates/RUS/task.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-10.346154">
-          <caret line="137" column="73" selection-start-line="137" selection-start-column="58" selection-end-line="137" selection-end-column="73" />
-          <folding>
-            <element signature="e#11924#13103#0#DjangoTemplate" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://E:/Yandex/Sites/djlib/test/htmlize_test.py">
+    <entry file="file://$PROJECT_DIR$/user_settings/views.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="159" column="13" selection-start-line="0" selection-start-column="0" selection-end-line="189" selection-end-column="0" />
-          <folding>
-            <element signature="e#25#40#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://E:/Yandex/Sites/djlib/cron_utils.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="65" column="0" selection-start-line="62" selection-start-column="0" selection-end-line="65" selection-end-column="0" />
-          <folding>
-            <element signature="e#107#2034#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://E:/Yandex/Sites/djlib/test/cron_utils_test.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="10" column="0" selection-start-line="10" selection-start-column="0" selection-end-line="10" selection-end-column="0" />
-          <folding>
-            <element signature="e#25#40#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/todoes/templates/RUS/base.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="8" column="0" selection-start-line="7" selection-start-column="0" selection-end-line="8" selection-end-column="0" />
+          <caret line="197" column="31" selection-start-line="197" selection-start-column="31" selection-end-line="197" selection-end-column="31" />
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/todoes/views.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="1247" column="31" selection-start-line="1247" selection-start-column="16" selection-end-line="1247" selection-end-column="31" />
-          <folding>
-            <element signature="e#112#156#0" expanded="true" />
-            <element signature="e#22168#22521#0" expanded="false" />
-            <element signature="e#23196#23294#0" expanded="false" />
-            <element signature="e#23336#23723#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/todoes/templates/RUS/close_ticket.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-12.076923">
-          <caret line="153" column="82" selection-start-line="153" selection-start-column="82" selection-end-line="153" selection-end-column="82" />
+        <state vertical-scroll-proportion="0.0">
+          <caret line="152" column="36" selection-start-line="152" selection-start-column="28" selection-end-line="152" selection-end-column="36" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tasks/urls.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="172" column="45" selection-start-line="172" selection-start-column="45" selection-end-line="172" selection-end-column="45" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/snmp/api.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="173" column="0" selection-start-line="173" selection-start-column="0" selection-end-line="173" selection-end-column="0" />
+          <folding>
+            <element signature="e#5314#5841#0" expanded="false" />
+            <element signature="e#5934#6213#0" expanded="false" />
+            <element signature="e#6263#8093#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tmp/foo.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-3.3846154">
+          <caret line="28" column="47" selection-start-line="28" selection-start-column="47" selection-end-line="28" selection-end-column="47" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tmp/tmp.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="1" column="21" selection-start-line="0" selection-start-column="0" selection-end-line="6" selection-end-column="14" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/todoes/templates/RUS/base.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="6.263158">
+          <caret line="25" column="45" selection-start-line="25" selection-start-column="45" selection-end-line="25" selection-end-column="45" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/snmp/__settings__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="31" column="45" selection-start-line="31" selection-start-column="45" selection-end-line="31" selection-end-column="45" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.gitignore">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="2.1411765">
+          <caret line="169" column="9" selection-start-line="169" selection-start-column="9" selection-end-line="169" selection-end-column="9" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://E:/Yandex/Sites/djlib/module_utils.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="115" column="22" selection-start-line="115" selection-start-column="22" selection-end-line="115" selection-end-column="22" />
+          <folding>
+            <element signature="e#63#72#0" expanded="true" />
+            <marker date="1440765526154" expanded="true" signature="221:1136" placeholder="..." />
+            <marker date="1440765526154" expanded="true" signature="257:1136" placeholder="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/todoes/templates/RUS/confirm_ticket.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-11.115385">
+          <caret line="38" column="29" selection-start-line="38" selection-start-column="19" selection-end-line="38" selection-end-column="29" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/todoes/templates/RUS/any_form.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-2.6153846">
+          <caret line="4" column="17" selection-start-line="4" selection-start-column="17" selection-end-line="4" selection-end-column="17" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://E:/Yandex/Sites/djlib/multilanguage_utils.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="106" column="20" selection-start-line="106" selection-start-column="20" selection-end-line="106" selection-end-column="20" />
+          <folding>
+            <element signature="e#24#81#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/user_settings/config.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="8" column="26" selection-start-line="8" selection-start-column="26" selection-end-line="8" selection-end-column="26" />
           <folding />
         </state>
       </provider>
@@ -1489,16 +1857,44 @@
     <entry file="file://$PROJECT_DIR$/tasks/settings.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="48" column="16" selection-start-line="48" selection-start-column="16" selection-end-line="48" selection-end-column="16" />
+          <caret line="211" column="0" selection-start-line="211" selection-start-column="0" selection-end-line="211" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/.gitignore">
+    <entry file="file://$PROJECT_DIR$/user_settings/functions.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.7111651">
-          <caret line="168" column="17" selection-start-line="168" selection-start-column="17" selection-end-line="168" selection-end-column="17" />
-          <folding />
+        <state vertical-scroll-proportion="0.0">
+          <caret line="5" column="0" selection-start-line="5" selection-start-column="0" selection-end-line="5" selection-end-column="0" />
+          <folding>
+            <element signature="e#40#86#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/todoes/views.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="9.369193">
+          <caret line="2024" column="25" selection-start-line="2024" selection-start-column="18" selection-end-line="2024" selection-end-column="25" />
+          <folding>
+            <element signature="e#113#157#0" expanded="true" />
+            <element signature="e#22995#25674#0" expanded="false" />
+            <element signature="e#23116#24141#0" expanded="false" />
+            <element signature="e#23155#23508#0" expanded="false" />
+            <element signature="e#24419#24806#0" expanded="false" />
+            <element signature="e#33517#35184#0" expanded="false" />
+            <element signature="e#33568#35184#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/todoes/models.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.70660144">
+          <caret line="270" column="12" selection-start-line="270" selection-start-column="12" selection-end-line="270" selection-end-column="12" />
+          <folding>
+            <element signature="e#4532#4567#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
