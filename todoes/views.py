@@ -2000,14 +2000,14 @@ def get_user_activity_history(request,user_login,date):
 def messages_add(request):
     lang, login, user, method = get_info(request)
     if method == 'POST':
-        form = get_localized_form('NewMessageForm',app,request)\
+        form = get_localized_form('NewMessageForm', app, request)\
             (request.POST)
         if form.is_valid():
             data = form.cleaned_data
-            m=Message(name = data['name'],
-                      text = data['text'],
-                      author = user,
-                      timestamp = datetime.datetime.now(),)
+            m=Message(name=data['name'],
+                      text=data['text'],
+                      author=user,
+                      timestamp=datetime.datetime.now(),)
             m.save()
             # добавляем оповещения для всех пользователей
             all_persons = Person.objects.all()

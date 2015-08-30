@@ -138,37 +138,38 @@ class Task(models.Model):
         ordering = ['priority', 'due_date']
 
     def build_history(self):
-        """
-        Формат записи истории такой:
-        |||user||timestamp||record1||record2|||
-        record:
-        key|old_val|new_val
-        """
-        class HistoryRecord:
-            def __init__(self, record):
-                temp = record.split(u'||')
-                self.user = temp[0]
-                self.timestamp = temp[1]
-                self.items = []
-                self.length = len(temp[2:])
-                for number, item in enumerate(temp[2:]):
-                    self.items.append(HistoryItem(number, item))
-
-        class HistoryItem:
-            def __init__(self, number, item):
-                self.key, self.old_value, self.new_value =\
-                    item.split('|')
-                self.number = number
-
-        if self.change_history:
-            records = self.change_history.split(u'|||')
-            res = []
-            for record in records:
-                if record:
-                    res.append(HistoryRecord(record))
-            self.history = res
-        else:
-            self.history = None
+        # """
+        # Формат записи истории такой:
+        # |||user||timestamp||record1||record2|||
+        # record:
+        # key|old_val|new_val
+        # """
+        # class HistoryRecord:
+        #     def __init__(self, record):
+        #         temp = record.split(u'||')
+        #         self.user = temp[0]
+        #         self.timestamp = temp[1]
+        #         self.items = []
+        #         self.length = len(temp[2:])
+        #         for number, item in enumerate(temp[2:]):
+        #             self.items.append(HistoryItem(number, item))
+        #
+        # class HistoryItem:
+        #     def __init__(self, number, item):
+        #         self.key, self.old_value, self.new_value =\
+        #             item.split('|')
+        #         self.number = number
+        #
+        # if self.change_history:
+        #     records = self.change_history.split(u'|||')
+        #     res = []
+        #     for record in records:
+        #         if record:
+        #             res.append(HistoryRecord(record))
+        #     self.history = res
+        # else:
+        #     self.history = None
+        pass
 # TODO: ошибка при создании новой задачи
 #     def save(self, *args, **kwargs):
 #         """
