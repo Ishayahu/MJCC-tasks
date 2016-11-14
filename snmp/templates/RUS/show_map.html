@@ -43,12 +43,12 @@
 {#    {{ mac_port_dict }}#}
     <table border="1">
         {% for k in mac_port_dict %}
-            <tr>
+            <tr id="{{ k.mac.string_mac }}">
                 <td>
                     {{ k.number }}
                 </td>
                 <td>
-                    {{ k.mac }}
+                    {{ k.mac.human_mac }}
                 </td>
                 <td>
                     <a href="/api/snmp/brand_by_mac/{{ k.brand_mac }}/" class="qtip_link">&#9072;</a>

@@ -456,20 +456,21 @@
                 }
             })
             rdiff.forEach(function(item,i,arr){
-                if (first)
-                {
-                    SoundNotify('/media/img/yago.jpg',
-                    document.getElementById('rtask_'+item).innerText,
-                    '/task/regular/'+item,
-                    '/media/audio/aladdin_problem.wav');
-                    first = false;
-                }
-                else
-                {
-                    SoundNotify('/media/img/yago.jpg',
-                    document.getElementById('rtask_'+item).innerText,
-                    '/task/regular/'+item,
-                    0)
+                if (rdiff!="") { // если вдруг нет регулярных задач.
+                    //TODO: то же надо сделать для обычных
+                    if (first) {
+                        SoundNotify('/media/img/yago.jpg',
+                                document.getElementById('rtask_' + item).innerText,
+                                '/task/regular/' + item,
+                                '/media/audio/aladdin_problem.wav');
+                        first = false;
+                    }
+                    else {
+                        SoundNotify('/media/img/yago.jpg',
+                                document.getElementById('rtask_' + item).innerText,
+                                '/task/regular/' + item,
+                                0)
+                    }
                 }
             })
         }

@@ -82,7 +82,7 @@ def switch_branch(branch=''):
         return
     local ('git checkout %s' % branch)
 
-
+# TODO: django.core.context_processors вроеде заменить?
 def make_and_send_settings(host='',port='5432',email_host='',email_port='',email_user='',email_password='',where_to_place='',srv_ip=''):
     """
     Создаёт файл settings.py локально, выгружает его каталог where_to_place. Для того, чтобы настройки и пароли не хранились на github
@@ -200,12 +200,17 @@ TEMPLATE_LOADERS = (
 )
 TEMPLATE_CONTEXT_PROCESSORS = (
     "django.contrib.auth.context_processors.auth",
-    "django.core.context_processors.debug",
-    "django.core.context_processors.i18n",
-    "django.core.context_processors.media",
-    "django.core.context_processors.static",
-    "django.core.context_processors.tz",
-    "django.contrib.messages.context_processors.messages")
+                # "django.core.context_processors.debug",
+                # "django.core.context_processors.i18n",
+                # "django.core.context_processors.media",
+                # "django.core.context_processors.static",
+                # "django.core.context_processors.tz",
+
+                'django.template.context_processors.debug',
+                'django.template.context_processors.i18n',
+                'django.template.context_processors.media',
+                'django.template.context_processors.static',
+                'django.template.context_processors.tz',    "django.contrib.messages.context_processors.messages")
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',

@@ -1,0 +1,58 @@
+{% extends "todoes:RUS/base.html" %}
+{% block title %}
+    {{ title }}
+{% endblock %}
+{% block style %}
+    <script src="http://cdn.jsdelivr.net/qtip2/2.2.1/jquery.qtip.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="http://cdn.jsdelivr.net/qtip2/2.2.1/jquery.qtip.min.css" />
+{#    <script>#}
+{#        // Create the tooltips only when document ready#}
+{#         $(document).ready(function()#}
+{#         {#}
+{#             // MAKE SURE YOUR SELECTOR MATCHES SOMETHING IN YOUR HTML!!!#}
+{#             $("a.qtip_link").each(function() {#}
+{#                 $(this).qtip({#}
+{#                    content: {#}
+{#                        text: function(event, api) {#}
+{#                            $.ajax({#}
+{#                                url: api.elements.target.attr('href') // Use href attribute as URL#}
+{#                            })#}
+{#                            .then(function(content) {#}
+{#                                // Set the tooltip content upon successful retrieval#}
+{#                                api.set('content.text', content);#}
+{#                            }, function(xhr, status, error) {#}
+{#                                // Upon failure... set the tooltip content to error#}
+{#                                api.set('content.text', status + ': ' + error);#}
+{#                            });#}
+{##}
+{#                            return 'Loading...'; // Set some initial text#}
+{#                        }#}
+{#                    },#}
+{#                    position: {#}
+{#                        my: 'left top',  // Position my top left...#}
+{#                        at: 'top right', // at the bottom right of...#}
+{#                        viewport: $(window)#}
+{#                    },#}
+{#                    style: 'qtip-wiki'#}
+{#                 });#}
+{#             });#}
+{#         });#}
+{#    </script>#}
+{% endblock %}
+{% block content %}
+{#    {{ mac_port_dict }}#}
+    {% for tree in trees %}
+        <table border="1" style="text-align: center;">
+            {% for level in tree %}
+                <tr>
+                    {% for node in level %}
+                        <td colspan="{{ node.count }}">
+                            {{ node.node.name }};{{ node.node.ip }}
+                        </td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </table>
+        <hr/>
+    {% endfor %}
+{% endblock %}
